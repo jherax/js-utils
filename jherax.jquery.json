@@ -1,0 +1,39 @@
+{
+	"name": "jherax",
+	"version": "3.3.1",
+	"title": "JSU Library",
+	"description": "This is a library of JavaScript / jQuery utilities, which includes tools for data validation and text formatting, plugins for tooltip, modal-windows and positioning elements, resources injection, string and JSON manipulation, object cloning, sorting arrays, and other features.",
+	"dependencies": {
+		"jquery": ">=1.8.0"
+	},
+	"keywords": [
+		"JSON",
+		"text",
+		"validation",
+		"formatting",
+		"capitalization",
+		"capitalize",
+		"tooltip",
+		"windows",
+		"popup",
+		"positioning",
+		"injection",
+		"sorting",
+		"cloning",
+		"jquery"
+	],
+	"author": {
+		"name": "David Rivera",
+		"url": "http://jherax.github.io/",
+		"email": "jherax@gmail.com"
+	},
+	"licenses": [{
+		"type": "MIT",
+		"url": "http://www.opensource.org/licenses/mit-license.php"
+	}],
+	"homepage": "https://github.com/jherax/js-utils",
+	"docs": "http://jherax.github.io/",
+	"bugs": "https://github.com/jherax/js-utils/issues",
+	"download": "",
+	"demo": "http://jherax.github.io/"
+}
