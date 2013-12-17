@@ -5,7 +5,7 @@ These are a suite of utilities for javascript and jquery, including tools for va
 
 Getting Started
 ---------------
-The tools has a dependency on [jQuery 1.9+][jQuery.js], which must be loaded before *[js-utils]*.<br>
+The tools has a dependency on [jQuery 1.9+][jQuery.js], which must be loaded before *[js-utils][jherax.js]*.<br>
 Also require some [CSS][jherax.css] for tooltip elements and other stuff.<br>
 Some functions depend on [jQuery.UI][jQuery.ui]<br><br>
 The namespace is `js.utils`, so we must use it to access the methods exposed.<br>
@@ -573,3 +573,4 @@ Licensed under the MIT License
 [jQuery.ui]: http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js
 [category.text]: #categorytext
 [jherax.css]: https://github.com/jherax/js-utils/tree/master/assets/css/jherax.css
+[jherax.js]: https://github.com/jherax/js-utils/tree/master/assets/js/jherax.js
