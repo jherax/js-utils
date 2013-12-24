@@ -57,16 +57,14 @@ Adds support for browser detect, because jquery 1.9+ deprecates the *[browser]* 
 For detecting capabilities, better to use [Modernizr](http://modernizr.com/docs/).<br>
 **Returns** `Object`
 ```javascript
+  // see browser and version
+  console.log(js.utils.browser);
+  // check for a specific browser
   if (js.utils.browser.msie) { ... }
   if (js.utils.browser.chrome) { ... }
   if (js.utils.browser.mozilla) { ... }
   if (js.utils.browser.opera) { ... }
-  // you can see what is your browser
-  console.log(js.utils.browser);
-  // you can also know the browser version
-  console.log(js.utils.browser.version);
 ```
-
 
 ### isDOM *(object)*
 Determines if a object is DOM element.<br>
@@ -75,10 +73,8 @@ Determines if a object is DOM element.<br>
 
 ```javascript
   var _dom = document.getElementById("txtName");
-  console.log(js.utils.isDOM(_dom));
-  if(js.utils.isDOM(_dom)) { ... }
+  if (js.utils.isDOM(_dom)) { ... }
 ```
-
 
 ### isEvent *(object)*
 Determines if the entry parameter is a normalized [Event Object](http://api.jquery.com/category/events/event-object/).<br>
@@ -86,11 +82,10 @@ Determines if the entry parameter is a normalized [Event Object](http://api.jque
 * **object:** `Object` to validate
 
 ```javascript
-  $("#txtName").on("click", function(e) {
+  $(":button").on("click", function(e) {
     console.log(js.utils.isEvent(e));
   });
 ```
-
 
 ### isFunction *(object)*
 Determines if the entry parameter is a function.<br>
@@ -98,17 +93,15 @@ Determines if the entry parameter is a function.<br>
 * **object:** `Object` to validate
 
 ```javascript
-  var myObj = function() {};
-  //myObj = "function";
-  //myObj = null;
-  //myObj = {};
-  console.log(js.utils.isFunction(myObj));
-  if (js.utils.isFunction(myObj)) {
-    //call the method
-    myObj();
-  }
+  var fn = {};
+  if (js.utils.isFunction(fn)) { fn(); }
+  fn = null;
+  if (js.utils.isFunction(fn)) { fn(); }
+  fn = "function";
+  if (js.utils.isFunction(fn)) { fn(); }
+  fn = function() { alert("is function"); };
+  if (js.utils.isFunction(fn)) { fn(); }
 ```
-
 
 ### fnStringify *(json)*
 This is a facade of `JSON.stringify` and provides support in old browsers.<br>
@@ -131,7 +124,6 @@ fnStringify serializes a *JSON* object and returns its string representation.<br
   console.log(js.utils.fnStringify(jsonNew));
 ```
 
-
 ### fnGetDate ()
 Gets the text of current date in **es-CO** culture.<br>
 **Returns** `Object` with the following properties:
@@ -139,14 +131,13 @@ Gets the text of current date in **es-CO** culture.<br>
 {
   date: String //gets the date in dd/MM/yyyy format
   time: String //gets the time in HH:mm:ss format
-  dateTime: String //gets the date in dd/MM/yyyy HH:mm:ss format
+  dateTime: String //date in dd/MM/yyyy HH:mm:ss format
 }
 ```
 ```javascript
   var d = js.utils.fnGetDate();
   $("#span-time").html(d.date +" <b>"+ d.time +"</b>");
 ```
-
 
 ### fnGetHtmlText *(index, value)*
 Gets the text as html encoded.<br>
@@ -169,7 +160,6 @@ This is a delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuer
   console.log(js.utils.fnGetHtmlText(0, html));
 ```
 
-
 ### fnGetSelectedText ()
 Gets the selected text in the document.<br>
 **Returns** `Object` with the following properties:
@@ -188,7 +178,6 @@ Gets the selected text in the document.<br>
   console.log(sel);
 ```
 
-
 ### fnGetCaretPosition *(dom)*
 Gets the cursor position in the text.<br>
 **Returns** `Number`
@@ -196,12 +185,10 @@ Gets the cursor position in the text.<br>
 
 ```javascript
   var text = document.getElementById("txtName");
-  //text = $("#txtName").get(0);
   text.value = "Hello World!";
   var pos = js.utils.fnGetCaretPosition(text);
   console.log(pos);
 ```
-
 
 ### fnSetCaretPosition *(dom, position)*
 Sets the cursor position in the text.<br>
@@ -223,8 +210,8 @@ Escaping user input to be treated as a literal string within a regular expressio
 ```javascript
   var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
   var re2 = new RegExp(js.utils.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
-  console.log(re1.test("ac1")); //RegExp is: /[abc]+\d/
-  console.log(re2.test("ac1")); //RegExp is: /\[abc\]\+\\d/
+  console.log(re1.test("ac1")); //RegExp: /[abc]+\d/
+  console.log(re2.test("ac1")); //RegExp: /\[abc\]\+\\d/
 ```
 
 
@@ -257,7 +244,7 @@ Places the decimal`.` and thousand`,` separator.<br>
 
 ```javascript
   var num = "123456789,47.15";
-  console.log(js.utils.fnNumericFormat(num)); //sends String
+  console.log(js.utils.fnNumericFormat(num)); //sends string
   var text = $("#txtName").val(num);
   js.utils.fnNumericFormat(text.get(0)) //sends DOM
   console.log(text.val());
@@ -272,11 +259,11 @@ Validates the format of text, depending on the type supplied.<br>
 * **type:** `String` specifying the type of validation. Can be one of the following values:
   * `d` validates the date format - dd/MM/yyyy
   * `t` validates the time format - HH:mm:ss
-  * `dt` Validates DateTime format - dd/MM/yyyy HH:mm:ss
-  * `email` Validates an email address
-  * `pass` Validates the password strength (must have 8-20 characters, one+ uppercase, one+ number)
-  * `lat` Validates the latitude
-  * `lon` Validates the longitude
+  * `dt` validates date format - dd/MM/yyyy HH:mm:ss
+  * `email` validates an email address
+  * `pass` validates the password strength (must have 8-20 characters, one+ uppercase, one+ number)
+  * `lat` validates the latitude
+  * `lon` validates the longitude
 
 ```javascript
   var _dateTime = "31/10/2013 16:10:00";
@@ -311,17 +298,17 @@ Tooltip has a dependency on [jQuery.UI][jQuery.ui]<br>
   js.utils.fnIsValidDate.formatError = "The date format is incorrect";
   
   //validates the form
-  $("#btnSendForm").on("click", function(){
+  $("#btnSendForm").on("click", function() {
   
   	var dBirthday = $("#txtBirthday").get(0);
   	dBirthday.value = js.utils.fnGetDate().date;
   	var dDriverLic = $("#txtDriverLic").val("28/02/2010").get(0);
   
-  	if(!js.utils.fnIsValidDate(dDriverLic, {
+  	if (!js.utils.fnIsValidDate(dDriverLic, {
   		warning: "The driver's license expedition can't be greater than today"
   	})) return false;
   
-  	if(!js.utils.fnIsValidDate(dBirthday, {
+  	if (!js.utils.fnIsValidDate(dBirthday, {
   		compareTo: dDriverLic.value,
   		warning: "Your birthday can't be greater than the driver's license expedition"
   	})) return false;
@@ -361,10 +348,10 @@ The progress animation is performed through CSS3, so you must add the [css class
 }
 ```
 ```javascript
-  $("#btnTest").on("click", function(){
-	  js.utils.fnLoading();
-	  setTimeout(function(){
-		  js.utils.fnLoading({ hide:true });
+  $("#btnTest").on("click", function() {
+    js.utils.fnLoading();
+    setTimeout(function() {
+      js.utils.fnLoading({ hide:true });
     }, 8000);
   });
 ```
@@ -374,12 +361,12 @@ The progress animation is performed through CSS3, so you must add the [css class
 Sets the focus on all `input:text` and `textarea` elements, except those that have `.no-auto-focus` class.<br>
 This function is util when you need validate form fields.
 ```javascript
-  $(document).on("ready", function(){
+  $(document).on("ready", function() {
 	  $("#txtDate").datepicker().addClass("no-auto-focus");
 	  $("#txtName").fnCapitalize("word");
 	  $("#txtID").fnNumericInput();
   });
-  $("#btnSendForm").on("click", function(){
+  $("#btnSendForm").on("click", function() {
 	  js.utils.fnSetFocus();
   });
 ```
