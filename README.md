@@ -203,17 +203,15 @@ Sets the cursor position in the text.<br>
   //cursor must be positioned after "Hello"
 ```
 
-
 ### fnEscapeRegExp *(text)*
 Escaping user input to be treated as a literal string within a regular expression.<br>
 **Returns** `String` or `null` if *text* parameter is not a string
 ```javascript
   var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
   var re2 = new RegExp(js.utils.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
-  console.log(re1.test("ac1")); //RegExp: /[abc]+\d/
-  console.log(re2.test("ac1")); //RegExp: /\[abc\]\+\\d/
+  console.log("re1: " + re1.test("ac1") + ", regexp: " + re1.source); //regexp: /[abc]+\d/
+  console.log("re2: " + re2.test("ac1") + ", regexp: " + re2.source); //regexp: /\[abc\]\+\\d/
 ```
-
 
 ### fnCapitalize *(object, type)*
 Transforms the text to capital letter. (Some articles are lowercased according to **es-CO** culture)<br>
