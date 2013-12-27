@@ -156,7 +156,7 @@ This is a delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuer
   console.log(html);
   $("textarea").val($.trim(html));
   $(".target").val(js.utils.fnGetHtmlText);
-  //also can run it as invoked function
+  // invoke the function programmatically
   console.log(js.utils.fnGetHtmlText(0, html));
 ```
 
@@ -206,6 +206,8 @@ Sets the cursor position in the text.<br>
 ### fnEscapeRegExp *(text)*
 Escaping user input to be treated as a literal string within a regular expression.<br>
 **Returns** `String` or `null` if *text* parameter is not a string
+* **text:** `String` to escape characters
+
 ```javascript
   var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
   var re2 = new RegExp(js.utils.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
@@ -233,7 +235,6 @@ If the whitespace characters occur in the middle of the string, also they are re
   console.log("upper: " + js.utils.fnCapitalize(test, "upper"));
 ```
 
-
 ### fnNumericFormat *(object)*
 Sets the numeric format according to **es-CO** culture.<br>
 Places the decimal`.` and thousand`,` separator.<br>
@@ -243,11 +244,10 @@ Places the decimal`.` and thousand`,` separator.<br>
 ```javascript
   var num = "123456789,47.15";
   console.log(js.utils.fnNumericFormat(num)); //sends string
-  var text = $("#txtName").val(num);
-  js.utils.fnNumericFormat(text.get(0)) //sends DOM
-  console.log(text.val());
+  var dom = $("#txtName").val(num).get(0);
+  js.utils.fnNumericFormat(dom) //sends DOM
+  console.log(dom.value);
 ```
-
 
 ### fnIsValidFormat *(object, type)*
 Validates the format of text, depending on the type supplied.<br>
@@ -272,7 +272,6 @@ Validates the format of text, depending on the type supplied.<br>
   console.log(js.utils.fnIsValidFormat(_pass, "pass"));
 ```
 
-
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the value of text is a date or not.<br>
 The validation outcome will be shown in a tooltip.<br>
@@ -286,7 +285,7 @@ Tooltip has a dependency on [jQuery.UI][jQuery.ui]<br>
 
 ```javascript
 {
-  compareTo: Date, String //date against which to compare the entry value (Default: new Date())
+  compareTo: Date|String //date against which to compare the entry value (Default: new Date())
   isFuture: Boolean //determines whether entry date must be greater than [compareTo] (Default:false)
   warning: String //message indicating that entry date did not meet the requirements
 }
@@ -308,12 +307,11 @@ Tooltip has a dependency on [jQuery.UI][jQuery.ui]<br>
   
   	if (!js.utils.fnIsValidDate(dBirthday, {
   		compareTo: dDriverLic.value,
-  		warning: "Your birthday can't be greater than the driver's license expedition"
+  		warning: "Your birthday can't be greater than driver's license expedition"
   	})) return false;
   
   });
 ```
-
 
 ### fnShowTooltip *(dom, message)*
 Shows a tooltip ***message*** at the right side of the ***dom*** element and focuses that element.<br>
@@ -324,12 +322,11 @@ It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.
 * **dom:** `DOM` element
 
 ```javascript
-  var _email = $("txtEmail").get(0);
+  var _email = document.getElementById("txtEmail");
   if (!js.utils.fnIsValidFormat(_email, "email")) {
     return js.utils.fnShowTooltip(_email, "The email address is not valid");
   }
 ```
-
 
 ### fnLoading *(options)*
 Shows a overlay screen with the "loading" indicator at the center.<br>
@@ -354,10 +351,9 @@ The progress animation is performed through CSS3, so you must add the [css class
   });
 ```
 
-
 ### fnSetFocus ()
 Sets the focus on all `input:text` and `textarea` elements, except those that have `.no-auto-focus` class.<br>
-This function is util when you need validate form fields.
+This function is useful when you need validate form fields using any of the below [jQuery plugins](#jquery-plugins).
 ```javascript
   $(document).on("ready", function() {
 	  $("#txtDate").datepicker().addClass("no-auto-focus");
@@ -375,7 +371,6 @@ This is a set of utilities for [jQuery](http://jquery.com/).<br>
 jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy API that works cross-browser.<br>
 If you want to learn more about jQuery, here is a full guide: [How jQuery Works](http://learn.jquery.com/about-jquery/how-jquery-works/).
 
-
 ### jQuery.fnCenter ()
 Sets the collection of jquery objects in the center of screen.<br>
 Elements are centered using fixed position.<br>
@@ -389,7 +384,6 @@ Elements are centered using fixed position.<br>
   div.fnCenter();
 ```
 
-
 ### jQuery.fnMaxLength *(length)*
 Limits the max length of characters in the elements [category:text][category.text]<br>
 A tooltip will be placed on the right side of input element showing the characters remaining.<br>
@@ -401,7 +395,6 @@ It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.
   $("#txtName").fnMaxLength(20);
   $(".numbers").fnMaxLength(10);
 ```
-
 
 ### jQuery.fnCapitalize *(type)*
 This is the jQuery version of [fnCapitalize](#fncapitalize-object-type).<br>
@@ -424,19 +417,17 @@ If the whitespace characters occur in the middle of the string, also they are re
   //raise blur event to transform text
 ```
 
-
 ### jQuery.fnNumericFormat ()
 This is the jQuery version of [fnNumericFormat](#fnnumericformat-object).<br>
 Sets the numeric format according to **es-CO** culture.<br>
 Places the decimal`.` and thousand`,` separator.<br>
-**Note:** The text is formatted when the `keyup, blur` events occurs.<br>
+**Note:** Text is formatted when the `keyup, blur` events occurs.<br>
 **Returns** `jQuery`
 ```javascript
   var num = "123456789,47.15";
   console.log(num); //number to be formatted
   $("#txtName").val(num).fnNumericFormat().focus();
 ```
-
 
 ### jQuery.fnNumericInput ()
 This function allows that only numeric keys can be pressed at the input.<br>
@@ -445,31 +436,28 @@ This function allows that only numeric keys can be pressed at the input.<br>
   $(".vld-numeric").fnNumericInput();
 ```
 
-
 ### jQuery.fnCustomInput *(mask)*
 This function applies a mask for the allowed characters.<br>
 **Returns** `jQuery`
-* **mask:** It can be one of these:<br>`String`: is a literal with the allowed characters.<br>`RegExp`: is a regular expression for the allowed characters.
+* **mask:** It can be one of these types:<br>`String`: a literal with the allowed characters.<br>`RegExp`: a regular expression for the allowed characters.
 
 ```javascript
   $("#txtGrade").fnCustomInput("abc1-6");
   $("#txtEmail").fnCustomInput(/[@ñ;.\-\w]/);
 ```
 
-
 ### jQuery.fnDisableKey *(keys)*
 Disables the specified keyboard keys.<br>
-To allow a set of characters, better use *[$.fnCustomInput](#jqueryfncustominput-mask)*<br>
+To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-mask)<br>
 **Returns** `jQuery`
 * **keys:** `String` with character(s) that will be blocked
 
 ```javascript
-  // prevents the spacebar is pressed in document
+  // prevents the spacebar be pressed in the document
   $(document).fnDisableKey(" ");
   // avoids pressing the keys q,w,e,r,t on the input
   $("#txtName").fnDisableKey("qwert");
 ```
-
 
 ### jQuery.fnEasyValidate *(fnvalidator)*
 Validates the form fields with css class `.vld-required` through a submit button.<br>
@@ -490,16 +478,16 @@ If you wish to validate only a set of elements in the form, you can specify a **
 ```
 ```javascript
 $(document).on("ready", function () {
-    $(".vld-numeric").fnNumericInput();
-    $("#txtDate").datepicker().addClass("no-auto-focus");
-    //$("#btnAdd").fnEasyValidate(); //only validates that required fields are not empty
-    $("#btnAdd").fnEasyValidate(function (btn) { //this function is fnvalidator parameter
-        var num = $('#txtValue').get(0);
-        if (parseFloat(num.value) < 1000) {
-          return js.utils.fnShowTooltip(num, "Price must be greater than $999"); //cancels submit
-        }
-        return true; //submits the form
-    });
+  $(".vld-numeric").fnNumericInput();
+  $("#txtDate").datepicker().addClass("no-auto-focus");
+  //$("#btnAdd").fnEasyValidate(); //only validates that required fields are not empty
+  $("#btnAdd").fnEasyValidate(function (btn) { //this function is fnvalidator parameter
+    var num = $('#txtValue').get(0);
+    if (parseFloat(num.value) < 1000) {
+      return js.utils.fnShowTooltip(num, "Price must be greater than $999"); //cancels submit
+    }
+    return true; //submits the form
+  });
 });
 ```
 
