@@ -3,6 +3,7 @@
 //  Author: David Rivera
 //  Created: 26/06/2013
 //******************************
+// jherax.github.io
 // github.com/jherax/js-utils
 //******************************
 ;
