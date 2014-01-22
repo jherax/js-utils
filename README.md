@@ -35,6 +35,7 @@ List of methods
 * [fnIsValidFormat](#fnisvalidformat-object-type)
 * [fnIsValidDate](#fnisvaliddate-dom-options)
 * [fnShowTooltip](#fnshowtooltip-dom-message)
+* [fnShowDialog--TODO](#fnshowdialog-options)
 * [fnLoading](#fnloading-options)
 * [fnSetFocus](#fnsetfocus-)
 
@@ -47,7 +48,8 @@ jQuery extensions
 * [$.fnNumericInput](#jqueryfnnumericinput-)
 * [$.fnCustomInput](#jqueryfncustominput-mask)
 * [$.fnDisableKey](#jqueryfndisablekey-keys)
-* [$.fnEasyValidate](#jqueryfneasyvalidate-fnvalidator)
+* [$.fnEasyValidate](#jqueryfneasyvalidate-options)
+* [$.fnConfirm--TODO](#jqueryfnconfirm-options)
 
 Usage
 -----
@@ -328,6 +330,9 @@ It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.
   }
 ```
 
+### fnShowDialog *(options)*
+TODO
+
 ### fnLoading *(options)*
 Shows a overlay screen with the "loading" indicator at the center.<br>
 The progress animation is performed through CSS3, so you must add the [css class][jherax.css]:<br>
@@ -459,13 +464,19 @@ To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-
   $("#txtName").fnDisableKey("qwert");
 ```
 
-### jQuery.fnEasyValidate *(fnvalidator)*
+### jQuery.fnEasyValidate *(options)*
 Validates the form fields with css class `.vld-required` through a submit button.<br>
 It has a dependency on [jQuery.UI][jQuery.ui] for the validation notification.<br>
 If you wish to validate only a set of elements in the form, you can specify a **validation group** by adding the `data-validation` attribute to the elements to validate and also to the submit button.<br>
 **Returns** `jQuery`
-* **fnvalidator:** `Function`. If it is specified, this function performs a custom validation and must return:<br> `true`: submit the form.<br>`false`: cancel submit.
+* **options:** `Object` that provides the following settings:
 
+```javascript
+{
+  fnvalidator: Function //Performs a custom validation and must return true or false
+  firstItemInvalid: Boolean //Validates first item of <select> as an invalid option (Default: true)
+}
+```
 ```html
 <select id="ddlType" class="vld-required" data-validation="group.a">
   <option value="0">Select...</option>
@@ -473,23 +484,29 @@ If you wish to validate only a set of elements in the form, you can specify a **
   <option value="2">Electric</option>
 </select>
 <input type="number" id="txtValue" class="vld-numeric vld-required" data-validation="group.a" />
-<input type="date" id="txtDate" class="vld-required" /><!--This one isn't in the validation group-->
+<input type="date" id="txtDate" class="vld-required" /><!--This one is not in validation group-->
 <button type="submit" id="btnAdd" data-validation="group.a">Add new item</button>
 ```
 ```javascript
 $(document).on("ready", function () {
   $(".vld-numeric").fnNumericInput();
   $("#txtDate").datepicker().addClass("no-auto-focus");
-  //$("#btnAdd").fnEasyValidate(); //only validates that required fields are not empty
-  $("#btnAdd").fnEasyValidate(function (btn) { //this function is fnvalidator parameter
-    var num = $('#txtValue').get(0);
-    if (parseFloat(num.value) < 1000) {
-      return js.utils.fnShowTooltip(num, "Price must be greater than $999"); //cancels submit
-    }
-    return true; //submits the form
+  //$("#btnAdd").fnEasyValidate(); //only validates required fields
+  $("#btnAdd").fnEasyValidate({
+    firstItemInvalid: true,
+    fnValidator: function (btn) {
+      var num = $('#txtValue').get(0);
+      if (parseFloat(num.value) < 1000) {
+        return js.utils.fnShowTooltip(num, "Price must be greater than $999"); //cancel submit
+      }
+      return true; //submit the form
+  	}
   });
 });
 ```
+
+### jQuery.fnConfirm *(options)*
+TODO
 
 Appendix
 --------
