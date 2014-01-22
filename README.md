@@ -473,8 +473,8 @@ If you wish to validate only a set of elements in the form, you can specify a **
 
 ```javascript
 {
-  fnvalidator: Function //Performs a custom validation and must return true or false
-  firstItemInvalid: Boolean //Validates first item of <select> as an invalid option (Default: true)
+  fnvalidator: Function //performs a custom validation and the function must return true or false
+  firstItemInvalid: Boolean //validates first item of <select> as an invalid option (Default: true)
 }
 ```
 ```html
