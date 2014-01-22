@@ -8,7 +8,7 @@
 //******************************
 ;
 // Essential JavaScript Namespacing Patterns
-// http://addyosmani.com/blog/essential-js-namespacing/
+// addyosmani.com/blog/essential-js-namespacing
 
 // Create a custom exception notifier
 var CustomException = function(message) {
@@ -241,10 +241,10 @@ js.wrapper = "body"; //#main-section
                 _pattern = /^((0[1-9])|([1-2][0-9])|(3[0-1]))\/((0[1-9])|(1[0-2]))\/([1-2][0,9][0-9][0-9])$/;
                 break;
             case "t": //Validates Time format: HH:mm:ss
-                _pattern = /^([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$/;
+                _pattern = /^([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/;
                 break;
             case "dt": //Validates DateTime format: dd/MM/yyyy HH:mm:ss
-                _pattern = /^((0[1-9])|([1-2][0-9])|(3[0-1]))\/((0[1-9])|(1[0-2]))\/([1-2][0,9][0-9][0-9])\s([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$/;
+                _pattern = /^((0[1-9])|([1-2][0-9])|(3[0-1]))\/((0[1-9])|(1[0-2]))\/([1-2][0,9][0-9][0-9])\s([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/;
                 break;
             case "email": //Validates an email address
                 _pattern = /^([0-9a-zA-Zñ](?:[\-.\w]*[0-9a-zA-Zñ])*@(?:[0-9a-zA-Zñ][\-\wñ]*[0-9a-zA-Zñ]\.)+[a-zA-Z]{2,9})$/i;
@@ -272,14 +272,13 @@ js.wrapper = "body"; //#main-section
             compareTo: new Date(),
             warning: 'La fecha no puede ser {0} a hoy'}, o);
         var _type = _dom.value.length > 10 ? "dt" : "d";
-        var _date = _dom.value.substr(0, 10);
         var parser = function (date) {
             if (date instanceof Date) return date;
             if (typeof date !== "string") return new Date();
             if (!fnIsValidFormat(date, _type)) { error = true; return new Date(); }
-            return new Date(date.replace(/^(\d{2})\/(\d{2})\/(\d{4})$/, '$3/$2/$1'));
+            return new Date(date.replace(/^(\d{2})\/(\d{2})\/(\d{4})/, '$3/$2/$1'));
         };
-        var dif = (parser(_date) - parser(o.compareTo)) / 1000 / 3600 / 24;
+        var dif = (parser(_dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
         if (error) return fnShowTooltip(_dom, fnIsValidDate.formatError);
         if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning.replace("{0}","menor"));
         if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning.replace("{0}","mayor"));
@@ -419,8 +418,7 @@ js.wrapper = "body"; //#main-section
                 var _ctrl = !!(e.ctrlKey || e.metaKey);
                 // Allow: (numbers), (keypad numbers),
                 // Allow: (backspace, tab, delete), (home, end, arrows)
-                // Allow: (Ctrl+A), (Ctrl+C)
-                // Allow: (Ctrl+V), (Ctrl+X)
+                // Allow: (Ctrl+A), (Ctrl+C), (Ctrl+V), (Ctrl+X)
                 return ((_key >= 48 && _key <= 57) || (_key >= 96 && _key <= 105) ||
                          (_key == 8 || _key == 9 || _key == 46) || (_key >= 35 && _key <= 40) ||
                          (_ctrl && _key == 65) || (_ctrl && _key == 67) ||
@@ -478,7 +476,13 @@ js.wrapper = "body"; //#main-section
     };
     //-----------------------------------
     // Validates the required form fields
-    $.fn.fnEasyValidate = function (fnValidator) {
+    $.fn.fnEasyValidate = function (o) {
+        var d = $.extend({ fnValidator: null, firstItemInvalid: true }, o);
+        var fnValidateFirstItem = function (dom) {
+            if (dom.length === 0) return true;
+            // Validates first item of <select> as an invalid option
+            return (d.firstItemInvalid && dom.selectedIndex === 0);
+        };
         return this.each(function () {
             var btn = this;
             if (!window.jQuery.ui) {
@@ -501,8 +505,8 @@ js.wrapper = "body"; //#main-section
                     var _tag = _dom.nodeName.toLowerCase();
                     // Gets the html5 validation data storage, modern browsers admit: _dom.dataset.validation
                     if (btn.getAttribute('data-validation') !== _dom.getAttribute('data-validation')) return true; //continue
-                    // If the element is [select], the first option and the option with a value="0" will be invalid
-                    if ((_tag == "select" && (_dom.selectedIndex === 0 || _dom.value === "0")) || _tag == "span" ||
+                    // If the element is <select>, evaluates first option and the option with value="0" will be invalid
+                    if ((_tag == "select" && (fnValidateFirstItem(_dom) || _dom.value === "0")) || _tag == "span" ||
                         (input.isText(_dom) && !_dom.value.length) || (input.isCheck(_dom) && !_dom.checked)) {
                         var dom = _dom;
                         // Asp radiobutton or checkbox
@@ -537,7 +541,7 @@ js.wrapper = "body"; //#main-section
                     }
                 });
                 // Calls the function to validate the form if it was provided
-                if (_submit && isFunction(fnValidator) && !fnValidator(btn)) {
+                if (_submit && isFunction(d.fnValidator) && !d.fnValidator(btn)) {
                     event.preventDefault();
                     _submit = false;
                 }
@@ -545,6 +549,131 @@ js.wrapper = "body"; //#main-section
             }); //end $.click
         }); //return jquery
     };
+    //-----------------------------------
+    // Displays a jquery confirm window
+    $.fn.fnConfirm = function (o) {
+        var type = "click", current = {};
+        $.fn.fnConfirm.canSubmit = false;
+        return this.each(function (i, target) {
+            $(target).on(type, function (e) {
+                current = this;
+                if (!$.fn.fnConfirm.canSubmit) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    fnShowDialog(o);
+                }
+            });
+            var hasValidUrl = function (href) {
+                return !!(href && href.length && (/(?:^\w+:\/\/[^\s\n]+)[^#]$/).test(href));
+            };
+            o.buttons = {
+                "Aceptar": function () {
+                    if (hasValidUrl(current.href)) document.location = current.href;
+                    $("#dialog").on("dialogclose", function (ev, ui) {
+                        $.fn.fnConfirm.canSubmit = true;
+                        $(current).trigger(type);
+                        if ((/[_]{2}doPostBack/).test(current.href))
+                            setTimeout(current.href.replace(/javascript:/i, ""), 1);
+                    }).dialog("close");
+                },
+                "Cancelar": function () {
+                    $.fn.fnConfirm.canSubmit = false;
+                    $("#dialog").dialog("close");
+                }
+            };
+        });
+    };
+    // We expose a property to check whether the form can be submitted or not
+    $.fn.fnConfirm.canSubmit = false;
+
+    //-----------------------------------
+    /* FACADES */
+    //-----------------------------------
+    // Shows a jquery.ui modal dialog
+    function fnShowDialog(o) {
+        if (!o.content) return false;
+        if (!$.isPlainObject(o.buttons) && !$.isArray(o.buttons)) o.buttons = {};
+        var d = $.extend({ title: "Advertencia", content: null, buttons: {} }, o);
+        $('#dialog, .ui-widget-overlay').remove();
+        var parent = null, body = $('body');
+        var _dialog = $('<div id="dialog" title="' + d.title + '" />');
+        if (d.content instanceof jQuery) parent = d.content.parent();
+        else if (isDOM(d.content)) parent = $(d.content).parent();
+        else if ($.type(d.content) === "string") {
+            var css = (/^(?:advertencia|informaci.n|error|aceptado|rechazado)\b/i).exec(d.title);
+            if (css && (css = css[0].toLowerCase()))
+                d.content = '<div class="wnd-icon ' + css + '" /><div>' + d.content + '</div>';
+            _dialog.html('<div class="wnd-message">' + d.content + '</div>').appendTo($(js.wrapper));
+        }
+        if (parent) _dialog.append(d.content).insertAfter(parent);
+        _dialog.find('> *').wrapAll('<div class="ui-dialog-custom"/>');
+        if (!d.width) d.width = $('.ui-dialog-custom').width(); //add 24px for left-right padding
+        if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //for v.scrollbar
+        $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
+        $(window).on('beforeunload', function() { $('#dialog').dialog("close"); });
+        body.css("overflow", "hidden");
+        _dialog.dialog({
+            draggable: true,
+            resizable: false,
+            modal: true,
+            hide: 'drop',
+            show: 'fade',
+            buttons: d.buttons,
+            height: d.height || 'auto',
+            minHeight: 134,
+            width: d.width,
+            open: function (ev, ui) {
+                if (parent) $(".ui-dialog").insertAfter(parent);
+                _dialog.dialog("option", "position", "center");
+                $(".ui-dialog-titlebar-close").focus();
+            },
+            close: function (ev, ui) {
+                body.css("overflow", "");
+                if (parent) parent.append(d.content);
+                _dialog.dialog("destroy").remove();
+            }
+        });
+        return _dialog;
+    }
+    //-----------------------------------
+    // Sets the defaults for jquery.ui datepicker
+    jQuery(function ($) {
+        if ($.datepicker && $.datepicker.regional) {
+            $.datepicker.regional['es'] = {
+                closeText: 'Cerrar',
+                prevText: '&lt; Anterior',
+                nextText: 'Siguiente &gt;',
+                currentText: 'Hoy',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mi&eacute;', 'Juv', 'Vie', 'S&aacute;b'],
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S&aacute;'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd/mm/yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ""
+            };
+            $.datepicker.setDefaults($.datepicker.regional['es']);
+        }
+        if ($.timepicker && $.timepicker.regional) {
+            $.timepicker.regional['es'] = {
+                timeOnlyTitle: 'Seleccione Hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Actual',
+                closeText: 'Aceptar',
+                hourGrid: 4,
+                minuteGrid: 10,
+                ampm: false
+            };
+            $.timepicker.setDefaults($.timepicker.regional['es']);
+        }
+    });
 
     //-----------------------------------
     /* PUBLIC API */
@@ -566,6 +695,7 @@ js.wrapper = "body"; //#main-section
     jherax.fnIsValidFormat = fnIsValidFormat;
     jherax.fnIsValidDate = fnIsValidDate;
     jherax.fnShowTooltip = fnShowTooltip;
+    jherax.fnShowDialog = fnShowDialog;
     jherax.fnLoading = fnLoading;
     jherax.fnSetFocus = fnSetFocus;
 })(js.createNS("js.utils"), jQuery);
