@@ -1,14 +1,15 @@
-//******************************
+//**********************************
 //  Utils for validations
 //  Author: David Rivera
 //  Created: 26/06/2013
-//******************************
-// jherax.github.io
-// github.com/jherax/js-utils
-//******************************
+//  Version: 2.0.13
+//**********************************
+// http://jherax.github.io
+// http://github.com/jherax/js-utils
+//**********************************
 ;
 // Essential JavaScript Namespacing Patterns
-// addyosmani.com/blog/essential-js-namespacing
+// http://addyosmani.com/blog/essential-js-namespacing
 
 // Create a custom exception notifier
 var CustomException = function(message) {
@@ -19,21 +20,25 @@ var CustomException = function(message) {
     };
 };
 // We need to do a check before we create the namespace
-var js = window.js || { author: 'jherax' };
+var js = window.js || {
+    author: "jherax",
+    version: "2.0.13",
+    dependencies: ["jQuery","jQuery.ui","jherax.css"]
+};
 if (js.author != 'jherax') {
     throw new CustomException("A variable with namespace [js] is already in use");
 }
 // Create a general purpose namespace method
 js.createNS = js.createNS || function (namespace) {
     var nsparts = namespace.toString().split(".");
-    var parent = js;
+    var parent = window;
     // we want to be able to include or exclude the root namespace so we strip it if it's in the namespace
-    if (nsparts[0] === "js") nsparts = nsparts.slice(1);
+    if (nsparts[0] === "window") nsparts = nsparts.slice(1);
     // loop through the parts and create a nested namespace if necessary
     for (var i = 0; i < nsparts.length; i++) {
         var subns = nsparts[i];
         // check if the namespace is a valid variable name
-        if (!(/\w+/).test(subns)) throw new CustomException("Invalid namespace");
+        if (!(/^[A-Za-z_]\w+/).test(subns)) throw new CustomException("Invalid namespace");
         // check if the current parent already has the namespace declared
         // if it isn't, then create it
         if (typeof parent[subns] === "undefined") {
@@ -47,17 +52,110 @@ js.createNS = js.createNS || function (namespace) {
 };
 // We expose a property to specify where the tooltip element will be appended
 js.wrapper = "body"; //#main-section
+
 //-----------------------------------
 // Immediately-invoked Function Expressions (IIFE)
 // We pass the namespace as an argument to a self-invoking function.
-// jherax is the namespace context, and $ is the jQuery Object
+// jherax is the local namespace context, and $ is the jQuery object
+(function (jherax, $) {
+    //-----------------------------------
+    /* PUBLIC API */
+    //-----------------------------------
+    // Creates the messages for specific culture
+    jherax.spanish = {
+        culture: "es",
+        wordPattern: /\s(?:Y|O|De[l]?|Por|A[l]?|L[ao]s?|[SC]on|En|Se|Que|Un[a]?)\b/g,
+        dateIsGreater: "La fecha no puede ser mayor a hoy",
+        dateIsLesser: "La fecha no puede ser menor a hoy",
+        dateFormatError: "El formato de fecha es incorrecto",
+        validateButton: "fnEasyValidate se ejecuta únicamente con botones [submit]",
+        validateForm: "El botón debe estar dentro de un formulario",
+        validateRequired: "Este campo es requerido",
+        dialogTitle: "Información"
+    };
+    jherax.english = {
+        culture: "en",
+        wordPattern: /^[]$/g,
+        dateIsGreater: "The date can't be greater than today",
+        dateIsLesser: "The date can't be lesser than today",
+        dateFormatError: "The date format is incorrect",
+        validateButton: "fnEasyValidate is performed only with buttons [submit]",
+        validateForm: "The button must be inside a form",
+        validateRequired: "This field is required",
+        dialogTitle: "Information"
+    };
+    //-----------------------------------
+    // You can add more languages using $.extend
+    jherax.default = $.extend({}, jherax.spanish);
+    
+    //-----------------------------------
+    // Creates culture for jquery.ui datepicker
+    (function() {
+        if ($.datepicker) {
+            $.datepicker.regional['en'] = $.extend({}, $.datepicker.regional[""]);
+            $.datepicker.regional['es'] = {
+                closeText: 'Cerrar',
+                prevText: '&lt; Anterior',
+                nextText: 'Siguiente &gt;',
+                currentText: 'Hoy',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mi&eacute;', 'Juv', 'Vie', 'S&aacute;b'],
+                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S&aacute;'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd/mm/yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ""
+            };
+        }
+        if ($.timepicker) {
+            $.timepicker.regional['en'] = $.extend({}, $.timepicker.regional[""]);
+            $.timepicker.regional['es'] = {
+                timeOnlyTitle: 'Seleccione Hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Actual',
+                closeText: 'Aceptar',
+                timeFormat: 'HH:mm',
+                hourGrid: 4,
+                minuteGrid: 10,
+                ampm: false
+            };
+        }
+    })();
+    //-----------------------------------
+    // Sets the default language configuration
+    jherax.set = function (obj, fnSetCustom) {
+        $.extend(jherax.default, obj);
+        // This code segment must be called before the plugin initialization
+        // You can find more languages: [http://github.com/jquery/jquery-ui/tree/master/ui/i18n]
+        if ($.datepicker) { $.datepicker.setDefaults($.datepicker.regional[jherax.default.culture]); }
+        if ($.timepicker) { $.timepicker.setDefaults($.timepicker.regional[jherax.default.culture]); }
+        if ($.isFunction(fnSetCustom)) fnSetCustom();
+    };
+})(js.createNS("js.regional"), jQuery);
+// Create the namespace for messages
+
+//-----------------------------------
+// Immediately-invoked Function Expressions (IIFE)
+// We pass the namespace as an argument to a self-invoking function.
+// jherax is the local namespace context, and $ is the jQuery object
 (function (jherax, $) {
     //-----------------------------------
     /* PRIVATE MEMBERS */
     //-----------------------------------
+    // Sets the default language configuration
+    js.regional.set(js.regional.spanish);
+    var _messages = Object.create(js.regional.default);
+    //-----------------------------------
     // Adds support for browser detect.
     // jquery 1.9+ deprecates $.browser
-    var getBrowser = (function() {
+    var _browser = (function() {
         var ua = navigator.userAgent.toLowerCase();
         var match =
             /(msie) ([\w.]+)/.exec(ua) ||
@@ -91,7 +189,7 @@ js.wrapper = "body"; //#main-section
     };
     //-----------------------------------
     // Determines whether the entry parameter is a text input or checkable input
-    // www.quackit.com/html_5/tags/html_input_tag.cfm
+    // http://www.quackit.com/html_5/tags/html_input_tag.cfm
     var input = {
         isText: function(_dom) {
             if(!isDOM(_dom)) return false;
@@ -205,15 +303,11 @@ js.wrapper = "body"; //#main-section
         }
         else _text = $.trim(_text.replace(/\s{2,}/g, " "));
         if (parseFloat(_text) === 0) _text = "0";
-        if (_type) {
-            if (_type == "upper") _text = _text.toUpperCase();
-            if (_type == "lower" || _type == "word") _text = _text.toLowerCase();
-            if (_type == "title" || _type == "word") {
-                _text = _text.replace(/(?:^|-|:|;|\s|\.|\(|\/)[a-záéíóúüñ]/g, function (m) { return m.toUpperCase(); });
-                _text = _text.replace(/\s(?:Y|O|De[l]?|Por|A[l]?|L[ao]s?|[SC]on|En|Se|Que|Un[a]?)\b/g, function (m) { return m.toLowerCase(); });
-            }
-        }
-        else _text = _text.replace(/^\w/, _text.charAt(0).toUpperCase());
+        if (_type == "word" || _type == "lower") _text = _text.toLowerCase();
+        if (_type == "word" || _type == "title") _text = _text.replace(/(?:^|-|:|;|\s|\.|\(|\/)[a-záéíóúüñ]/g, function (m) { return m.toUpperCase(); });
+        if (_type == "word" ) _text = _text.replace(_messages.wordPattern, function (m) { return m.toLowerCase(); });
+        if (_type == "first") _text = _text.replace(/^\w/, _text.charAt(0).toUpperCase());
+        if (_type == "upper") _text = _text.toUpperCase();
         if (_isDOM) obj.value = _text;
         return _text;
     }
@@ -230,8 +324,7 @@ js.wrapper = "body"; //#main-section
         return (num + dec);
     }
     //-----------------------------------
-    // Validates the format of text,
-    // depending on the type supplied.
+    // Validates the format of text, depending on type supplied.
     // Date validations are performed according to es-CO culture
     function fnIsValidFormat(obj, _type) {
         var _pattern = null,
@@ -270,7 +363,7 @@ js.wrapper = "body"; //#main-section
         o = $.extend({
             isFuture: false,
             compareTo: new Date(),
-            warning: 'La fecha no puede ser {0} a hoy'}, o);
+            warning: null }, o);
         var _type = _dom.value.length > 10 ? "dt" : "d";
         var parser = function (date) {
             if (date instanceof Date) return date;
@@ -279,13 +372,11 @@ js.wrapper = "body"; //#main-section
             return new Date(date.replace(/^(\d{2})\/(\d{2})\/(\d{4})/, '$3/$2/$1'));
         };
         var dif = (parser(_dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
-        if (error) return fnShowTooltip(_dom, fnIsValidDate.formatError);
-        if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning.replace("{0}","menor"));
-        if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning.replace("{0}","mayor"));
+        if (error) return fnShowTooltip(_dom, _messages.dateFormatError);
+        if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _messages.dateIsLesser);
+        if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _messages.dateIsGreater);
         return true;
     };
-    // We expose a property to set default message for the format error
-    fnIsValidDate.formatError = 'El formato de fecha es incorrecto';
     //-----------------------------------
     // Shows a custom warning message
     function fnShowTooltip(_dom, _msg) {
@@ -354,7 +445,7 @@ js.wrapper = "body"; //#main-section
             $(dom).on("keypress input paste", function (e) {
                 var len = dom.value.length;
                 var max = len >= length ? 1 : 0;
-                if (getBrowser.mozilla) max = !e.keyCode && max;
+                if (_browser.mozilla) max = !e.keyCode && max;
                 if (max) {
                     len = length;
                     dom.value = dom.value.substr(0, len);
@@ -486,15 +577,15 @@ js.wrapper = "body"; //#main-section
         return this.each(function () {
             var btn = this;
             if (!window.jQuery.ui) {
-                throw new CustomException("jQuery.UI is required");
+                throw new CustomException("jQuery.ui is required");
             }
             if (!btn.type || btn.type.toLowerCase() != "submit") {
-                fnShowTooltip(btn, "this method can be performed only on submit buttons");
+                fnShowTooltip(btn, _messages.validateButton);
                 return true; //continue with next element
             }
             if (!$(btn).closest("form").length) {
-                fnShowTooltip(btn, "The button must be inside a form");
-                return true;
+                fnShowTooltip(btn, _messages.validateForm);
+                return true; //continue with next element
             }
             // Prevents send the form if any field is not valid
             $(btn).on("click", { handler: "easyValidate" }, function (event) {
@@ -519,7 +610,7 @@ js.wrapper = "body"; //#main-section
                         }
                         // Shows the tooltip for required field
                         var vld = $('<span class="vld-tooltip" />').data("target-id", dom.id);
-                        vld.appendTo(js.wrapper).html("Este campo es requerido").position({
+                        vld.appendTo(js.wrapper).html(_messages.validateRequired).position({
                             of: dom,
                             at: "right center",
                             my: "left+6 center",
@@ -593,22 +684,25 @@ js.wrapper = "body"; //#main-section
     function fnShowDialog(o) {
         if (!o.content) return false;
         if (!$.isPlainObject(o.buttons) && !$.isArray(o.buttons)) o.buttons = {};
-        var d = $.extend({ title: "Advertencia", content: null, buttons: {} }, o);
-        $('#dialog, .ui-widget-overlay').remove();
         var parent = null, body = $('body');
+        var d = $.extend({
+            title: _messages.dialogTitle,
+            icon: null,
+            content: null,
+            buttons: {}
+         }, o);
+        $('#dialog, .ui-widget-overlay').remove();
         var _dialog = $('<div id="dialog" title="' + d.title + '" />');
         if (d.content instanceof jQuery) parent = d.content.parent();
         else if (isDOM(d.content)) parent = $(d.content).parent();
         else if ($.type(d.content) === "string") {
-            var css = (/^(?:advertencia|informaci.n|error|aceptado|rechazado)\b/i).exec(d.title);
-            if (css && (css = css[0].toLowerCase()))
-                d.content = '<div class="wnd-icon ' + css + '" /><div>' + d.content + '</div>';
-            _dialog.html('<div class="wnd-message">' + d.content + '</div>').appendTo($(js.wrapper));
+            var icon = d.icon ? '<div class="wnd-icon ' + d.icon + '"></div>' : "";
+            _dialog.html(icon + '<p>' + d.content + '</p>').appendTo($(js.wrapper));
         }
         if (parent) _dialog.append(d.content).insertAfter(parent);
-        _dialog.find('> *').wrapAll('<div class="ui-dialog-custom"/>');
-        if (!d.width) d.width = $('.ui-dialog-custom').width(); //add 24px for left-right padding
-        if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //for v.scrollbar
+        _dialog.find('> *').wrapAll('<section class="ui-dialog-custom"/>');
+        if (!d.width) d.width = $('.ui-dialog-custom').width();
+        if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //scrollbar
         $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
         $(window).on('beforeunload', function() { $('#dialog').dialog("close"); });
         body.css("overflow", "hidden");
@@ -618,14 +712,13 @@ js.wrapper = "body"; //#main-section
             modal: true,
             hide: 'drop',
             show: 'fade',
-            buttons: d.buttons,
-            height: d.height || 'auto',
             minHeight: 134,
+            height: d.height || 'auto',
             width: d.width,
+            buttons: d.buttons,
             open: function (ev, ui) {
                 if (parent) $(".ui-dialog").insertAfter(parent);
                 _dialog.dialog("option", "position", "center");
-                $(".ui-dialog-titlebar-close").focus();
             },
             close: function (ev, ui) {
                 body.css("overflow", "");
@@ -635,50 +728,11 @@ js.wrapper = "body"; //#main-section
         });
         return _dialog;
     }
-    //-----------------------------------
-    // Sets the defaults for jquery.ui datepicker
-    jQuery(function ($) {
-        if ($.datepicker && $.datepicker.regional) {
-            $.datepicker.regional['es'] = {
-                closeText: 'Cerrar',
-                prevText: '&lt; Anterior',
-                nextText: 'Siguiente &gt;',
-                currentText: 'Hoy',
-                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
-                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mi&eacute;', 'Juv', 'Vie', 'S&aacute;b'],
-                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S&aacute;'],
-                weekHeader: 'Sm',
-                dateFormat: 'dd/mm/yy',
-                firstDay: 1,
-                isRTL: false,
-                showMonthAfterYear: false,
-                yearSuffix: ""
-            };
-            $.datepicker.setDefaults($.datepicker.regional['es']);
-        }
-        if ($.timepicker && $.timepicker.regional) {
-            $.timepicker.regional['es'] = {
-                timeOnlyTitle: 'Seleccione Hora',
-                timeText: 'Tiempo',
-                hourText: 'Hora',
-                minuteText: 'Minuto',
-                secondText: 'Segundo',
-                currentText: 'Actual',
-                closeText: 'Aceptar',
-                hourGrid: 4,
-                minuteGrid: 10,
-                ampm: false
-            };
-            $.timepicker.setDefaults($.timepicker.regional['es']);
-        }
-    });
 
     //-----------------------------------
     /* PUBLIC API */
     //-----------------------------------
-    jherax.browser = getBrowser;
+    jherax.browser = _browser;
     jherax.isDOM = isDOM;
     jherax.isEvent = isEvent;
     jherax.isFunction = isFunction;
