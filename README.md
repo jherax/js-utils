@@ -5,19 +5,63 @@ These are a suite of utilities for javascript and jquery, including tools for va
 
 Getting Started
 ---------------
-The tools has a dependency on [jQuery 1.9+][jQuery.js], which must be loaded before *[js-utils][jherax.js]*.<br>
-Also require some [CSS][jherax.css] for tooltip elements and other stuff.<br>
+The tools has a dependency on [jQuery 1.10+][jQuery.js], which must be loaded before *[js-utils][jherax.js]*.<br>
+Also require some [CSS][jherax.css] for tooltip, loading, and other elements.<br>
 Some functions depend on [jQuery.UI][jQuery.ui]<br><br>
-The namespace is `js.utils`, so we must use it to access the methods exposed.<br>
-A property called `wrapper` was exposed in `js` namespace to specify where the [tooltip](#fnshowtooltip-dom-message) and [loading](#fnloading-options) elements will be appended. By default `js.wrapper = "body"`<br>
+The library has the following structure:
+- `js:` main namespace
+  - `author:` me :^)
+  - `version:` release number
+  - `dependencies:` array with name of dependencies
+  - `createNS:` utility to create safe namespaces
+  - `wrapper:` selector where dynamic HTML elements are placed
+  - `regional:` namespace to set the language setting
+  - `utils:` namespace for the utilities
 
+#### Initialization
+```javascript
+  (function() {
+    // We set the container of the views
+    js.wrapper = "#main-section";
+
+    // We set the language setting
+    js.regional.set(js.regional.english);
+    
+    // Add your code for plugins init, event handlers, etc...
+  })();
+```
+  
 Namespacing
 -----------
 In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global namespace. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.<br>
 
 In JavaScript, namespacing at an enterprise level is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are.
 
-List of methods
+I recommend this excellent book: [Learning JavaScript Design Patterns](http://www.addyosmani.com/resources/essentialjsdesignpatterns/book/).
+
+### js.createNS
+This utility makes life easier when you require create nested namespaces.<br>
+For example, you need to create the following object structure:
+- animation
+  - g2D
+    - slide
+  - g3D
+    - cubic
+  - tools
+
+```javascript
+  // using closures, modules, IIFE, is a good practice
+  (function() {
+    js.createNS("animation.g2D.slide");
+    js.createNS("animation.g3D.cubic");
+    // you can get the reference of a namespace, declaring localized namespaces
+    // by a function or module at the top of your function scope.
+    // (this is called: dependancy declaration pattern)
+    var tools = js.createNS("animation.tools");
+  })();
+```
+---
+js.utils methods
 ---------------
 * [browser](#browser)
 * [isDOM](#isdom-object)
@@ -35,7 +79,7 @@ List of methods
 * [fnIsValidFormat](#fnisvalidformat-object-type)
 * [fnIsValidDate](#fnisvaliddate-dom-options)
 * [fnShowTooltip](#fnshowtooltip-dom-message)
-* [fnShowDialog--TODO](#fnshowdialog-options)
+* [fnShowDialog](#fnshowdialog-options)
 * [fnLoading](#fnloading-options)
 * [fnSetFocus](#fnsetfocus-)
 
@@ -49,7 +93,7 @@ jQuery extensions
 * [$.fnCustomInput](#jqueryfncustominput-mask)
 * [$.fnDisableKey](#jqueryfndisablekey-keys)
 * [$.fnEasyValidate](#jqueryfneasyvalidate-options)
-* [$.fnConfirm--TODO](#jqueryfnconfirm-options)
+* [$.fnConfirm](#jqueryfnconfirm-options)
 
 Usage
 -----
