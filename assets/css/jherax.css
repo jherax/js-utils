@@ -8,9 +8,9 @@ img { border: 0 none; }
 }
 
 /* PAGE VIEW */
-#main-section { height: 100%; overflow: auto; }
-#page-wrapper { padding: 10px; }
-.footer { position: relative; margin-top: -35px; /* negative value of footer height */ bottom: 0; clear: both; line-height: 32px; text-align: center; background-color: #F2F2F2; border-top: 3px solid #E42639; }
+#main-section { height: auto; min-height: 100%; overflow: auto; }
+#page-wrapper { margin: 0; padding: 60px 30px; /* must be grater than footer height */ }
+.footer { position: relative; bottom: 0; clear: both; height: 32px; margin-top: -35px; /* footer height + border */ border-top: 3px solid #E42639; line-height: 32px; text-align: center; background-color: #F2F2F2; }
 
 /* COMMON USE */
 .clear { clear: both; }
@@ -96,22 +96,20 @@ img { border: 0 none; }
 
 /* JQUERY UI DIALOG */
 #dialog { max-height: 500px; }
-#dialog > .ui-dialog-custom { box-sizing: content-box; display: inline-block; zoom: 1; *display: inline; }
-#dialog > .ui-dialog-custom > div.wnd-message { display: inline-block; margin-top: 16px; text-align: center; cursor: default; }
-#dialog > .ui-dialog-custom > div.wnd-message:after { clear: both; }
-#dialog > .ui-dialog-custom > div.wnd-message > div.wnd-icon { display: table-cell; width: 55px; height: 45px; }
-#dialog > .ui-dialog-custom > div.wnd-message > div.wnd-icon.advertencia { background: url("/assets/img/ico_alerta.png") no-repeat 7px 0; }
-#dialog > .ui-dialog-custom > div.wnd-message > div.wnd-icon.informacion { background: url("/assets/img/ico_informacion.png") no-repeat 7px 0; }
-#dialog > .ui-dialog-custom > div.wnd-message > div.wnd-icon.error { background: url("/assets/img/ico_error.png") no-repeat 7px 0; }
-#dialog > .ui-dialog-custom > div.wnd-message > div.wnd-icon.aceptado { background: url("/assets/img/ico_aceptado.png") no-repeat 7px 0; }
-#dialog > .ui-dialog-custom > div.wnd-message > div.wnd-icon.rechazado { background: url("/assets/img/ico_rechazado.png") no-repeat 7px 0; }
-#dialog > .ui-dialog-custom > div.wnd-message > div.wnd-icon + div { display: table-cell; padding: 0 15px; min-height: 45px; vertical-align: middle; white-space: nowrap; }
 .ui-dialog { color: #222; font-size: 11px !important; padding: 0; }
-.ui-dialog span.ui-button-icon-primary { margin: -8px !important; }
-.ui-dialog .ui-dialog-content { border-width: 1px; }
-.ui-widget-overlay { position: fixed !important; top: 0; left: 0; width: 100%; height: 100%; }
-.ui-dialog-buttonset button { margin: .5em .4em .1em .4em !important; }
-.ui-button-text-only .ui-button-text { padding: .3em .8em !important; }
+.ui-dialog-custom { display: table; margin: 0 auto; vertical-align: middle; border-collapse: separate; border-spacing: 2px; box-sizing: content-box; }
+.ui-dialog-custom > p { display: table-cell; padding: 10px 4px; vertical-align: middle; cursor: default; }
+.ui-dialog-custom > div.wnd-icon { display: table-cell; width: 54px; height: 64px; padding: 0!important; }
+.ui-dialog-custom > div.wnd-icon + p { white-space: nowrap; }
+.ui-dialog-custom > div.wnd-icon.info { background: url("assets/img/ico_info.png") no-repeat; background-position: left center; }
+.ui-dialog-custom > div.wnd-icon.alert { background: url("assets/img/ico_alert.png") no-repeat; background-position: left center; }
+.ui-dialog-custom > div.wnd-icon.success { background: url("assets/img/ico_success.png") no-repeat; background-position: left center; }
+.ui-dialog-custom > div.wnd-icon.cancel { background: url("assets/img/ico_cancel.png") no-repeat; background-position: left center; }
+.ui-dialog-custom > div.wnd-icon.error { background: url("assets/img/ico_error.png") no-repeat; background-position: left center; }
+.ui-dialog-buttonpane button { margin: .5em .4em .1em .4em !important; }
+.ui-button-text-only .ui-button-text { padding: .3em .8em; }
+.ui-button:focus, .ui-button:active { outline: none; }
+.ui-widget-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
 
 /* JQUERY UI DATE-PICKER */
 .ui-datepicker { font-family: Lucida Grande,Lucida Sans,Arial,sans-serif !important; font-size: 11px !important; }
