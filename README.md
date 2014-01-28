@@ -18,7 +18,7 @@ The library has the following structure:
   - `regional:` namespace to set the language setting
   - `utils:` namespace for the utilities
 
-#### Initialization
+### Initialization
 ```javascript
   (function() {
     // We set the container of the views
@@ -60,6 +60,64 @@ For example, you need to create the following object structure:
     var tools = js.createNS("animation.tools");
   })();
 ```
+
+### js.regional
+This namespace exposes objects and methods to setup your language preferences.<br>
+As we are using jQuery, we can provide a language to configure datepicker plugin.<br>
+Available predefined languages are `js.regional.english` and `js.regional.spanish`<br>
+By default spanish language is set, although you can specify language using method `set()`<br>
+e.g. `js.regional.set(js.regional.english);`<br>
+You can define your own language settings:
+```javascript
+  (function() {
+    // Create the locale object, e.g. italian
+    js.regional.italian = {
+      culture: "it", //locale codes: http://www.science.co.il/Language/Locale-codes.asp
+      wordPattern: null, //regular expression pattern for text capitalization in fnCapitalize
+      dateIsGreater: "The date can't be greater than today", //text of date validation in fnIsValidDate
+      dateIsLesser: "The date can't be lesser than today", //text of date validation in fnIsValidDate
+      dateFormatError: "The date format is incorrect", //text for fnIsValidDate date format error
+      validateRequired: "This field is required", //text for $.fnEasyValidate required fields
+      dialogTitle: "Information", //default jQuery.ui.dialog title
+      dialogCancel: "Cancel", //default $.fnConfirm cancel text
+      dialogOK: "Agree" //default $.fnConfirm approve text
+    };
+    // We set the created language setting
+    js.regional.set(js.regional.italian);
+  })();
+```
+If you want to provide additional languages to other plugins, you can pass a function as second parameter in method `set()`<br>Keep in mind that some plugins can be configured only previous to its initialization.
+```javascript
+  (function() {
+    // We will create italian language for datepicker plugin
+    // Additional languages for datepicker can be found at:
+    // http://github.com/jquery/jquery-ui/tree/master/ui/i18n
+    datepicker.regional['it'] = {
+      closeText: 'Chiudi',
+      prevText: '&#x3C;Prec',
+      nextText: 'Succ&#x3E;',
+      currentText: 'Oggi',
+      monthNames: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+            'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+      monthNamesShort: ['Gen','Feb','Mar','Apr','Mag','Giu',
+            'Lug','Ago','Set','Ott','Nov','Dic'],
+      dayNames: ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'],
+      dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+      dayNamesMin: ['Do','Lu','Ma','Me','Gi','Ve','Sa'],
+      weekHeader: 'Sm',
+      dateFormat: 'dd/mm/yy',
+      firstDay: 1,
+      isRTL: false,
+      showMonthAfterYear: false,
+      yearSuffix: ''
+    };
+    // We set the created language setting
+    js.regional.set(js.regional.italian, function() {
+      datepicker.setDefaults(datepicker.regional['it']);
+    });
+  })();
+```
+
 ---
 js.utils methods
 ---------------
@@ -262,9 +320,10 @@ Escaping user input to be treated as a literal string within a regular expressio
 ```
 
 ### fnCapitalize *(object, type)*
-Transforms the text to capital letter. (Some articles are lowercased according to **es-CO** culture)<br>
+Transforms the text to capital letter.<br>
 This function also removes all newlines, spaces, and tabs from the beginning and end of the supplied string.<br>
 If the whitespace characters occur in the middle of the string, also they are removed.<br>
+There is a object defined in [`js.regional.<language>.wordPattern`](#jsregional), which is a regular expression used to lowercasing some articles after text capitalization.<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the text transformation. Can be one of the following values:
@@ -279,6 +338,19 @@ If the whitespace characters occur in the middle of the string, also they are re
   console.log("title: " + js.utils.fnCapitalize(test, "title"));
   console.log("lower: " + js.utils.fnCapitalize(test, "lower"));
   console.log("upper: " + js.utils.fnCapitalize(test, "upper"));
+```
+If you want to lowercase specific words, you can do it this way:
+```javascript
+  (function() {
+    // We configure the global language setting
+    js.regional.english.wordPattern = /\s(?:And|O[nrf]|By|At|In|The|A)\b/g;
+    js.regional.set(js.regional.english);
+    // This sample runs on click event
+    $(":button").on("click", function() {
+      var text = " the pc and keyboard are on the table ";
+      console.log(js.utils.fnCapitalize(text, "word"));
+    });
+  })();
 ```
 
 ### fnNumericFormat *(object)*
@@ -446,11 +518,11 @@ It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.
 ```
 
 ### jQuery.fnCapitalize *(type)*
-This is the jQuery version of [fnCapitalize](#fncapitalize-object-type).<br>
-Transforms the text to capital letter. (Some articles are lowercased according to **es-CO** culture)<br>
+This is the jQuery version of [fnCapitalize](#fncapitalize-object-type). Transforms the text to capital letter.<br>
 The plugin also removes all newlines, spaces, and tabs from the beginning and end of the string.<br>
 If the whitespace characters occur in the middle of the string, also they are removed.<br>
-**Note:** The text is transformed when the `blur` event occurs.<br>
+**Note:** The text is transformed when the `blur` event occurs.
+The object [`js.regional.<language>.wordPattern`](#jsregional) is a regular expression used to lowercasing some articles after text capitalization.<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `word` transform to lowercase and then turns the first letter of each word into uppercase
@@ -464,6 +536,21 @@ If the whitespace characters occur in the middle of the string, also they are re
   var name = $("#txtName").val(text);
   name.fnCapitalize("title").focus();
   //raise blur event to transform text
+```
+If you want to lowercase specific words:
+```javascript
+  (function() {
+    // We configure the global language setting
+    js.regional.english.wordPattern = /\s(?:And|O[nrf]|By|At|In|The|A)\b/g;
+    js.regional.set(js.regional.english);
+    // This sample runs on click event
+    $(":button").on("click", function() {
+      var text = " the pc and keyboard are on the table";
+      var name = $("#txtName").val(text);
+      name.fnCapitalize("title").focus();
+      //raise blur event to transform text
+    });
+  })();
 ```
 
 ### jQuery.fnNumericFormat ()
