@@ -323,7 +323,7 @@ Escaping user input to be treated as a literal string within a regular expressio
 Transforms the text to capital letter.<br>
 This function also removes all newlines, spaces, and tabs from the beginning and end of the supplied string.<br>
 If the whitespace characters occur in the middle of the string, also they are removed.<br>
-There is a object defined in [`js.regional.<language>.wordPattern`](#jsregional) which is a regular expression used to lowercasing some words after text capitalization.<br>
+**Note:** The object defined in [`js.regional.<language>.wordPattern`](#jsregional) is a regular expression used to lowercasing some words after text capitalization.<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the text transformation. Can be one of the following values:
@@ -522,7 +522,7 @@ This is the jQuery version of [fnCapitalize](#fncapitalize-object-type). Transfo
 The plugin also removes all newlines, spaces, and tabs from the beginning and end of the string.<br>
 If the whitespace characters occur in the middle of the string, also they are removed.<br>
 **Note:** The text is transformed when the `blur` event occurs.<br>
-The object [`js.regional.<language>.wordPattern`](#jsregional) is a regular expression used to lowercasing some words after text capitalization.<br>
+The object defined in [`js.regional.<language>.wordPattern`](#jsregional) is a regular expression used to lowercasing&nbsp;&nbsp; some words after text capitalization.<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `word` transform to lowercase and then turns the first letter of each word into uppercase
