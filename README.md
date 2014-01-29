@@ -343,7 +343,7 @@ If you want to lowercase specific words, you can do it this way:
 ```javascript
   (function() {
     // We configure the global language setting
-    js.regional.english.wordPattern = /\s(?:And|O[nrf]|By|At|In|The|A)\b/g;
+    js.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
     js.regional.set(js.regional.english);
     // This sample runs on click event
     $(":button").on("click", function() {
@@ -447,7 +447,7 @@ It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.
 ```
 
 ### fnShowDialog *(options)*
-TODO
+This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, DOM or jQuery elements
 
 ### fnLoading *(options)*
 Shows a overlay screen with the "loading" indicator at the center.<br>
@@ -541,7 +541,7 @@ If you want to lowercase specific words:
 ```javascript
   (function() {
     // We configure the global language setting
-    js.regional.english.wordPattern = /\s(?:And|O[nrf]|By|At|In|The|A)\b/g;
+    js.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
     js.regional.set(js.regional.english);
     // This sample runs on click event
     $(":button").on("click", function() {
