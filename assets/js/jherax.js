@@ -2,7 +2,7 @@
 //  Utils for validations
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.0.13
+//  Version: 2.0.20
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -22,7 +22,7 @@ var CustomException = function(message) {
 // We need to do a check before we create the namespace
 var js = window.js || {
     author: "jherax",
-    version: "2.0.13",
+    version: "2.0.20",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 if (js.author != 'jherax') {
@@ -64,25 +64,29 @@ js.wrapper = "body"; //#main-section
     // Creates the messages for specific culture
     jherax.spanish = {
         culture: "es",
-        wordPattern: /\s(?:Y|O|De[l]?|Por|A[l]?|L[ao]s?|[SC]on|En|Se|Que|Un[a]?)\b/g,
+        wordPattern: /\s(?:Y|O|Del?|Por|Al?|L[ao]s?|[SC]on|En|Se|Que|Una?)\b/g,
         dateIsGreater: "La fecha no puede ser mayor a hoy",
         dateIsLesser: "La fecha no puede ser menor a hoy",
         dateFormatError: "El formato de fecha es incorrecto",
         validateButton: "fnEasyValidate se ejecuta únicamente con botones [submit]",
         validateForm: "El botón debe estar dentro de un formulario",
         validateRequired: "Este campo es requerido",
-        dialogTitle: "Información"
+        dialogTitle: "Información",
+        dialogCancel: "Cancelar",
+        dialogOK: "Aceptar"
     };
     jherax.english = {
         culture: "en",
-        wordPattern: /^[]$/g,
+        wordPattern: null,
         dateIsGreater: "The date can't be greater than today",
         dateIsLesser: "The date can't be lesser than today",
         dateFormatError: "The date format is incorrect",
         validateButton: "fnEasyValidate is performed only with buttons [submit]",
         validateForm: "The button must be inside a form",
         validateRequired: "This field is required",
-        dialogTitle: "Information"
+        dialogTitle: "Information",
+        dialogCancel: "Cancel",
+        dialogOK: "Agree"
     };
     //-----------------------------------
     // You can add more languages using $.extend
@@ -305,7 +309,7 @@ js.wrapper = "body"; //#main-section
         if (parseFloat(_text) === 0) _text = "0";
         if (_type == "word" || _type == "lower") _text = _text.toLowerCase();
         if (_type == "word" || _type == "title") _text = _text.replace(/(?:^|-|:|;|\s|\.|\(|\/)[a-záéíóúüñ]/g, function (m) { return m.toUpperCase(); });
-        if (_type == "word" ) _text = _text.replace(_messages.wordPattern, function (m) { return m.toLowerCase(); });
+        if (_type == "word" && _messages.wordPattern instanceof RegExp) _text = _text.replace(_messages.wordPattern, function (m) { return m.toLowerCase(); });
         if (_type == "first") _text = _text.replace(/^\w/, _text.charAt(0).toUpperCase());
         if (_type == "upper") _text = _text.toUpperCase();
         if (_isDOM) obj.value = _text;
@@ -657,21 +661,27 @@ js.wrapper = "body"; //#main-section
             var hasValidUrl = function (href) {
                 return !!(href && href.length && (/(?:^\w+:\/\/[^\s\n]+)[^#]$/).test(href));
             };
-            o.buttons = {
-                "Aceptar": function () {
-                    if (hasValidUrl(current.href)) document.location = current.href;
-                    $("#dialog").on("dialogclose", function (ev, ui) {
-                        $.fn.fnConfirm.canSubmit = true;
-                        $(current).trigger(type);
-                        if ((/[_]{2}doPostBack/).test(current.href))
-                            setTimeout(current.href.replace(/javascript:/i, ""), 1);
-                    }).dialog("close");
+            o.buttons = [
+                {
+                    text: _messages.dialogOK,
+                    click: function () {
+                        if (hasValidUrl(current.href)) document.location = current.href;
+                        $("#dialog").on("dialogclose", function (ev, ui) {
+                            $.fn.fnConfirm.canSubmit = true;
+                            $(current).trigger(type);
+                            if ((/[_]{2}doPostBack/).test(current.href))
+                                setTimeout(current.href.replace(/javascript:/i, ""), 1);
+                        }).dialog("close");
+                    }
                 },
-                "Cancelar": function () {
-                    $.fn.fnConfirm.canSubmit = false;
-                    $("#dialog").dialog("close");
+                {
+                    text: _messages.dialogCancel,
+                    click: function () {
+                        $.fn.fnConfirm.canSubmit = false;
+                        $("#dialog").dialog("close");
+                    }
                 }
-            };
+            ];
         });
     };
     // We expose a property to check whether the form can be submitted or not
@@ -682,29 +692,33 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     // Shows a jquery.ui modal dialog
     function fnShowDialog(o) {
+        $('.ui-widget-overlay,#dialog').remove();
         if (!o.content) return false;
-        if (!$.isPlainObject(o.buttons) && !$.isArray(o.buttons)) o.buttons = {};
-        var parent = null, body = $('body');
+        var cnt = null, body = $('body');
         var d = $.extend({
             title: _messages.dialogTitle,
+            appendTo: null,
             icon: null,
             content: null,
             buttons: {}
-         }, o);
-        $('#dialog, .ui-widget-overlay').remove();
-        var _dialog = $('<div id="dialog" title="' + d.title + '" />');
-        if (d.content instanceof jQuery) parent = d.content.parent();
-        else if (isDOM(d.content)) parent = $(d.content).parent();
+        }, o);
+        if (!$.isPlainObject(d.buttons) && !$.isArray(d.buttons)) d.buttons = {};
+        if (d.content instanceof jQuery) cnt = d.content;
+        else if (isDOM(d.content)) cnt = $(d.content);
         else if ($.type(d.content) === "string") {
+            // If content is string, the html wrapper element will be created
             var icon = d.icon ? '<div class="wnd-icon ' + d.icon + '"></div>' : "";
-            _dialog.html(icon + '<p>' + d.content + '</p>').appendTo($(js.wrapper));
+            cnt = $(icon + '<p>' + d.content + '</p>').appendTo(js.wrapper).data("del", true);
         }
-        if (parent) _dialog.append(d.content).insertAfter(parent);
-        _dialog.find('> *').wrapAll('<section class="ui-dialog-custom"/>');
+        // Wraps the content into the created dialog element
+        cnt.wrapAll('<div id="dialog" title="' + d.title + '"/>')
+           .wrapAll('<section class="ui-dialog-custom"/>');
+        var _dialog = $("#dialog");
         if (!d.width) d.width = $('.ui-dialog-custom').width();
         if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //scrollbar
         $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
-        $(window).on('beforeunload', function() { $('#dialog').dialog("close"); });
+        // Uncomment next line if you need to close dialog when the page is unloaded
+        // $(window).on('beforeunload', function() { $('#dialog').dialog("close"); });
         body.css("overflow", "hidden");
         _dialog.dialog({
             draggable: true,
@@ -717,13 +731,13 @@ js.wrapper = "body"; //#main-section
             width: d.width,
             buttons: d.buttons,
             open: function (ev, ui) {
-                if (parent) $(".ui-dialog").insertAfter(parent);
+                $(".ui-dialog").appendTo(d.appendTo || _dialog.parent());
                 _dialog.dialog("option", "position", "center");
             },
             close: function (ev, ui) {
                 body.css("overflow", "");
-                if (parent) parent.append(d.content);
-                _dialog.dialog("destroy").remove();
+                _dialog.dialog("destroy");
+                cnt.data("del") ? _dialog.remove() : cnt.unwrap().unwrap();
             }
         });
         return _dialog;
