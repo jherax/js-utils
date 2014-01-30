@@ -106,8 +106,8 @@ img { border: 0 none; }
 .ui-dialog-custom > div.wnd-icon.success { background: url("assets/img/ico_success.png") no-repeat; background-position: left center; }
 .ui-dialog-custom > div.wnd-icon.cancel { background: url("assets/img/ico_cancel.png") no-repeat; background-position: left center; }
 .ui-dialog-custom > div.wnd-icon.error { background: url("assets/img/ico_error.png") no-repeat; background-position: left center; }
-.ui-dialog-buttonpane button { margin: .5em .4em .1em .4em !important; }
-.ui-button-text-only .ui-button-text { padding: .3em .8em; }
+.ui-dialog-buttonpane button { min-width: 54px; margin: .5em .4em .1em .4em !important; }
+.ui-button-text-only .ui-button-text { padding: .3em .8em; line-height: 1.5em; }
 .ui-button:focus, .ui-button:active { outline: none; }
 .ui-widget-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
 
