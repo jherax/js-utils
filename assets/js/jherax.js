@@ -2,7 +2,7 @@
 //  Utils for validations
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.0.20
+//  Version: 2.0.21
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -22,7 +22,7 @@ var CustomException = function(message) {
 // We need to do a check before we create the namespace
 var js = window.js || {
     author: "jherax",
-    version: "2.0.20",
+    version: "2.0.21",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 if (js.author != 'jherax') {
@@ -692,10 +692,11 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     // Shows a jquery.ui modal dialog
     function fnShowDialog(o) {
-        $('.ui-widget-overlay,#dialog').remove();
+        $('#dialog,.ui-widget-overlay').remove();
         if (!o.content) return false;
         var cnt = null, body = $('body');
         var d = $.extend({
+            closeOnPageUnload: false,
             title: _messages.dialogTitle,
             appendTo: null,
             icon: null,
@@ -717,8 +718,9 @@ js.wrapper = "body"; //#main-section
         if (!d.width) d.width = $('.ui-dialog-custom').width();
         if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //scrollbar
         $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
-        // Uncomment next line if you need to close dialog when the page is unloaded
-        // $(window).on('beforeunload', function() { $('#dialog').dialog("close"); });
+        // Determines whether the dialog should be closed when the page is unloaded
+        if (d.closeOnPageUnload && !($._data(window, 'events') || {}).beforeunload)
+            $(window).on('beforeunload', function() { $('#dialog').dialog("close"); });
         body.css("overflow", "hidden");
         _dialog.dialog({
             draggable: true,
