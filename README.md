@@ -5,9 +5,10 @@ These are a suite of utilities for javascript and jquery, including tools for va
 
 Getting Started
 ---------------
-The tools has a dependency on [jQuery 1.10+][jQuery.js], which must be loaded before *[js-utils][jherax.js]*.<br>
+The tools has a dependency on [jQuery 1.10+][jQuery.js], which must be loaded before [js-utils][jherax.js].<br>
 Also require some [CSS][jherax.css] for tooltip, loading, and other elements.<br>
-Some functions depend on [jQuery.UI][jQuery.ui]<br><br>
+Some functions depend on [jQuery.UI 1.9+][jQuery.ui]
+
 The library has the following structure:
 - `js:` main namespace
   - `author:` me :^)
@@ -18,7 +19,8 @@ The library has the following structure:
   - `regional:` namespace to set the language setting
   - `utils:` namespace for the utilities
 
-### Initialization
+Initialization
+--------------
 ```javascript
   (function() {
     // We set the container of the views
@@ -50,7 +52,7 @@ For example, you need to create the following object structure:
   - tools
 
 ```javascript
-  // using closures, modules, IIFE, is a good practice
+  // using closures, modules, IIFE, are good practices
   (function() {
     js.createNS("animation.g2D.slide");
     js.createNS("animation.g3D.cubic");
@@ -63,62 +65,63 @@ For example, you need to create the following object structure:
 
 ### js.regional
 This namespace exposes objects and methods to setup your language preferences.<br>
-As we are using jQuery, we can provide a language to configure datepicker plugin.<br>
+As we are using [jQuery.UI][jQuery.ui], we can provide a [language](http://github.com/jquery/jquery-ui/tree/master/ui/i18n) to configure [datepicker](http://api.jqueryui.com/datepicker/) widget.<br>
 Available predefined languages are `js.regional.english` and `js.regional.spanish`<br>
 By default spanish language is set, although you can specify language using method `set()`<br>
 e.g. `js.regional.set(js.regional.english);`<br>
 You can define your own language settings:
 ```javascript
-  (function() {
-    // Create the locale object, e.g. italian
-    js.regional.italian = {
-      culture: "it", //locale codes: http://www.science.co.il/Language/Locale-codes.asp
-      wordPattern: null, //regular expression pattern for text capitalization in fnCapitalize
-      dateIsGreater: "The date can't be greater than today", //text of date validation in fnIsValidDate
-      dateIsLesser: "The date can't be lesser than today", //text of date validation in fnIsValidDate
-      dateFormatError: "The date format is incorrect", //text for fnIsValidDate date format error
-      validateRequired: "This field is required", //text for $.fnEasyValidate required fields
-      dialogTitle: "Information", //default jQuery.ui.dialog title
-      dialogCancel: "Cancel", //default $.fnConfirm cancel text
-      dialogOK: "Agree" //default $.fnConfirm approve text
-    };
-    // We set the created language setting
-    js.regional.set(js.regional.italian);
-  })();
+(function() {
+  // Create the locale language object
+  // (the text should be in Italian)
+  js.regional.italian = {
+    culture: "it", //locale codes: http://www.science.co.il/Language/Locale-codes.asp
+    wordPattern: null, //regular expression pattern for text capitalization in fnCapitalize
+    dateIsGreater: "The date can't be greater than today", //text of date validation in fnIsValidDate
+    dateIsLesser: "The date can't be lesser than today", //text of date validation in fnIsValidDate
+    dateFormatError: "The date format is incorrect", //text for fnIsValidDate date format error
+    validateRequired: "This field is required", //text for $.fnEasyValidate required fields
+    dialogTitle: "Information", //default jQuery.ui.dialog title
+    dialogCancel: "Cancel", //default $.fnConfirm cancel text
+    dialogOK: "Agree" //default $.fnConfirm approve text
+  };
+  // We set the created language setting
+  js.regional.set(js.regional.italian);
+})();
 ```
-If you want to provide additional languages to other plugins, you can pass a function as second parameter in method `set()` Keep in mind that some plugins can be configured only previous to its initialization.
+If you want to provide additional languages to other plugins, you can pass a function as second parameter in method `set();` Keep in mind that some plugins can be configured only previous to its initialization.
 ```javascript
-  (function() {
-    // We will create italian language for datepicker plugin
-    // Additional languages for datepicker can be found at:
-    // http://github.com/jquery/jquery-ui/tree/master/ui/i18n
-    $.datepicker.regional['it'] = {
-      closeText: 'Chiudi',
-      prevText: '&#x3C;Prec',
-      nextText: 'Succ&#x3E;',
-      currentText: 'Oggi',
-      monthNames: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-            'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
-      monthNamesShort: ['Gen','Feb','Mar','Apr','Mag','Giu',
-            'Lug','Ago','Set','Ott','Nov','Dic'],
-      dayNames: ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'],
-      dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
-      dayNamesMin: ['Do','Lu','Ma','Me','Gi','Ve','Sa'],
-      weekHeader: 'Sm',
-      dateFormat: 'dd/mm/yy',
-      firstDay: 1,
-      isRTL: false,
-      showMonthAfterYear: false,
-      yearSuffix: ''
-    };
-    // We set the created language setting
-    js.regional.set(js.regional.italian, function() {
-      $.datepicker.setDefaults($.datepicker.regional['it']);
-    });
-  })();
+(function() {
+  // We will create italian language for datepicker plugin
+  // Additional languages for datepicker can be found at:
+  // [http://github.com/jquery/jquery-ui/tree/master/ui/i18n]
+  $.datepicker.regional['it'] = {
+    closeText: 'Chiudi',
+    prevText: '&#x3C;Prec',
+    nextText: 'Succ&#x3E;',
+    currentText: 'Oggi',
+    monthNames: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+          'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+    monthNamesShort: ['Gen','Feb','Mar','Apr','Mag','Giu',
+          'Lug','Ago','Set','Ott','Nov','Dic'],
+    dayNames: ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'],
+    dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+    dayNamesMin: ['Do','Lu','Ma','Me','Gi','Ve','Sa'],
+    weekHeader: 'Sm',
+    dateFormat: 'dd/mm/yy',
+    firstDay: 1,
+    isRTL: false,
+    showMonthAfterYear: false,
+    yearSuffix: ''
+  };
+  // We set the created language setting
+  js.regional.set(js.regional.italian, function() {
+    $.datepicker.setDefaults($.datepicker.regional['it']);
+  });
+})();
 ```
-
 ---
+
 js.utils methods
 ---------------
 * [browser](#browser)
@@ -157,7 +160,7 @@ Usage
 -----
 
 ### browser
-Adds support for browser detect, because jquery 1.9+ deprecates the *[browser]* property.<br>
+Adds support for browser detect, because jquery 1.9+ deprecates the *[browser](http://api.jquery.com/category/deprecated/#post-301)* property.<br>
 For detecting capabilities, better to use [Modernizr](http://modernizr.com/docs/).<br>
 **Returns** `Object`
 ```javascript
@@ -171,7 +174,7 @@ For detecting capabilities, better to use [Modernizr](http://modernizr.com/docs/
 ```
 
 ### isDOM *(object)*
-Determines if a object is DOM element.<br>
+Determines if a object is [DOM Element](http://api.jquery.com/Types/#Element).<br>
 **Returns** `Boolean`
 * **object:** `Object` to validate
 
@@ -208,7 +211,7 @@ Determines if the entry parameter is a function.<br>
 ```
 
 ### fnStringify *(json)*
-This is a facade of `JSON.stringify` and provides support in old browsers.<br>
+This is a facade of [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides support in old browsers.<br>
 fnStringify serializes a *JSON* object and returns its string representation.<br>
 **Returns** `String`
 * **json:** `JSON` object to be serialized
@@ -275,7 +278,7 @@ Gets the selected text in the document.<br>
   end: Number //final cursor position (if active element is category:text)
 }
 ```
-<div align="right">Take a look at <a href="#categorytext">category:text</a>&nbsp;</div>
+<div align="left">Take a look at <a href="#categorytext">category:text</a>&nbsp;</div>
 ```javascript
   var sel = js.utils.fnGetSelectedText();
   if (sel.text !== "") alert(sel.text);
@@ -309,7 +312,7 @@ Sets the cursor position in the text.<br>
 
 ### fnEscapeRegExp *(text)*
 Escaping user input to be treated as a literal string within a regular expression.<br>
-**Returns** `String` or `null` if *text* parameter is not a string
+**Returns** `String` or `null` if ***text*** parameter is not a string
 * **text:** `String` to escape characters
 
 ```javascript
@@ -320,15 +323,14 @@ Escaping user input to be treated as a literal string within a regular expressio
 ```
 
 ### fnCapitalize *(object, type)*
-Transforms the text to capital letter.<br>
-This function also removes all newlines, spaces, and tabs from the beginning and end of the supplied string.<br>
-If the whitespace characters occur in the middle of the string, also they are removed.<br>
+Transforms the text to capital letter and also removes all newlines, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in the middle of the string, also they are removed.<br>
 **Note:** The object defined in [`js.regional.<language>.wordPattern`](#jsregional) is a regular expression used to lowercasing some words after text capitalization. Only works when `type = "word"`<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `word` transform to lowercase and then turns the first letter of each word into uppercase
   * `title` turns the first letter of each word into uppercase
+  * `first` only the first letter is uppercase
   * `lower` transform to lowercase
   * `upper` transform to uppercase
 
@@ -377,7 +379,7 @@ Validates the format of text, depending on the type supplied.<br>
   * `t` validates the time format - HH:mm:ss
   * `dt` validates date format - dd/MM/yyyy HH:mm:ss
   * `email` validates an email address
-  * `pass` validates the password strength (must have 8-20 characters, one+ uppercase, one+ number)
+  * `pass` validates the password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
   * `lat` validates the latitude
   * `lon` validates the longitude
 
@@ -393,10 +395,13 @@ Validates the format of text, depending on the type supplied.<br>
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the value of text is a date or not.<br>
 The validation outcome will be shown in a tooltip.<br>
-Tooltip has a dependency on [jQuery.UI][jQuery.ui]<br>
+Tooltip has a dependency on [jQuery.UI 1.9+][jQuery.ui]<br>
 **Note:** Date validations are performed according to **es-CO** culture.<br>
-**Important:** You can set up the format error message through the property:<br>
-`js.utils.`<b><code>fnIsValidDate.formatError</code></b><br>
+**Important:** You can set up the messages through the properties defined in [js.regional](#jsregional) namespace:<br>
+`js.regional.<language>.dateIsGreater`<br>
+`js.regional.<language>.dateIsLesser`<br>
+`js.regional.<language>.dateFormatError`
+
 **Returns** `Boolean`
 * **dom:** `DOM` element [category:text][category.text]
 * **options:** `Object` that provides the following settings:
@@ -409,10 +414,7 @@ Tooltip has a dependency on [jQuery.UI][jQuery.ui]<br>
 }
 ```
 ```javascript
-  //this can be specified in a master page or using a singleton
-  js.utils.fnIsValidDate.formatError = "The date format is incorrect";
-  
-  //validates the form
+  // Validates some form fields
   $("#btnSendForm").on("click", function() {
   
   	var dBirthday = $("#txtBirthday").get(0);
@@ -447,7 +449,7 @@ It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.
 ```
 
 ### fnShowDialog *(options)*
-This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, DOM or jQuery elements
+This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements.
 
 ### fnLoading *(options)*
 Shows a overlay screen with the "loading" indicator at the center.<br>
