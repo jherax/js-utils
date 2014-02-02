@@ -6,8 +6,8 @@ These are a suite of utilities for javascript and jquery, including tools for va
 Getting Started
 ---------------
 The tools has a dependency on [jQuery 1.10+][jQuery.js], which must be loaded before [js-utils][jherax.js].<br>
-Also require some [CSS][jherax.css] for tooltip, loading, and other elements.<br>
-Some functions depend on [jQuery.UI 1.9+][jQuery.ui]
+Also require some [CSS][jherax.css] for tooltip, loading, and other methods.<br>
+Some functions have a dependency on [jQuery.UI 1.9+][jQuery.ui]
 
 The library has the following structure:
 - `js:` main namespace
@@ -56,10 +56,11 @@ For example, you need to create the following object structure:
   (function() {
     js.createNS("animation.g2D.slide");
     js.createNS("animation.g3D.cubic");
-    // you can get the reference of a namespace, declaring localized namespaces
-    // by a function or module at the top of your function scope.
-    // (this is called: dependancy declaration pattern)
+    // you can get the reference of created namespace
     var tools = js.createNS("animation.tools");
+    // If you use local/cached references is recommended declare them
+    // within a function or module at the top of your function scope
+    // (this is a dependancy declaration pattern)
   })();
 ```
 
@@ -125,8 +126,8 @@ If you want to provide additional languages to other plugins, you can pass a fun
 js.utils methods
 ---------------
 * [browser](#browser)
+* [input](#input)
 * [isDOM](#isdom-object)
-* [isEvent](#isevent-object)
 * [isFunction](#isfunction-object)
 * [fnStringify](#fnstringify-json)
 * [fnGetDate](#fngetdate-)
@@ -161,7 +162,7 @@ Usage
 
 ### browser
 Adds support for browser detect, because jquery 1.9+ deprecates the *[browser](http://api.jquery.com/category/deprecated/#post-301)* property.<br>
-For detecting capabilities, better to use [Modernizr](http://modernizr.com/docs/).<br>
+For detecting capabilities, is better to use [Modernizr](http://modernizr.com/docs/).<br>
 **Returns** `Object`
 ```javascript
   // see browser and version
@@ -173,6 +174,8 @@ For detecting capabilities, better to use [Modernizr](http://modernizr.com/docs/
   if (js.utils.browser.opera) { ... }
 ```
 
+### input
+
 ### isDOM *(object)*
 Determines if a object is [DOM Element](http://api.jquery.com/Types/#Element).<br>
 **Returns** `Boolean`
@@ -181,17 +184,6 @@ Determines if a object is [DOM Element](http://api.jquery.com/Types/#Element).<b
 ```javascript
   var _dom = document.getElementById("txtName");
   if (js.utils.isDOM(_dom)) { ... }
-```
-
-### isEvent *(object)*
-Determines if the entry parameter is a normalized [Event Object](http://api.jquery.com/category/events/event-object/).<br>
-**Returns** `Boolean`
-* **object:** `Object` to validate
-
-```javascript
-  $(":button").on("click", function(e) {
-    console.log(js.utils.isEvent(e));
-  });
 ```
 
 ### isFunction *(object)*
@@ -211,7 +203,7 @@ Determines if the entry parameter is a function.<br>
 ```
 
 ### fnStringify *(json)*
-This is a facade of [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides support in old browsers.<br>
+This is a reference to [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides support in old browsers.<br>
 fnStringify serializes a *JSON* object and returns its string representation.<br>
 **Returns** `String`
 * **json:** `JSON` object to be serialized
@@ -247,24 +239,24 @@ Gets the text of current date in **es-CO** culture.<br>
 ```
 
 ### fnGetHtmlText *(index, value)*
-Gets the text as html encoded.<br>
-This is a delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.text()](http://api.jquery.com/text/#text2)<br>
-**Returns** `String` with encoded html text
+Gets HTML encoded text, so if you have the text `<p>hello</p>`,<br>
+fnGetHtmlText will encoded it to `&lt;p&gt;hello&lt;/p&gt;`<br>
+This function is a delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.text()](http://api.jquery.com/text/#text2)<br>
+**Returns** `String` with encoded html
 ```html
   <textarea rows="4"></textarea>
-  <textarea rows="6" class="target"></textarea>
+  <textarea rows="6" id="target"></textarea>
   <div id="demo-wrapper">
     <h3>fnGetHtmlText</h3>
-    <p><u>Demo for delegated function</u></p>
+    <p><u>Delegated function</u></p>
   </div>
 ```
 ```javascript
   var html = $("#demo-wrapper").html();
-  console.log(html);
   $("textarea").val($.trim(html));
-  $(".target").val(js.utils.fnGetHtmlText);
+  $("#target").val(js.utils.fnGetHtmlText);
   // invoke the function programmatically
-  console.log(js.utils.fnGetHtmlText(0, html));
+  console.log(js.utils.fnGetHtmlText(html));
 ```
 
 ### fnGetSelectedText ()
@@ -307,13 +299,13 @@ Sets the cursor position in the text.<br>
   text.value = "Hello World!";
   text.focus();
   js.utils.fnSetCaretPosition(text, 5);
-  //cursor must be positioned after "Hello"
+  //cursor is positioned after "Hello"
 ```
 
 ### fnEscapeRegExp *(text)*
-Escaping user input to be treated as a literal string within a regular expression.<br>
-**Returns** `String` or `null` if ***text*** parameter is not a string
-* **text:** `String` to escape characters
+Escapes user input to be treated as a literal string in a regular expression.<br>
+**Returns** `String`, or `null` if ***text*** parameter is not a string
+* **text:** `String` to escape
 
 ```javascript
   var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
@@ -395,7 +387,7 @@ Validates the format of text, depending on the type supplied.<br>
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the value of text is a date or not.<br>
 The validation outcome will be shown in a tooltip.<br>
-Tooltip has a dependency on [jQuery.UI 1.9+][jQuery.ui]<br>
+The tooltip is positioned through [jQuery.UI 1.9+][jQuery.ui]<br>
 **Note:** Date validations are performed according to **es-CO** culture.<br>
 **Important:** You can set up the messages through the properties defined in [js.regional](#jsregional) namespace:<br>
 `js.regional.<language>.dateIsGreater`<br>
@@ -435,8 +427,8 @@ Tooltip has a dependency on [jQuery.UI 1.9+][jQuery.ui]<br>
 
 ### fnShowTooltip *(dom, message)*
 Shows a tooltip ***message*** at the right side of the ***dom*** element and focuses that element.<br>
-This function is very useful when need to notify the validation outcome.<br>
-It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.css] `.vld-tooltip`<br>
+This feature is very useful when you need to display a validation message.<br>
+It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and has a [css][jherax.css] `.vld-tooltip`<br>
 **Returns** `Boolean`, always returns `false`
 * **message:** `String` with the text to show
 * **dom:** `DOM` element
@@ -453,7 +445,7 @@ This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which
 
 ### fnLoading *(options)*
 Shows a overlay screen with the "loading" indicator at the center.<br>
-The progress animation is performed through CSS3, so you must add the [css class][jherax.css]:<br>
+The progress animation is done via CSS3, so you must add the following [css][jherax.css]:<br>
 `#floatingBarsG` `.blockG` `@keyframes fadeG` `.bg-fixed` `.bg-opacity`<br>
 **Returns** `Boolean`, always returns `true`
 * **options:** `Object` that provides the following settings:
@@ -499,6 +491,9 @@ Sets the collection of jquery objects in the center of screen.<br>
 Elements are centered using fixed position.<br>
 **Returns** `jQuery`
 ```javascript
+  // with existing element
+  $(".warning").fnCenter();
+  // or create a new one
   var div = $('<div id="divHello" />').css({
     'padding': '20px',
     'background': '#ccc',
@@ -508,9 +503,9 @@ Elements are centered using fixed position.<br>
 ```
 
 ### jQuery.fnMaxLength *(length)*
-Limits the max length of characters in the elements [category:text][category.text]<br>
+Limits the maximum length of characters allowed in the elements [category:text][category.text]<br>
 A tooltip will be placed on the right side of input element showing the characters remaining.<br>
-It has a dependency on [jQuery.UI][jQuery.ui] and also has a [css class][jherax.css] `.vld-tooltip`<br>
+It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [css class][jherax.css] `.vld-tooltip`<br>
 **Returns** `jQuery`
 * **length:** `Number` specifying the max length of characters
 
@@ -598,7 +593,7 @@ To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-
 ```
 
 ### jQuery.fnEasyValidate *(options)*
-Validates the form fields with css class `.vld-required` through a submit button.<br>
+Validates the form fields with [css class][jherax.css] `.vld-required` through a submit button.<br>
 It has a dependency on [jQuery.UI][jQuery.ui] for the validation notification.<br>
 If you wish to validate only a set of elements in the form, you can specify a **validation group** by adding the `data-validation` attribute to the elements to validate and also to the submit button.<br>
 **Returns** `jQuery`
