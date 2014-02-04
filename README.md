@@ -78,9 +78,11 @@ You can define your own language settings:
   js.regional.italian = {
     culture: "it", //locale codes: http://www.science.co.il/Language/Locale-codes.asp
     wordPattern: null, //regular expression pattern for text capitalization in fnCapitalize
+    timeFormat: "HH:mm", //pattern for time. HH: 0-23 hour, hh: 1-12 hour, mm: minutes, ss: seconds
+    dateFormat: "MM/dd/yyyy", //pattern for date. dd: 2-digit day, MM: 2-digit month, yyyy: 4-digit year
+    dateFormatError: "The date format is incorrect", //text for fnIsValidDate when date format is wrong
     dateIsGreater: "The date can't be greater than today", //text of date validation in fnIsValidDate
     dateIsLesser: "The date can't be lesser than today", //text of date validation in fnIsValidDate
-    dateFormatError: "The date format is incorrect", //text for fnIsValidDate date format error
     validateRequired: "This field is required", //text for $.fnEasyValidate required fields
     dialogTitle: "Information", //default jQuery.ui.dialog title
     dialogCancel: "Cancel", //default $.fnConfirm cancel text
@@ -126,7 +128,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 js.utils methods
 ---------------
 * [browser](#browser)
-* [input](#input)
+* [inputType](#inputtype)
 * [isDOM](#isdom-object)
 * [isFunction](#isfunction-object)
 * [fnStringify](#fnstringify-json)
@@ -150,6 +152,9 @@ jQuery extensions
 * [$.fnCenter](#jqueryfncenter-)
 * [$.fnMaxLength](#jqueryfnmaxlength-length)
 * [$.fnCapitalize](#jqueryfncapitalize-type)
+* [$.fnShowTooltip](#jqueryfnshowtooltip-message)
+* [$.fnIsValidFormat](#jqueryfnisvalidformat-type)
+* [$.fnIsValidDate](#jqueryfnisvaliddate-options)
 * [$.fnNumericFormat](#jqueryfnnumericformat-)
 * [$.fnNumericInput](#jqueryfnnumericinput-)
 * [$.fnCustomInput](#jqueryfncustominput-mask)
@@ -174,7 +179,29 @@ For detecting capabilities, is better to use [Modernizr](http://modernizr.com/do
   if (js.utils.browser.opera) { ... }
 ```
 
-### input
+### inputType
+This object has two methods to determine the type of the `<input>` element.
+* **`isText (dom)`**: This function returns `true` when the ***dom*** parameter is a writable  `<input>`<br>Elements classified in this category are: [Category:text](#categorytext)
+* **`isCheck (dom)`**: This function returns `true` when the ***dom*** parameter is a checkable `<input>`<br>Elements classified in this category are: `"checkbox"` and `"radio"` input elements.
+
+```html
+  <input type="radio" id="radio" />
+  <input type="date" id="date" />
+  <textarea id="area"></textarea>
+```
+```javascript
+  (function() {
+    //we use dependancy declaration pattern
+    var tools = js.utils;
+    //we use jquery.get() to get first DOM element
+    var area = $("#area").get(0);
+    var date = $("#date").get(0);
+    var radio = $("#radio").get(0);
+    if (tools.inputType.isText(area)) area.value = "I am category:text";
+    if (tools.inputType.isText(date)) date.value = new Date().toISOString().substring(0, 10);
+    if (tools.inputType.isCheck(radio)) radio.checked = true;
+  })();
+```
 
 ### isDOM *(object)*
 Determines if a object is [DOM Element](http://api.jquery.com/Types/#Element).<br>
