@@ -2,7 +2,7 @@
 //  Utils for validations
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.0.21
+//  Version: 2.1.27
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -22,14 +22,14 @@ var CustomException = function(message) {
 // We need to do a check before we create the namespace
 var js = window.js || {
     author: "jherax",
-    version: "2.0.21",
+    version: "2.1.27",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 if (js.author != 'jherax') {
     throw new CustomException("A variable with namespace [js] is already in use");
 }
 // Create a general purpose namespace method
-js.createNS = js.createNS || function (namespace) {
+js.createNS = js.createNS || function(namespace) {
     var nsparts = namespace.toString().split(".");
     var parent = window;
     // we want to be able to include or exclude the root namespace so we strip it if it's in the namespace
@@ -65,9 +65,11 @@ js.wrapper = "body"; //#main-section
     jherax.spanish = {
         culture: "es",
         wordPattern: /\s(?:Y|O|Del?|Por|Al?|L[ao]s?|[SC]on|En|Se|Que|Una?)\b/g,
+        timeFormat: "HH:mm",
+        dateFormat: "dd/MM/yyyy",
+        dateFormatError: "El formato de fecha es incorrecto",
         dateIsGreater: "La fecha no puede ser mayor a hoy",
         dateIsLesser: "La fecha no puede ser menor a hoy",
-        dateFormatError: "El formato de fecha es incorrecto",
         validateButton: "fnEasyValidate se ejecuta únicamente con botones [submit]",
         validateForm: "El botón debe estar dentro de un formulario",
         validateRequired: "Este campo es requerido",
@@ -78,9 +80,11 @@ js.wrapper = "body"; //#main-section
     jherax.english = {
         culture: "en",
         wordPattern: null,
+        timeFormat: "HH:mm",
+        dateFormat: "MM/dd/yyyy",
+        dateFormatError: "The date format is incorrect",
         dateIsGreater: "The date can't be greater than today",
         dateIsLesser: "The date can't be lesser than today",
-        dateFormatError: "The date format is incorrect",
         validateButton: "fnEasyValidate is performed only with buttons [submit]",
         validateForm: "The button must be inside a form",
         validateRequired: "This field is required",
@@ -134,7 +138,7 @@ js.wrapper = "body"; //#main-section
     })();
     //-----------------------------------
     // Sets the default language configuration
-    jherax.set = function (obj, fnSetCustom) {
+    jherax.set = function(obj, fnSetCustom) {
         $.extend(jherax.default, obj);
         // This code segment must be called before the plugin initialization
         // You can find more languages: [http://github.com/jquery/jquery-ui/tree/master/ui/i18n]
@@ -155,11 +159,11 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     // Sets the default language configuration
     js.regional.set(js.regional.spanish);
-    var _messages = Object.create(js.regional.default);
+    var _language = Object.create(js.regional.default);
     //-----------------------------------
     // Adds support for browser detect.
     // jquery 1.9+ deprecates $.browser
-    var _browser = (function() {
+    var browser = (function() {
         var ua = navigator.userAgent.toLowerCase();
         var match =
             /(msie) ([\w.]+)/.exec(ua) ||
@@ -177,21 +181,6 @@ js.wrapper = "body"; //#main-section
         return b;
     })();
     //-----------------------------------
-    // Determines if a object is DOM element
-    var isDOM = function(obj) {
-        return (!!obj && typeof obj === "object" && !!obj.nodeType);
-    };
-    //-----------------------------------
-    // Determines if the entry parameter is a normalized Event Object
-    var isEvent = function(obj) {
-        return (!!obj && typeof obj === "object" && obj.which !== undefined && !!obj.target);
-    };
-    //-----------------------------------
-    // Determines if the entry parameter is a function
-    var isFunction = function(obj) {
-        return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
-    };
-    //-----------------------------------
     // Determines whether the entry parameter is a text input or checkable input
     // http://www.quackit.com/html_5/tags/html_input_tag.cfm
     var input = {
@@ -208,10 +197,25 @@ js.wrapper = "body"; //#main-section
         }
     };
     //-----------------------------------
+    // Determines if a object is DOM element
+    var isDOM = function(obj) {
+        return (!!obj && typeof obj === "object" && !!obj.nodeType);
+    };
+    //-----------------------------------
+    // Determines if the entry parameter is a normalized Event Object
+    var isEvent = function(obj) {
+        return (!!obj && typeof obj === "object" && obj.which !== undefined && !!obj.target);
+    };
+    //-----------------------------------
+    // Determines if the entry parameter is a function
+    var isFunction = function(obj) {
+        return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
+    };
+    //-----------------------------------
     // This is a facade of JSON.stringify and provides support in old browsers
-    var fnStringify = typeof JSON != "undefined" ? JSON.stringify : function (json) {
+    var fnStringify = typeof JSON != "undefined" ? JSON.stringify : function(json) {
         var arr = [];
-        $.each(json, function (key, val) {
+        $.each(json, function(key, val) {
             var prop = "\"" + key + "\":";
             prop += ($.isPlainObject(val) ? fnStringify(val) : 
                 (typeof val === "string" ? "\"" + val + "\"" : val));
@@ -226,13 +230,32 @@ js.wrapper = "body"; //#main-section
         return txt.replace(/([.*+?=!:${}()|\^\[\]\/\\])/g, "\\$1");
     }
     //-----------------------------------
-    // Gets the text of current date in es-CO culture. dd/MM/yyyy HH:mm:ss
+    // Gets the text of current date according to regional setting
     function fnGetDate() {
         var f = new Date();
         var fillZero = function(n) { return ("0" + n.toString()).slice(-2); };
-        var fnDate = function() { return (fillZero(f.getDate()) +"/"+ fillZero(f.getMonth() + 1) +"/"+ f.getFullYear()); };
-        var fnTime = function() { return (fillZero(f.getHours()) +":"+ fillZero(f.getMinutes()) +":"+ fillZero(f.getSeconds())); };
+        var fnDate = function() {
+            return _language.dateFormat.replace(/[dMy]+/g, function(m) {
+                switch (m.toString()) {
+                    case "dd": return fillZero(f.getDate());
+                    case "MM": return fillZero(f.getMonth() + 1);
+                    case "yyyy": return f.getFullYear();
+                }
+            });
+        };
+        var fnTime = function() {
+            return _language.timeFormat.replace(/[Hhms]+/g, function(m) {
+                var h = f.getHours();
+                switch (m.toString()) {
+                    case "HH": return fillZero(f.getHours());
+                    case "hh": return fillZero(h === 12 ? 12 : h % 12);
+                    case "mm": return fillZero(f.getMinutes());
+                    case "ss": return fillZero(f.getSeconds());
+                }
+            });
+        };
         var fnDateTime = function() { return fnDate() + " " + fnTime(); };
+        // Public API
         return {
             date: fnDate(),
             time: fnTime(),
@@ -243,6 +266,7 @@ js.wrapper = "body"; //#main-section
     // Gets the text as html encoded
     // This is a delegate for $.val()
     function fnGetHtmlText(i, value) {
+        if (!value && typeof i === "string") value = i;
         var html = $("<div/>").text(value).html();
         return $.trim(html);
     }
@@ -308,8 +332,8 @@ js.wrapper = "body"; //#main-section
         else _text = $.trim(_text.replace(/\s{2,}/g, " "));
         if (parseFloat(_text) === 0) _text = "0";
         if (_type == "word" || _type == "lower") _text = _text.toLowerCase();
-        if (_type == "word" || _type == "title") _text = _text.replace(/(?:^|-|:|;|\s|\.|\(|\/)[a-záéíóúüñ]/g, function (m) { return m.toUpperCase(); });
-        if (_type == "word" && _messages.wordPattern instanceof RegExp) _text = _text.replace(_messages.wordPattern, function (m) { return m.toLowerCase(); });
+        if (_type == "word" || _type == "title") _text = _text.replace(/(?:^|-|:|;|\s|\.|\(|\/)[a-záéíóúüñ]/g, function(m) { return m.toUpperCase(); });
+        if (_type == "word" && _language.wordPattern instanceof RegExp) _text = _text.replace(_language.wordPattern, function(m) { return m.toLowerCase(); });
         if (_type == "first") _text = _text.replace(/^\w/, _text.charAt(0).toUpperCase());
         if (_type == "upper") _text = _text.toUpperCase();
         if (_isDOM) obj.value = _text;
@@ -328,25 +352,39 @@ js.wrapper = "body"; //#main-section
         return (num + dec);
     }
     //-----------------------------------
-    // Validates the format of text, depending on type supplied.
-    // Date validations are performed according to es-CO culture
+    // Validates the text format, depending on the type supplied.
+    // Date validations are run according to regional setting
     function fnIsValidFormat(obj, _type) {
         var _pattern = null,
             _text = input.isText(obj) ? obj.value : obj.toString();
+        var _formatter = function(format) {
+            return "^" +
+            fnEscapeRegExp(format).replace(/[dMyHhms]+/g, function(m) {
+                switch (m.toString()) {
+                    case "dd": return "((0[1-9])|([1-2][0-9])|(3[0-1]))";
+                    case "MM": return "((0[1-9])|(1[0-2]))";
+                    case "yyyy": return "([1-2][0,9][0-9][0-9])";
+                    case "HH": return "([0-1][0-9]|[2][0-3])";
+                    case "hh": return "([0][0-9]|[1][0-2])";
+                    case "mm": return "([0-5][0-9])";
+                    case "ss": return "([0-5][0-9])";
+                }
+            }) + "$";
+        };
         switch (_type) {
             case "d": //Validates Date format: dd/MM/yyyy
-                _pattern = /^((0[1-9])|([1-2][0-9])|(3[0-1]))\/((0[1-9])|(1[0-2]))\/([1-2][0,9][0-9][0-9])$/;
+                _pattern = new RegExp(_formatter(_language.dateFormat));
                 break;
             case "t": //Validates Time format: HH:mm:ss
                 _pattern = /^([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/;
                 break;
             case "dt": //Validates DateTime format: dd/MM/yyyy HH:mm:ss
-                _pattern = /^((0[1-9])|([1-2][0-9])|(3[0-1]))\/((0[1-9])|(1[0-2]))\/([1-2][0,9][0-9][0-9])\s([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/;
+                _pattern = new RegExp(_formatter(_language.dateFormat + " " + _language.timeFormat));
                 break;
             case "email": //Validates an email address
                 _pattern = /^([0-9a-zA-Zñ](?:[\-.\w]*[0-9a-zA-Zñ])*@(?:[0-9a-zA-Zñ][\-\wñ]*[0-9a-zA-Zñ]\.)+[a-zA-Z]{2,9})$/i;
                 break;
-            case "pass": //Validates the password strength (must have 8-20 characters, at least one number, at least one uppercase)
+            case "pass": //Validates the password strength (must have 8-20 characters, 1+ number, 1+ uppercase)
                 _pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
                 break;
             case "lat": //Validates the latitude
@@ -359,9 +397,9 @@ js.wrapper = "body"; //#main-section
         return !!_pattern && _pattern.test(_text);
     }
     //-----------------------------------
-    // Evaluates whether the value of text is a date or not.
-    // The validation outcome will be shown in a tooltip
-    var fnIsValidDate = function(_dom, o) {
+    // Evaluates whether the input value is a date or not.
+    // The validation result will be shown in a tooltip
+    function fnIsValidDate(_dom, o) {
         if (!input.isText(_dom)) return false;
         var error = false;
         o = $.extend({
@@ -369,23 +407,31 @@ js.wrapper = "body"; //#main-section
             compareTo: new Date(),
             warning: null }, o);
         var _type = _dom.value.length > 10 ? "dt" : "d";
-        var parser = function (date) {
+        var parser = function(date) {
             if (date instanceof Date) return date;
             if (typeof date !== "string") return new Date();
             if (!fnIsValidFormat(date, _type)) { error = true; return new Date(); }
-            return new Date(date.replace(/^(\d{2})\/(\d{2})\/(\d{4})/, '$3/$2/$1'));
+            var d = date.split(/\D/); date = "y/M/d";
+            var p = _language.dateFormat.split(/[^yMd]/);
+            for (var x = 0; x < p.length; x++) {
+                if ((/y+/).test(p[x])) date = date.replace("y", d[x]);
+                if ((/M+/).test(p[x])) date = date.replace("M", d[x]);
+                if ((/d+/).test(p[x])) date = date.replace("d", d[x]);
+            }
+            d.splice(0, 3);
+            return new Date(date +" "+ d.join(":"));
         };
         var dif = (parser(_dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
-        if (error) return fnShowTooltip(_dom, _messages.dateFormatError);
-        if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _messages.dateIsLesser);
-        if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _messages.dateIsGreater);
+        if (error) return fnShowTooltip(_dom, _language.dateFormatError);
+        if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _language.dateIsLesser);
+        if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _language.dateIsGreater);
         return true;
-    };
+    }
     //-----------------------------------
-    // Shows a custom warning message
+    // Displays a tooltip next to DOM element
     function fnShowTooltip(_dom, _msg) {
         if (isDOM(_dom)) _dom = $(_dom);
-        _dom.on("blur", function () { $(".vld-tooltip").remove(); });
+        _dom.on("blur", function() { $(".vld-tooltip").remove(); });
         var vld = $('<span class="vld-tooltip">' + _msg + '</span>');
         vld.appendTo(js.wrapper).position({
             of: _dom,
@@ -417,7 +463,7 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     // Sets the focus on input elements
     function fnSetFocus() {
-        $($('input[type="text"], textarea').filter(':not(input:disabled)').get().reverse()).each(function () {
+        $($('input[type="text"], textarea').filter(':not(input:disabled)').get().reverse()).each(function() {
             if (!$(this).hasClass("no-auto-focus")) $(this).focus();
         });
     }
@@ -426,6 +472,7 @@ js.wrapper = "body"; //#main-section
     /* jQUERY EXTENSIONS */
     //-----------------------------------
     // Sets the jquery objects in the center of screen
+    // See css:calc [http://jsfiddle.net/apaul34208/e4y6F]
     $.fn.fnCenter = function() {
         this.css({
             'position': 'fixed',
@@ -441,15 +488,15 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     // Limits the max length in the input:text
     $.fn.fnMaxLength = function(length) {
-        return this.each(function (i, dom) {
+        return this.each(function(i, dom) {
             var count = "Max: " + length;
             var vld = '#max' + dom.id;
             if (!input.isText(dom)) return true; //continue
             $(dom).on("blur", function() { $(vld).remove(); });
-            $(dom).on("keypress input paste", function (e) {
+            $(dom).on("keypress input paste", function(e) {
                 var len = dom.value.length;
                 var max = len >= length ? 1 : 0;
-                if (_browser.mozilla) max = !e.keyCode && max;
+                if (browser.mozilla) max = !e.keyCode && max;
                 if (max) {
                     len = length;
                     dom.value = dom.value.substr(0, len);
@@ -471,16 +518,36 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     // Apply the capitalized format to text when blur event occurs
     $.fn.fnCapitalize = function(type) {
-        return this.each(function (i, dom) {
+        return this.each(function(i, dom) {
             $(dom).on("blur", function() {
                 fnCapitalize(this, type);
             });
         });
     };
     //-----------------------------------
+    // Displays a tooltip next to DOM element
+    $.fn.fnShowTooltip = function(msg) {
+        return this.each(function(i, dom) {
+            fnShowTooltip(dom, msg);
+        });
+    };
+    //-----------------------------------
+    // Validates the format of first element, depending on the type supplied.
+    // Date validations are run according to regional setting
+    $.fn.fnIsValidFormat = function(type) {
+        return fnIsValidFormat(this.get(0), type);
+    };
+    //-----------------------------------
+    // Evaluates whether the input value is a date or not.
+    // The validation result will be shown in a tooltip
+    $.fn.fnIsValidDate = function(o) {
+        return fnIsValidDate(this.get(0), o);
+    };
+    //-----------------------------------
     // Sets numeric format with decimal/thousand separators
+    // http://jsbin.com/ekeSeG/2/edit
     $.fn.fnNumericFormat = function() {
-        return this.each(function (i, dom) {
+        return this.each(function(i, dom) {
             $(dom).on("keyup blur", function() {
                 fnNumericFormat(this);
             });
@@ -488,12 +555,12 @@ js.wrapper = "body"; //#main-section
     };
     //-----------------------------------
     // Allows only numeric characters
-    $.fn.fnNumericInput = function () {
-        return this.each(function (i, dom) {
+    $.fn.fnNumericInput = function() {
+        return this.each(function(i, dom) {
             var len = dom.maxLength;
             dom.maxLength = 524000;
             if (len < 1) len = 524000;
-            $(dom).on("focus blur input paste", { max: len }, function (e) {
+            $(dom).on("focus blur input paste", { max: len }, function(e) {
                 var _pos = e.type != "blur" ? fnGetCaretPosition(e.target) : 0;
                 var _value = e.target.value;
                 if (e.type == "paste") {
@@ -508,7 +575,7 @@ js.wrapper = "body"; //#main-section
                 e.target.maxLength = e.data.max;
                 if (e.type != "blur") fnSetCaretPosition(e.target, _pos);
             });
-            $(dom).on("keydown", function (e) {
+            $(dom).on("keydown", function(e) {
                 var _key = e.which || e.keyCode;
                 var _ctrl = !!(e.ctrlKey || e.metaKey);
                 // Allow: (numbers), (keypad numbers),
@@ -523,15 +590,15 @@ js.wrapper = "body"; //#main-section
     };
     //-----------------------------------
     // Sets a mask for the allowed characters
-    $.fn.fnCustomInput = function (mask) {
+    $.fn.fnCustomInput = function(mask) {
         mask = mask instanceof RegExp ? mask : fnEscapeRegExp(mask);
         if (!mask) throw new CustomException("Mask must be RegExp or string");
         if (typeof mask === "string") mask = "[" + mask + "]";
-        return this.each(function (i, dom) {
+        return this.each(function(i, dom) {
             var len = dom.maxLength;
             dom.maxLength = 524000;
             if (len < 1) len = 524000;
-            $(dom).on("focus blur input paste", { max: len }, function (e) {
+            $(dom).on("focus blur input paste", { max: len }, function(e) {
                 var _pos = e.type != "blur" ? fnGetCaretPosition(e.target) : 0;
                 var _value = e.target.value;
                 if (e.type == "paste") {
@@ -546,7 +613,7 @@ js.wrapper = "body"; //#main-section
                 e.target.maxLength = e.data.max;
                 if (e.type != "blur") fnSetCaretPosition(e.target, _pos);
             });
-            $(dom).on("keypress", function (e) {
+            $(dom).on("keypress", function(e) {
                 var _pattern = new RegExp(mask.source || mask, "i");
                 var _key = e.which || e.keyCode;
                 var _vk = (_key == 8 || _key == 9 || _key == 46 || (_key >= 35 && _key <= 40));
@@ -557,12 +624,12 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     // Disables the specified keyboard keys.
     // To allow a set of keys, better use $.fnCustomInput
-    $.fn.fnDisableKey = function (key) {
+    $.fn.fnDisableKey = function(key) {
         if (!key) return this;
         var keys = key.toString().split("");
         keys = keys.filter(function(n){ return (n && n.length); });
         return this.each(function() {
-            $(this).on("keypress", function (e) {
+            $(this).on("keypress", function(e) {
                 var _key = e.which || e.keyCode;
                 _key = String.fromCharCode(_key);
                 return $.inArray(_key, keys) == -1;
@@ -571,32 +638,32 @@ js.wrapper = "body"; //#main-section
     };
     //-----------------------------------
     // Validates the required form fields
-    $.fn.fnEasyValidate = function (o) {
+    $.fn.fnEasyValidate = function(o) {
         var d = $.extend({ fnValidator: null, firstItemInvalid: true }, o);
-        var fnValidateFirstItem = function (dom) {
+        var fnValidateFirstItem = function(dom) {
             if (dom.length === 0) return true;
             // Validates first item of <select> as an invalid option
             return (d.firstItemInvalid && dom.selectedIndex === 0);
         };
-        return this.each(function () {
+        return this.each(function() {
             var btn = this;
             if (!window.jQuery.ui) {
                 throw new CustomException("jQuery.ui is required");
             }
             if (!btn.type || btn.type.toLowerCase() != "submit") {
-                fnShowTooltip(btn, _messages.validateButton);
+                fnShowTooltip(btn, _language.validateButton);
                 return true; //continue with next element
             }
             if (!$(btn).closest("form").length) {
-                fnShowTooltip(btn, _messages.validateForm);
+                fnShowTooltip(btn, _language.validateForm);
                 return true; //continue with next element
             }
             // Prevents send the form if any field is not valid
-            $(btn).on("click", { handler: "easyValidate" }, function (event) {
+            $(btn).on("click", { handler: "easyValidate" }, function(event) {
                 btn.blur(); $(".vld-tooltip").remove();
                 var _submit = true; fnSetFocus();
                 // Validates each [input, select] element
-                $(".vld-required").each(function (i, _dom) {
+                $(".vld-required").each(function(i, _dom) {
                     var _tag = _dom.nodeName.toLowerCase();
                     // Gets the html5 validation data storage, modern browsers admit: _dom.dataset.validation
                     if (btn.getAttribute('data-validation') !== _dom.getAttribute('data-validation')) return true; //continue
@@ -614,7 +681,7 @@ js.wrapper = "body"; //#main-section
                         }
                         // Shows the tooltip for required field
                         var vld = $('<span class="vld-tooltip" />').data("target-id", dom.id);
-                        vld.appendTo(js.wrapper).html(_messages.validateRequired).position({
+                        vld.appendTo(js.wrapper).html(_language.validateRequired).position({
                             of: dom,
                             at: "right center",
                             my: "left+6 center",
@@ -626,10 +693,10 @@ js.wrapper = "body"; //#main-section
                     } //end if
                 }); //end $.each
                 // Removes the validation message
-                $(".vld-required").on("blur", function (e) {
+                $(".vld-required").on("blur", function(e) {
                     var dom = e.target;
                     if (dom.selectedIndex !== 0 || dom.checked || dom.value.length) {
-                        $(".vld-tooltip").each(function (i, _vld) {
+                        $(".vld-tooltip").each(function(i, _vld) {
                             if (dom.id == $(_vld).data("target-id"))
                             { $(_vld).remove(); return false; }
                         });
@@ -646,11 +713,12 @@ js.wrapper = "body"; //#main-section
     };
     //-----------------------------------
     // Displays a jquery confirm window
-    $.fn.fnConfirm = function (o) {
+    // http://github.com/wiggin/jQuery-Easy-Confirm-Dialog-plugin
+    $.fn.fnConfirm = function(o) {
         var type = "click", current = {};
         $.fn.fnConfirm.canSubmit = false;
-        return this.each(function (i, target) {
-            $(target).on(type, function (e) {
+        return this.each(function(i, target) {
+            $(target).on(type, function(e) {
                 current = this;
                 if (!$.fn.fnConfirm.canSubmit) {
                     e.stopImmediatePropagation();
@@ -658,15 +726,15 @@ js.wrapper = "body"; //#main-section
                     fnShowDialog(o);
                 }
             });
-            var hasValidUrl = function (href) {
+            var hasValidUrl = function(href) {
                 return !!(href && href.length && (/(?:^\w+:\/\/[^\s\n]+)[^#]$/).test(href));
             };
             o.buttons = [
                 {
-                    text: _messages.dialogOK,
-                    click: function () {
+                    text: _language.dialogOK,
+                    click: function() {
                         if (hasValidUrl(current.href)) document.location = current.href;
-                        $("#dialog").on("dialogclose", function (ev, ui) {
+                        $("#dialog").on("dialogclose", function(ev, ui) {
                             $.fn.fnConfirm.canSubmit = true;
                             $(current).trigger(type);
                             if ((/[_]{2}doPostBack/).test(current.href))
@@ -675,8 +743,8 @@ js.wrapper = "body"; //#main-section
                     }
                 },
                 {
-                    text: _messages.dialogCancel,
-                    click: function () {
+                    text: _language.dialogCancel,
+                    click: function() {
                         $.fn.fnConfirm.canSubmit = false;
                         $("#dialog").dialog("close");
                     }
@@ -697,7 +765,7 @@ js.wrapper = "body"; //#main-section
         var cnt = null, body = $('body');
         var d = $.extend({
             closeOnPageUnload: false,
-            title: _messages.dialogTitle,
+            title: _language.dialogTitle,
             appendTo: null,
             icon: null,
             content: null,
@@ -717,7 +785,7 @@ js.wrapper = "body"; //#main-section
         var _dialog = $("#dialog");
         if (!d.width) d.width = $('.ui-dialog-custom').width();
         if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //scrollbar
-        $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
+        $('.close-dialog').one("click", function() { $('#dialog').dialog("close"); });
         // Determines whether the dialog should be closed when the page is unloaded
         if (d.closeOnPageUnload && !($._data(window, 'events') || {}).beforeunload)
             $(window).on('beforeunload', function() { $('#dialog').dialog("close"); });
@@ -732,11 +800,11 @@ js.wrapper = "body"; //#main-section
             height: d.height || 'auto',
             width: d.width,
             buttons: d.buttons,
-            open: function (ev, ui) {
+            open: function(ev, ui) {
                 $(".ui-dialog").appendTo(d.appendTo || _dialog.parent());
                 _dialog.dialog("option", "position", "center");
             },
-            close: function (ev, ui) {
+            close: function(ev, ui) {
                 body.css("overflow", "");
                 _dialog.dialog("destroy");
                 cnt.data("del") ? _dialog.remove() : cnt.unwrap().unwrap();
@@ -748,11 +816,10 @@ js.wrapper = "body"; //#main-section
     //-----------------------------------
     /* PUBLIC API */
     //-----------------------------------
-    jherax.browser = _browser;
+    jherax.browser = browser;
+    jherax.inputType = input;
     jherax.isDOM = isDOM;
-    jherax.isEvent = isEvent;
     jherax.isFunction = isFunction;
-    //jherax.input = input;
     jherax.fnStringify = fnStringify;
     jherax.fnEscapeRegExp = fnEscapeRegExp;
     jherax.fnGetDate = fnGetDate;
