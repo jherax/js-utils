@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.2.28
+//  Version: 2.3.30
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -17,11 +17,14 @@
 // http://addyosmani.com/blog/essential-js-namespacing
 
 // We need to do a check before we create the namespace
-var js = window.js || {
+var jsu = window.jsu || {
     author: "jherax",
-    version: "2.2.28",
+    version: "2.3.30",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
+// Specifies where tooltip and dialog elements will be appended
+jsu.wrapper = "body"; //#main-section
+
 // We provide encapsulation for global scope
 (function() {
     // Create a custom exception notifier
@@ -32,8 +35,8 @@ var js = window.js || {
             return this.name + ": " + this.message;
         };
     };
-    if (js.author != 'jherax') {
-        throw new CustomException("A variable with namespace [js] is already in use");
+    if (jsu.author != 'jherax') {
+        throw new CustomException("A variable with namespace [jsu] is already in use");
     }
     // Fixes unsupported create() method on IE
     Object.create || (Object.create = function(o) {
@@ -42,7 +45,7 @@ var js = window.js || {
         return new F();
     });
     // Create a general purpose namespace method
-    js.createNS || (js.createNS = function(namespace) {
+    jsu.createNS || (jsu.createNS = function(namespace) {
         var nsparts = namespace.toString().split(".");
         var parent = window;
         // we want to be able to include or exclude the root namespace so we strip it if it's in the namespace
@@ -63,8 +66,6 @@ var js = window.js || {
         // we return the outermost namespace
         return parent;
     });
-    // We expose a property to specify where the tooltip element will be appended
-    js.wrapper = "body"; //#main-section
 
     //-----------------------------------
     // Immediately-invoked Function Expressions (IIFE)
@@ -159,7 +160,7 @@ var js = window.js || {
             if ($.timepicker) { $.timepicker.setDefaults($.timepicker.regional[jherax.default.culture]); }
             if ($.isFunction(fnSetCustom)) fnSetCustom();
         };
-    })(js.createNS("js.regional"), jQuery);
+    })(jsu.createNS("jsu.regional"), jQuery);
     // Create the namespace for languages
 
     //-----------------------------------
@@ -171,8 +172,8 @@ var js = window.js || {
         /* PRIVATE MEMBERS */
         //-----------------------------------
         // Sets the default language configuration
-        js.regional.set(js.regional.spanish);
-        var _language = Object.create(js.regional.default);
+        jsu.regional.set(jsu.regional.spanish);
+        var _language = Object.create(jsu.regional.default);
         //-----------------------------------
         // Adds support for browser detect.
         // jquery 1.9+ deprecates $.browser
@@ -194,7 +195,7 @@ var js = window.js || {
             return b;
         })();
         //-----------------------------------
-        // Determines whether the entry parameter is a text input or checkable input
+        // Determines whether entry parameter is a writable or checkable input
         // http://www.quackit.com/html_5/tags/html_input_tag.cfm
         var input = {
             isText: function(_dom) {
@@ -225,7 +226,7 @@ var js = window.js || {
             return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
         };
         //-----------------------------------
-        // This is a facade of JSON.stringify and provides support in old browsers
+        // This is a reference to JSON.stringify and provides support in old browsers
         var fnStringify = typeof JSON !== undefined ? JSON.stringify : function(json) {
             var arr = [];
             $.each(json, function(key, val) {
@@ -237,7 +238,7 @@ var js = window.js || {
             return "{" + arr.join(",") + "}";
         };
         //-----------------------------------
-        // Escaping user input to be treated as a literal string within a regular expression
+        // Escapes user input to be treated as a literal string in a regular expression
         function fnEscapeRegExp(txt) {
             if (typeof txt !== "string") return null;
             return txt.replace(/([.*+?=!:${}()|\^\[\]\/\\])/g, "\\$1");
@@ -276,7 +277,7 @@ var js = window.js || {
             };
         }
         //-----------------------------------
-        // Gets the text as html encoded
+        // Gets the text as encoded html
         // This is a delegate for $.val()
         function fnGetHtmlText(i, value) {
             if (!value && typeof i === "string") value = i;
@@ -306,7 +307,7 @@ var js = window.js || {
             return _sel;
         }
         //-----------------------------------
-        // Gets the cursor position in the text
+        // Gets the cursor position of DOM element
         function fnGetCaretPosition(_dom) {
             if ('selectionStart' in _dom) {
                 return (_dom.selectionStart);
@@ -317,7 +318,7 @@ var js = window.js || {
             }
         }
         //-----------------------------------
-        // Sets the cursor position in the text
+        // Sets the position of the cursor in the DOM element
         function fnSetCaretPosition(_dom, pos) {
             if ('selectionStart' in _dom) {
                 _dom.setSelectionRange(pos, pos);
@@ -330,8 +331,8 @@ var js = window.js || {
             }
         }
         //-----------------------------------
-        // Transforms the text to capital letter.
-        // Also removes all consecutive spaces
+        // Applies a transformation to text,
+        // also removes all consecutive spaces
         function fnCapitalize(obj, _type) {
             var _isDOM = input.isText(obj),
                 _text = _isDOM ? obj.value : obj.toString();
@@ -353,8 +354,8 @@ var js = window.js || {
             return _text;
         }
         //-----------------------------------
-        // Sets the numeric format in es-CO culture.
-        // Places decimal "." and thousand "," separator
+        // Sets the numeric format according to es-CO culture.
+        // Places the decimal "." and thousand "," separator
         function fnNumericFormat(obj) {
             var _isDOM = input.isText(obj),
                 _text = _isDOM ? obj.value : obj.toString();
@@ -446,7 +447,7 @@ var js = window.js || {
             if (isDOM(_dom)) _dom = $(_dom);
             _dom.on("blur", function() { $(".vld-tooltip").remove(); });
             var vld = $('<span class="vld-tooltip">' + _msg + '</span>');
-            vld.appendTo(js.wrapper).position({
+            vld.appendTo(jsu.wrapper).position({
                 of: _dom,
                 at: "right center",
                 my: "left+6 center",
@@ -469,7 +470,7 @@ var js = window.js || {
             for (var i = 1; i < 9; i++) blockG.push('<div class="blockG"></div>');
             var loading = $('<div id="floatingBarsG" />').append(blockG.join(""));
             var overlay = $('<div class="bg-fixed bg-opacity" />');
-            $('<div id="loadingWrapper" />').append(overlay, loading).appendTo(js.wrapper).hide().fadeIn(d.delay);
+            $('<div id="loadingWrapper" />').append(overlay, loading).appendTo(jsu.wrapper).hide().fadeIn(d.delay);
             loading.fnCenter();
             return true;
         }
@@ -518,7 +519,7 @@ var js = window.js || {
                     count = "Max: " + len + "/" + length;
                     if(!$(vld).text(count).length) {
                         $('<span class="vld-tooltip" id="max' + dom.id + '" />')
-                        .text(count).appendTo(js.wrapper).position({
+                        .text(count).appendTo(jsu.wrapper).position({
                             of: dom,
                             at: "right top",
                             my: "left+6 top",
@@ -558,7 +559,6 @@ var js = window.js || {
         };
         //-----------------------------------
         // Sets numeric format with decimal/thousand separators
-        // http://jsbin.com/ekeSeG/2/edit
         $.fn.fnNumericFormat = function() {
             return this.each(function(i, dom) {
                 $(dom).on("keyup blur", function() {
@@ -694,7 +694,7 @@ var js = window.js || {
                             }
                             // Shows the tooltip for required field
                             var vld = $('<span class="vld-tooltip" />').data("target-id", dom.id);
-                            vld.appendTo(js.wrapper).html(_language.validateRequired).position({
+                            vld.appendTo(jsu.wrapper).html(_language.validateRequired).position({
                                 of: dom,
                                 at: "right center",
                                 my: "left+6 center",
@@ -726,7 +726,6 @@ var js = window.js || {
         };
         //-----------------------------------
         // Displays a jquery confirm window
-        // http://github.com/wiggin/jQuery-Easy-Confirm-Dialog-plugin
         $.fn.fnConfirm = function(o) {
             var type = "click", current = {};
             $.fn.fnConfirm.canSubmit = false;
@@ -790,7 +789,7 @@ var js = window.js || {
             else if ($.type(d.content) === "string") {
                 // If content is string, the html wrapper element will be created
                 var icon = d.icon ? '<div class="wnd-icon ' + d.icon + '"></div>' : "";
-                cnt = $(icon + '<p>' + d.content + '</p>').appendTo(js.wrapper).data("del", true);
+                cnt = $(icon + '<p>' + d.content + '</p>').appendTo(jsu.wrapper).data("del", true);
             }
             // Wraps the content into the created dialog element
             cnt.wrapAll('<div id="dialog" title="' + d.title + '"/>')
@@ -848,6 +847,6 @@ var js = window.js || {
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
         jherax.fnSetFocus = fnSetFocus;
-    })(js.createNS("js.utils"), jQuery);
-    // Create the namespace for utils
+    })(jsu, jQuery);
+    // Set default namespace
 })();
