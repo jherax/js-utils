@@ -10,24 +10,23 @@ Also require some [CSS][jherax.css] for tooltip, loading, and other methods.<br>
 Some functions have a dependency on [jQuery.UI 1.9+][jQuery.ui]
 
 The library has the following structure:
-- `js:` main namespace
+- `jsu:` main namespace
   - `author:` me :^)
   - `version:` release number
   - `dependencies:` array with name of dependencies
   - `createNS:` utility to create safe namespaces
   - `wrapper:` selector where dynamic HTML elements are placed
   - `regional:` namespace to set the language setting
-  - `utils:` namespace for the utilities
 
 Initialization
 --------------
 ```javascript
   (function() {
     // We set the container of the views
-    js.wrapper = "#main-section";
+    jsu.wrapper = "#main-section";
 
     // We set the language setting
-    js.regional.set(js.regional.english);
+    jsu.regional.set(jsu.regional.english);
     
     // Add your code for plugins init, event handlers, etc...
   })();
@@ -39,9 +38,13 @@ In many programming languages, namespacing is a technique employed to avoid coll
 
 In JavaScript, namespacing at an enterprise level is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are.
 
-I recommend this excellent book: [Learning JavaScript Design Patterns](http://www.addyosmani.com/resources/essentialjsdesignpatterns/book/).
+I recommend this excellent book: [Learning JavaScript Design Patterns](http://www.addyosmani.com/resources/essentialjsdesignpatterns/book/).<br>
+These articles also worth reading them:
+* [Essential JavaScript Namespacing Patterns](http://addyosmani.com/blog/essential-js-namespacing/)
+* [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
+* [Namespacing in JavaScript](http://msdn.microsoft.com/en-us/magazine/gg578608.aspx)
 
-### js.createNS
+### jsu.createNS
 This utility makes life easier when you require create nested namespaces.<br>
 For example, you need to create the following object structure:
 - animation
@@ -54,28 +57,28 @@ For example, you need to create the following object structure:
 ```javascript
   // using closures, modules, IIFE, are good practices
   (function() {
-    js.createNS("animation.g2D.slide");
-    js.createNS("animation.g3D.cubic");
+    jsu.createNS("animation.g2D.slide");
+    jsu.createNS("animation.g3D.cubic");
     // you can get the reference of created namespace
-    var tools = js.createNS("animation.tools");
+    var tools = jsu.createNS("animation.tools");
     // If you use local/cached references is recommended declare them
     // within a function or module at the top of your function scope
     // (this is a dependancy declaration pattern)
   })();
 ```
 
-### js.regional
+### jsu.regional
 This namespace exposes objects and methods to setup your language preferences.<br>
 As we are using [jQuery.UI][jQuery.ui], we can provide a [language](http://github.com/jquery/jquery-ui/tree/master/ui/i18n) to configure [datepicker](http://api.jqueryui.com/datepicker/) widget.<br>
-Available predefined languages are `js.regional.english` and `js.regional.spanish`<br>
+Available predefined languages are `jsu.regional.english` and `jsu.regional.spanish`<br>
 By default spanish language is set, although you can specify language using method `set()`<br>
-e.g. `js.regional.set(js.regional.english);`<br>
+e.g. `jsu.regional.set(jsu.regional.english);`<br>
 You can define your own language settings:
 ```javascript
 (function() {
   // Create the locale language object
   // (the text should be in Italian)
-  js.regional.italian = {
+  jsu.regional.italian = {
     culture: "it", //locale codes: http://www.science.co.il/Language/Locale-codes.asp
     wordPattern: null, //regular expression pattern for text capitalization in fnCapitalize
     timeFormat: "HH:mm", //pattern for time. HH: 0-23 hour, hh: 1-12 hour, mm: minutes, ss: seconds
@@ -89,7 +92,7 @@ You can define your own language settings:
     dialogOK: "Agree" //default $.fnConfirm approve text
   };
   // We set the created language setting
-  js.regional.set(js.regional.italian);
+  jsu.regional.set(jsu.regional.italian);
 })();
 ```
 If you want to provide additional languages to other plugins, you can pass a function as second parameter in method `set();` Keep in mind that some plugins can be configured only previous to its initialization.
@@ -118,14 +121,14 @@ If you want to provide additional languages to other plugins, you can pass a fun
     yearSuffix: ''
   };
   // We set the created language setting
-  js.regional.set(js.regional.italian, function() {
+  jsu.regional.set(jsu.regional.italian, function() {
     $.datepicker.setDefaults($.datepicker.regional['it']);
   });
 })();
 ```
 ---
 
-js.utils methods
+List of methods
 ---------------
 * [browser](#browser)
 * [inputType](#inputtype)
@@ -144,8 +147,8 @@ js.utils methods
 * [fnIsValidDate](#fnisvaliddate-dom-options)
 * [fnShowTooltip](#fnshowtooltip-dom-message)
 * [fnShowDialog](#fnshowdialog-options)
-* [fnLoading](#fnloading-options)
 * [fnSetFocus](#fnsetfocus-)
+* [fnLoading](#fnloading-options)
 
 jQuery extensions
 -----------------
@@ -171,12 +174,12 @@ For detecting capabilities, is better to use [Modernizr](http://modernizr.com/do
 **Returns** `Object`
 ```javascript
   // see browser and version
-  console.log(js.utils.browser);
+  console.log(jsu.browser);
   // check for a specific browser
-  if (js.utils.browser.msie) { ... }
-  if (js.utils.browser.chrome) { ... }
-  if (js.utils.browser.mozilla) { ... }
-  if (js.utils.browser.opera) { ... }
+  if (jsu.browser.msie) { ... }
+  if (jsu.browser.chrome) { ... }
+  if (jsu.browser.mozilla) { ... }
+  if (jsu.browser.opera) { ... }
 ```
 
 ### inputType
@@ -191,26 +194,30 @@ This object has two methods to determine the type of the `<input>` element.
 ```
 ```javascript
   (function() {
-    //we use dependancy declaration pattern
-    var tools = js.utils;
     //we use jquery.get() to get first DOM element
     var area = $("#area").get(0);
     var date = $("#date").get(0);
     var radio = $("#radio").get(0);
-    if (tools.inputType.isText(area)) area.value = "I am category:text";
-    if (tools.inputType.isText(date)) date.value = new Date().toISOString().substring(0, 10);
-    if (tools.inputType.isCheck(radio)) radio.checked = true;
+    if (jsu.inputType.isText(area)) area.value = "I am category:text";
+    if (jsu.inputType.isText(date)) date.value = new Date().toISOString().substring(0, 10);
+    if (jsu.inputType.isCheck(radio)) radio.checked = true;
   })();
 ```
 
 ### isDOM *(object)*
-Determines if a object is [DOM Element](http://api.jquery.com/Types/#Element).<br>
+Determines if the entry parameter is a [DOM Element](http://api.jquery.com/Types/#Element).<br>
 **Returns** `Boolean`
 * **object:** `Object` to validate
 
 ```javascript
-  var _dom = document.getElementById("txtName");
-  if (js.utils.isDOM(_dom)) { ... }
+  var obj = { name: "Mordecai" };
+  if (jsu.isDOM(obj)) { ... } //false
+  obj = document.getElementById("txtName");
+  if (jsu.isDOM(obj)) { ... } //true
+  obj = $(":button");
+  if (jsu.isDOM(obj)) { ... } //false
+  obj = $(":button").get(0);
+  if (jsu.isDOM(obj)) { ... } //true
 ```
 
 ### isFunction *(object)*
@@ -220,13 +227,13 @@ Determines if the entry parameter is a function.<br>
 
 ```javascript
   var fn = {};
-  if (js.utils.isFunction(fn)) { fn(); }
+  if (jsu.isFunction(fn)) { fn(); } //false
   fn = null;
-  if (js.utils.isFunction(fn)) { fn(); }
+  if (jsu.isFunction(fn)) { fn(); } //false
   fn = "function";
-  if (js.utils.isFunction(fn)) { fn(); }
+  if (jsu.isFunction(fn)) { fn(); } //false
   fn = function() { alert("is function"); };
-  if (js.utils.isFunction(fn)) { fn(); }
+  if (jsu.isFunction(fn)) { fn(); } //true
 ```
 
 ### fnStringify *(json)*
@@ -241,28 +248,32 @@ fnStringify serializes a *JSON* object and returns its string representation.<br
       sex: "male",
       age: 30
   };
-  console.log(js.utils.fnStringify(jsonPerson));
+  console.log(jsu.fnStringify(jsonPerson));
   // '{"name":"David","age":30,"sex":"male"}'
 
   // We use jQuery.extend to merge the contents of
   // two or more objects together into the first object.
   var jsonNew = $.extend({ alias: 'jherax' }, jsonPerson);
-  console.log(js.utils.fnStringify(jsonNew));
+  console.log(jsu.fnStringify(jsonNew));
 ```
 
 ### fnGetDate ()
-Gets the text of current date in **es-CO** culture.<br>
+Gets the text of current date according to [regional setting](#jsuregional).<br>
 **Returns** `Object` with the following properties:
 ```javascript
 {
-  date: String //gets the date in dd/MM/yyyy format
-  time: String //gets the time in HH:mm:ss format
-  dateTime: String //date in dd/MM/yyyy HH:mm:ss format
+  date: String //gets the date according to [dateFormat]
+  time: String //gets the time according to [timeFormat]
+  dateTime: String //gets the date with [dateFormat] + [timeFormat]
 }
 ```
 ```javascript
-  var d = js.utils.fnGetDate();
-  $("#span-time").html(d.date +" <b>"+ d.time +"</b>");
+  (function() {
+    // We set the language setting
+    jsu.regional.set(jsu.regional.english);
+    var d = jsu.fnGetDate();
+    $("#date").html(d.date +" <b>"+ d.time +"</b>");
+  })();
 ```
 
 ### fnGetHtmlText *(index, value)*
@@ -281,9 +292,9 @@ This function is a delegate for [jQuery.val()](http://api.jquery.com/val/#val2) 
 ```javascript
   var html = $("#demo-wrapper").html();
   $("textarea").val($.trim(html));
-  $("#target").val(js.utils.fnGetHtmlText);
+  $("#target").val(jsu.fnGetHtmlText);
   // invoke the function programmatically
-  console.log(js.utils.fnGetHtmlText(html));
+  console.log(jsu.fnGetHtmlText(html));
 ```
 
 ### fnGetSelectedText ()
@@ -299,7 +310,7 @@ Gets the selected text in the document.<br>
 ```
 <div align="left">Take a look at <a href="#categorytext">category:text</a>&nbsp;</div>
 ```javascript
-  var sel = js.utils.fnGetSelectedText();
+  var sel = jsu.fnGetSelectedText();
   if (sel.text !== "") alert(sel.text);
   console.log(sel);
 ```
@@ -312,7 +323,7 @@ Gets the cursor position in the text.<br>
 ```javascript
   var text = document.getElementById("txtName");
   text.value = "Hello World!";
-  var pos = js.utils.fnGetCaretPosition(text);
+  var pos = jsu.fnGetCaretPosition(text);
   console.log(pos);
 ```
 
@@ -325,7 +336,7 @@ Sets the cursor position in the text.<br>
   var text = $("#txtName").get(0);
   text.value = "Hello World!";
   text.focus();
-  js.utils.fnSetCaretPosition(text, 5);
+  jsu.fnSetCaretPosition(text, 5);
   //cursor is positioned after "Hello"
 ```
 
@@ -336,14 +347,14 @@ Escapes user input to be treated as a literal string in a regular expression.<br
 
 ```javascript
   var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
-  var re2 = new RegExp(js.utils.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
+  var re2 = new RegExp(jsu.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
   console.log("re1: " + re1.test("ac1") + ", regexp: " + re1.source); //regexp: /[abc]+\d/
   console.log("re2: " + re2.test("ac1") + ", regexp: " + re2.source); //regexp: /\[abc\]\+\\d/
 ```
 
 ### fnCapitalize *(object, type)*
 Transforms the text to capital letter and also removes all newlines, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in the middle of the string, also they are removed.<br>
-**Note:** The object defined in [`js.regional.<language>.wordPattern`](#jsregional) is a regular expression used to lowercasing some words after text capitalization. Only works when `type = "word"`<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when `type = "word"`<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the text transformation. Can be one of the following values:
@@ -355,21 +366,21 @@ Transforms the text to capital letter and also removes all newlines, spaces, and
 
 ```javascript
   var test = "  \t  hello  to  THE \t  wOrLD  \n   ";
-  console.log("word : " + js.utils.fnCapitalize(test, "word"));
-  console.log("title: " + js.utils.fnCapitalize(test, "title"));
-  console.log("lower: " + js.utils.fnCapitalize(test, "lower"));
-  console.log("upper: " + js.utils.fnCapitalize(test, "upper"));
+  console.log("word : " + jsu.fnCapitalize(test, "word"));
+  console.log("title: " + jsu.fnCapitalize(test, "title"));
+  console.log("lower: " + jsu.fnCapitalize(test, "lower"));
+  console.log("upper: " + jsu.fnCapitalize(test, "upper"));
 ```
 If you want to lowercase specific words, you can do it this way:
 ```javascript
   (function() {
     // We configure the global language setting
-    js.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
-    js.regional.set(js.regional.english);
+    jsu.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
+    jsu.regional.set(jsu.regional.english);
     // This sample runs on click event
     $(":button").on("click", function() {
       var text = " the pc and keyboard are on the table ";
-      console.log(js.utils.fnCapitalize(text, "word"));
+      console.log(jsu.fnCapitalize(text, "word"));
     });
   })();
 ```
@@ -382,9 +393,9 @@ Places the decimal`.` and thousand`,` separator.<br>
 
 ```javascript
   var num = "123456789,47.15";
-  console.log(js.utils.fnNumericFormat(num)); //sends string
+  console.log(jsu.fnNumericFormat(num)); //sends string
   var dom = $("#txtName").val(num).get(0);
-  js.utils.fnNumericFormat(dom) //sends DOM
+  jsu.fnNumericFormat(dom) //sends DOM
   console.log(dom.value);
 ```
 
@@ -406,9 +417,9 @@ Validates the format of text, depending on the type supplied.<br>
   var _dateTime = "31/10/2013 16:10:00";
   var _email = "jherax-12gmail.com";
   var _pass = "insufficient";
-  console.log(js.utils.fnIsValidFormat(_dateTime, "dt"));
-  console.log(js.utils.fnIsValidFormat(_email, "email"));
-  console.log(js.utils.fnIsValidFormat(_pass, "pass"));
+  console.log(jsu.fnIsValidFormat(_dateTime, "dt"));
+  console.log(jsu.fnIsValidFormat(_email, "email"));
+  console.log(jsu.fnIsValidFormat(_pass, "pass"));
 ```
 
 ### fnIsValidDate *(dom, options)*
@@ -416,10 +427,10 @@ Evaluates whether the value of text is a date or not.<br>
 The validation outcome will be shown in a tooltip.<br>
 The tooltip is positioned through [jQuery.UI 1.9+][jQuery.ui]<br>
 **Note:** Date validations are performed according to **es-CO** culture.<br>
-**Important:** You can set up the messages through the properties defined in [js.regional](#jsregional) namespace:<br>
-`js.regional.<language>.dateIsGreater`<br>
-`js.regional.<language>.dateIsLesser`<br>
-`js.regional.<language>.dateFormatError`
+**Important:** You can set up the messages through the properties defined in [jsu.regional](#jsuregional) namespace:<br>
+`jsu.regional.<language>.dateIsGreater`<br>
+`jsu.regional.<language>.dateIsLesser`<br>
+`jsu.regional.<language>.dateFormatError`
 
 **Returns** `Boolean`
 * **dom:** `DOM` element [category:text][category.text]
@@ -437,14 +448,14 @@ The tooltip is positioned through [jQuery.UI 1.9+][jQuery.ui]<br>
   $("#btnSendForm").on("click", function() {
   
   	var dBirthday = $("#txtBirthday").get(0);
-  	dBirthday.value = js.utils.fnGetDate().date;
+  	dBirthday.value = jsu.fnGetDate().date;
   	var dDriverLic = $("#txtDriverLic").val("28/02/2010").get(0);
   
-  	if (!js.utils.fnIsValidDate(dDriverLic, {
+  	if (!jsu.fnIsValidDate(dDriverLic, {
   		warning: "The driver's license expedition can't be greater than today"
   	})) return false;
   
-  	if (!js.utils.fnIsValidDate(dBirthday, {
+  	if (!jsu.fnIsValidDate(dBirthday, {
   		compareTo: dDriverLic.value,
   		warning: "Your birthday can't be greater than driver's license expedition"
   	})) return false;
@@ -462,13 +473,27 @@ It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and has a [css][j
 
 ```javascript
   var _email = document.getElementById("txtEmail");
-  if (!js.utils.fnIsValidFormat(_email, "email")) {
-    return js.utils.fnShowTooltip(_email, "The email address is not valid");
+  if (!jsu.fnIsValidFormat(_email, "email")) {
+    return jsu.fnShowTooltip(_email, "The email address is not valid");
   }
 ```
 
 ### fnShowDialog *(options)*
 This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements.
+
+### fnSetFocus ()
+Sets the focus on all `input:text` and `textarea` elements, except those that have `.no-auto-focus` class.<br>
+This function is useful when you need validate form fields using any of the below [jQuery plugins](#jquery-plugins).
+```javascript
+  $(document).on("ready", function() {
+	  $("#txtDate").datepicker().addClass("no-auto-focus");
+	  $("#txtName").fnCapitalize("word");
+	  $("#txtID").fnNumericInput();
+  });
+  $("#btnSendForm").on("click", function() {
+	  jsu.fnSetFocus();
+  });
+```
 
 ### fnLoading *(options)*
 Shows a overlay screen with the "loading" indicator at the center.<br>
@@ -486,24 +511,10 @@ The progress animation is done via CSS3, so you must add the following [css][jhe
 ```
 ```javascript
   $("#btnTest").on("click", function() {
-    js.utils.fnLoading();
+    jsu.fnLoading();
     setTimeout(function() {
-      js.utils.fnLoading({ hide:true });
+      jsu.fnLoading({ hide:true });
     }, 8000);
-  });
-```
-
-### fnSetFocus ()
-Sets the focus on all `input:text` and `textarea` elements, except those that have `.no-auto-focus` class.<br>
-This function is useful when you need validate form fields using any of the below [jQuery plugins](#jquery-plugins).
-```javascript
-  $(document).on("ready", function() {
-	  $("#txtDate").datepicker().addClass("no-auto-focus");
-	  $("#txtName").fnCapitalize("word");
-	  $("#txtID").fnNumericInput();
-  });
-  $("#btnSendForm").on("click", function() {
-	  js.utils.fnSetFocus();
   });
 ```
 
@@ -546,7 +557,7 @@ This is the jQuery version of [fnCapitalize](#fncapitalize-object-type). Transfo
 The plugin also removes all newlines, spaces, and tabs from the beginning and end of the string.<br>
 If the whitespace characters occur in the middle of the string, also they are removed.<br>
 **Note:** The text is transformed when the `blur` event occurs.<br>
-The object defined in [`js.regional.<language>.wordPattern`](#jsregional) is a regular expression used to lowercasing&nbsp;&nbsp; some words after text capitalization. Only works when `type = "word"`<br>
+The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;&nbsp; some words after text capitalization. Only works when `type = "word"`<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `word` transform to lowercase and then turns the first letter of each word into uppercase
@@ -565,8 +576,8 @@ If you want to lowercase specific words:
 ```javascript
   (function() {
     // We configure the global language setting
-    js.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
-    js.regional.set(js.regional.english);
+    jsu.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
+    jsu.regional.set(jsu.regional.english);
     // This sample runs on click event
     $(":button").on("click", function() {
       var text = " the pc and keyboard are on the table";
@@ -652,7 +663,7 @@ $(document).on("ready", function () {
     fnValidator: function (btn) {
       var num = $('#txtValue').get(0);
       if (parseFloat(num.value) < 1000) {
-        return js.utils.fnShowTooltip(num, "Price must be greater than $999"); //cancel submit
+        return jsu.fnShowTooltip(num, "Price must be greater than $999"); //cancel submit
       }
       return true; //submit the form
   	}
