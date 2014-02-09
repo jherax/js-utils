@@ -40,9 +40,11 @@ In JavaScript, namespacing at an enterprise level is critical as it's important 
 
 I recommend this excellent book: [Learning JavaScript Design Patterns](http://www.addyosmani.com/resources/essentialjsdesignpatterns/book/).<br>
 These articles also worth reading them:
-* [Essential JavaScript Namespacing Patterns](http://addyosmani.com/blog/essential-js-namespacing/)
-* [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
 * [Namespacing in JavaScript](http://msdn.microsoft.com/en-us/magazine/gg578608.aspx)
+* [Essential JavaScript Namespacing Patterns](http://addyosmani.com/blog/essential-js-namespacing/)
+* [JavaScript Namespacing Common Practices](http://michaux.ca/articles/javascript-namespacing)
+* [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
+* [JavaScript Coding Standards and Best Practices](http://github.com/stevekwan/best-practices/blob/master/javascript/best-practices.md)
 
 ### jsu.createNS
 This utility makes life easier when you require create nested namespaces.<br>
@@ -277,7 +279,7 @@ Gets the text of current date according to [regional setting](#jsuregional).<br>
 ```
 
 ### fnGetHtmlText *(index, value)*
-Gets HTML encoded text, so if you have the text `<p>hello</p>`,<br>
+Gets the text as encoded html, so if you have the text `<p>hello</p>`,<br>
 fnGetHtmlText will encoded it to `&lt;p&gt;hello&lt;/p&gt;`<br>
 This function is a delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.text()](http://api.jquery.com/text/#text2)<br>
 **Returns** `String` with encoded html
@@ -316,21 +318,20 @@ Gets the selected text in the document.<br>
 ```
 
 ### fnGetCaretPosition *(dom)*
-Gets the cursor position in the text.<br>
+Gets the cursor position of ***dom*** element.<br>
 **Returns** `Number`
-* **dom:** `DOM` active element [category:text][category.text]
+* **dom:** `DOM` element [category:text][category.text]
 
 ```javascript
-  var text = document.getElementById("txtName");
-  text.value = "Hello World!";
+  var text = $("#txtName").val("Hello!").get(0);
   var pos = jsu.fnGetCaretPosition(text);
   console.log(pos);
 ```
 
 ### fnSetCaretPosition *(dom, position)*
-Sets the cursor position in the text.<br>
+Sets the cursor ***position*** in the ***dom*** element.<br>
 * **dom:** `DOM` element [category:text][category.text]
-* **position** `Number` of the position where the cursor is set
+* **position:** `Number` that indicates where the cursor is set
 
 ```javascript
   var text = $("#txtName").get(0);
@@ -342,8 +343,10 @@ Sets the cursor position in the text.<br>
 
 ### fnEscapeRegExp *(text)*
 Escapes user input to be treated as a literal string in a regular expression.<br>
+This mean that special characters will be treated as literals.<br>
+e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
 **Returns** `String`, or `null` if ***text*** parameter is not a string
-* **text:** `String` to escape
+* **text:** `String` to literalize
 
 ```javascript
   var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
