@@ -34,9 +34,9 @@ Initialization
   
 Namespacing
 -----------
-In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global namespace. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.<br>
+At an enterprise level is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are.
 
-In JavaScript, namespacing at an enterprise level is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are.
+In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global context. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.<br>
 
 I recommend this excellent book: [Learning JavaScript Design Patterns](http://www.addyosmani.com/resources/essentialjsdesignpatterns/book/).<br>
 These articles also worth reading them:
@@ -356,35 +356,39 @@ e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
 ```
 
 ### fnCapitalize *(object, type)*
-Transforms the text to capital letter and also removes all newlines, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in the middle of the string, also they are removed.<br>
+Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when `type = "word"`<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the text transformation. Can be one of the following values:
-  * `word` transform to lowercase and then turns the first letter of each word into uppercase
-  * `title` turns the first letter of each word into uppercase
-  * `first` only the first letter is uppercase
-  * `lower` transform to lowercase
-  * `upper` transform to uppercase
+  * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
+  * `"title"` turns the first letter of each word into uppercase
+  * `"first"` only the first letter is uppercase
+  * `"lower"` transform to lowercase
+  * `"upper"` transform to uppercase
 
 ```javascript
-  var test = "  \t  hello  to  THE \t  wOrLD  \n   ";
-  console.log("word : " + jsu.fnCapitalize(test, "word"));
-  console.log("title: " + jsu.fnCapitalize(test, "title"));
-  console.log("lower: " + jsu.fnCapitalize(test, "lower"));
-  console.log("upper: " + jsu.fnCapitalize(test, "upper"));
+  var text = "\n  make  your\t  code DRY  \n ";
+  console.log('original text: "' + text + '"');
+  console.log('word : "' + jsu.fnCapitalize(text, "word" ) + '"');
+  console.log('title: "' + jsu.fnCapitalize(text, "title") + '"');
+  console.log('lower: "' + jsu.fnCapitalize(text, "lower") + '"');
+  console.log('upper: "' + jsu.fnCapitalize(text, "upper") + '"');
 ```
 If you want to lowercase specific words, you can do it this way:
 ```javascript
   (function() {
     // We configure the global language setting
+    // The following words will always be lowercase
     jsu.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
     jsu.regional.set(jsu.regional.english);
-    // This sample runs on click event
-    $(":button").on("click", function() {
-      var text = " the pc and keyboard are on the table ";
-      console.log(jsu.fnCapitalize(text, "word"));
-    });
+    var text = " pc AND KEYBOARD\t ARE on the table ";
+    console.log("Before: ", '"' + text + '"');
+    // Transforms the text after 2 seconds
+    setTimeout(function() {
+      text = jsu.fnCapitalize(text, "word");
+      console.log("After: ", '"' + text + '"');
+    }, 2000);
   })();
 ```
 
@@ -403,26 +407,30 @@ Places the decimal`.` and thousand`,` separator.<br>
 ```
 
 ### fnIsValidFormat *(object, type)*
-Validates the format of text, depending on the type supplied.<br>
-**Note:** Date validations are performed according to **es-CO** culture.<br>
+Validates the text format, depending on the ***type*** supplied.<br>
+**Note:** Date validations are run according to [regional setting](#jsuregional).<br>
 **Returns** `Boolean`
 * **object:** `String` or `DOM` element [category:text][category.text]
-* **type:** `String` specifying the type of validation. Can be one of the following values:
-  * `d` validates the date format - dd/MM/yyyy
-  * `t` validates the time format - HH:mm:ss
-  * `dt` validates date format - dd/MM/yyyy HH:mm:ss
-  * `email` validates an email address
-  * `pass` validates the password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
-  * `lat` validates the latitude
-  * `lon` validates the longitude
+* **type:** `String` specifying the type of validation:
+  * `"t"` validates the time format (Default HH:mm)
+  * `"d"` validates the date format (Default dd/MM/yyyy)
+  * `"dt"` validates full date format (Default dd/MM/yyyy HH:mm)
+  * `"email"` validates an email address
+  * `"pass"` validates the password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
+  * `"lat"` validates the latitude
+  * `"lon"` validates the longitude
 
 ```javascript
-  var _dateTime = "31/10/2013 16:10:00";
-  var _email = "jherax-12gmail.com";
-  var _pass = "insufficient";
-  console.log(jsu.fnIsValidFormat(_dateTime, "dt"));
-  console.log(jsu.fnIsValidFormat(_email, "email"));
-  console.log(jsu.fnIsValidFormat(_pass, "pass"));
+  (function() {
+    //We configure the global language setting
+    jsu.regional.set(jsu.regional.english);
+    var _dateTime = "10/31/2013 16:10";
+    var _email = "some-mail.gmail.com";
+    var _pass = "insufficient";
+    console.log(jsu.fnIsValidFormat(_dateTime, "dt"));
+    console.log(jsu.fnIsValidFormat(_email, "email"));
+    console.log(jsu.fnIsValidFormat(_pass, "pass"));
+  })();
 ```
 
 ### fnIsValidDate *(dom, options)*
@@ -556,38 +564,44 @@ It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [c
 ```
 
 ### jQuery.fnCapitalize *(type)*
-This is the jQuery version of [fnCapitalize](#fncapitalize-object-type). Transforms the text to capital letter.<br>
-The plugin also removes all newlines, spaces, and tabs from the beginning and end of the string.<br>
-If the whitespace characters occur in the middle of the string, also they are removed.<br>
+This is the jQuery version of [fnCapitalize](#fncapitalize-object-type).<br>
+Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when `type = "word"`<br>
 **Note:** The text is transformed when the `blur` event occurs.<br>
-The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;&nbsp; some words after text capitalization. Only works when `type = "word"`<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
-  * `word` transform to lowercase and then turns the first letter of each word into uppercase
-  * `title` turns the first letter of each word into uppercase
-  * `lower` transform to lowercase
-  * `upper` transform to uppercase
+  * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
+  * `"title"` turns the first letter of each word into uppercase
+  * `"first"` only the first letter is uppercase
+  * `"lower"` transform to lowercase
+  * `"upper"` transform to uppercase
 
 ```javascript
-  var text = "  \t  hello \t\t  jQuery\t\n ";
-  console.log(text);
-  var name = $("#txtName").val(text);
-  name.fnCapitalize("title").focus();
+  var text = "\n do\t it  with\t  jQuery\t\n ";
+  var $input = $("#txtName").val(text);
+  $input.fnCapitalize("title").focus();
   //raise blur event to transform text
+  setTimeout(function() {
+    alert("capitalize");
+    $input.blur();
+  }, 2000);
 ```
-If you want to lowercase specific words:
+If you want to lowercase specific words, you can do it this way:
 ```javascript
   (function() {
     // We configure the global language setting
+    // The following words will always be lowercase
     jsu.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
     jsu.regional.set(jsu.regional.english);
-    // This sample runs on click event
-    $(":button").on("click", function() {
-      var text = " the pc and keyboard are on the table";
-      var name = $("#txtName").val(text);
-      name.fnCapitalize("word").focus();
-      //raise blur event to transform text
-    });
+    // You can bind the event handler at beginning
+    var $input = $("#txtName").fnCapitalize("word");
+    var text = " pc AND KEYBOARD\t ARE on the table ";
+    // Raise blur event to transform text
+    $input.val(text).focus();
+    setTimeout(function() {
+      alert("capitalize");
+      $input.blur();
+    }, 2000);
   })();
 ```
 
