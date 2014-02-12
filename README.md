@@ -34,12 +34,14 @@ Initialization
   
 Namespacing
 -----------
-At an enterprise level is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are.
+In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global context. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.
 
-In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global context. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.<br>
+Global variables should be reserved for objects that have system-wide relevance and they should be named to avoid ambiguity and minimize the risk of naming collisions. In practice this means you should avoid creating global objects unless they are absolutely necessary.
+
+Is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are. To overcome some of these issues, we take advantage of the [Module Pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html) through namespace injection. The logic is shielded from the global scope by a function wrapper (usually self-invoking) which exposes an object representing the module’s public interface.
 
 I recommend this excellent book: [Learning JavaScript Design Patterns](http://www.addyosmani.com/resources/essentialjsdesignpatterns/book/).<br>
-These articles also worth reading them:
+Also worth reading these articles:
 * [Namespacing in JavaScript](http://msdn.microsoft.com/en-us/magazine/gg578608.aspx)
 * [Essential JavaScript Namespacing Patterns](http://addyosmani.com/blog/essential-js-namespacing/)
 * [JavaScript Namespacing Common Practices](http://michaux.ca/articles/javascript-namespacing)
@@ -434,11 +436,11 @@ Validates the text format, depending on the ***type*** supplied.<br>
 ```
 
 ### fnIsValidDate *(dom, options)*
-Evaluates whether the value of text is a date or not.<br>
-The validation outcome will be shown in a tooltip.<br>
-The tooltip is positioned through [jQuery.UI 1.9+][jQuery.ui]<br>
-**Note:** Date validations are performed according to **es-CO** culture.<br>
-**Important:** You can set up the messages through the properties defined in [jsu.regional](#jsuregional) namespace:<br>
+Evaluates whether the input value is a date or not.<br>
+The validation result will be shown in a tooltip.<br>
+The tooltip is positioned via [jQuery.ui.position()](http://api.jqueryui.com/position/)<br>
+**Note:** Date validations are run according to [regional setting](#jsuregional).<br>
+**Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `jsu.regional.<language>.dateIsGreater`<br>
 `jsu.regional.<language>.dateIsLesser`<br>
 `jsu.regional.<language>.dateFormatError`
@@ -449,37 +451,42 @@ The tooltip is positioned through [jQuery.UI 1.9+][jQuery.ui]<br>
 
 ```javascript
 {
-  compareTo: Date|String //date against which to compare the entry value (Default: new Date())
+  compareTo: Date|String //date against which to compare the dom value (Default: new Date())
   isFuture: Boolean //determines whether entry date must be greater than [compareTo] (Default:false)
   warning: String //message indicating that entry date did not meet the requirements
 }
 ```
 ```javascript
-  // Validates some form fields
+  (function() {
+    //We configure the global language setting
+    jsu.regional.set(jsu.regional.english);
+  })();
+
+  //Validates some form fields
   $("#btnSendForm").on("click", function() {
-  
   	var dBirthday = $("#txtBirthday").get(0);
   	dBirthday.value = jsu.fnGetDate().date;
-  	var dDriverLic = $("#txtDriverLic").val("28/02/2010").get(0);
+  	var dDriverLic = $("#txtDriverLic").val("02/28/2010").get(0);
   
   	if (!jsu.fnIsValidDate(dDriverLic, {
-  		warning: "The driver's license expedition can't be greater than today"
+  	  //uncomment the following line to set a custom message
+  	  //warning: "The driver's license expedition can't be greater than today"
   	})) return false;
   
   	if (!jsu.fnIsValidDate(dBirthday, {
   		compareTo: dDriverLic.value,
   		warning: "Your birthday can't be greater than driver's license expedition"
   	})) return false;
-  
   });
 ```
 
 ### fnShowTooltip *(dom, message)*
 Shows a tooltip ***message*** at the right side of the ***dom*** element and focuses that element.<br>
 This feature is very useful when you need to display a validation message.<br>
-It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and has a [css][jherax.css] `.vld-tooltip`<br>
+It has a dependency on [jQuery.UI][jQuery.ui] for positioning.<br>
+Also has a [css class][jherax.css] named `.vld-tooltip`<br>
 **Returns** `Boolean`, always returns `false`
-* **message:** `String` with the text to show
+* **message:** `String` to display
 * **dom:** `DOM` element
 
 ```javascript
@@ -490,7 +497,16 @@ It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and has a [css][j
 ```
 
 ### fnShowDialog *(options)*
-This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements.
+This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements. 
+You can display text as html by passing the string to `content` property. Generated HTML is appended by default 
+to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into a specific element,
+then you can provide the wrapper selector to `appendTo` property.<br>
+There are some [images]() used to display an image to the left side of text, only if `content` parameter is a string.<br>
+Also you can display existing HTML elements by passing the *DOM* or *jQuery* object to the `content` property.<br>
+The `closeOnPageUnload` option determines whether dialog should be closed on `window.beforeunload` event.<br>
+**Note:** It has a dependency on [jQuery.UI][jQuery.ui] and also has some [css rules][jherax.css].<br>
+**Returns** `jQuery` dialog element
+* options: Object that provides the following properties: //TODO
 
 ### fnSetFocus ()
 Sets the focus on all `input:text` and `textarea` elements, except those that have `.no-auto-focus` class.<br>
