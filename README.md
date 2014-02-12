@@ -501,7 +501,7 @@ This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which
 You can display text as html by passing the string to `content` property. Generated HTML is appended by default 
 to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into a specific element,
 then you can provide the wrapper selector to `appendTo` property.<br>
-There are some [images]() used to display an image to the left side of text, only if `content` parameter is a string.<br>
+There are some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) used to display an icon to the left side of text, only if `content` parameter is a string.<br>
 Also you can display existing HTML elements by passing the *DOM* or *jQuery* object to the `content` property.<br>
 The `closeOnPageUnload` option determines whether dialog should be closed on `window.beforeunload` event.<br>
 **Note:** It has a dependency on [jQuery.UI][jQuery.ui] and also has some [css rules][jherax.css].<br>
