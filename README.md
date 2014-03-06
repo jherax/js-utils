@@ -132,7 +132,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 ```
 ---
 
-List of methods
+[List of methods](#list-of-methods)
 ---------------
 * [browser](#browser)
 * [inputType](#inputtype)
@@ -154,7 +154,7 @@ List of methods
 * [fnSetFocus](#fnsetfocus-)
 * [fnLoading](#fnloading-options)
 
-jQuery extensions
+[jQuery extensions](#jquery-extensions)
 -----------------
 * [$.fnCenter](#jqueryfncenter-)
 * [$.fnMaxLength](#jqueryfnmaxlength-length)
