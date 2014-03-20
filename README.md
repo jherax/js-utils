@@ -286,7 +286,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 
 ### fnAddScript *(path, before)*
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that component.<br>
-**Returns** `undefined` this method does not return anything.
+**Returns** `undefined` this method returns nothing.
 * **path:** `String` source of the script to be added
 * **before:** `String` part of `src` attribute of element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
 
