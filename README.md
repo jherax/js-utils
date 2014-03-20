@@ -91,6 +91,7 @@ You can define your own language settings:
     dateIsGreater: "The date can't be greater than today", //text of date validation in fnIsValidDate
     dateIsLesser: "The date can't be lesser than today", //text of date validation in fnIsValidDate
     validateRequired: "This field is required", //text for $.fnEasyValidate required fields
+    validateFormat: "The format is incorrect", //text for $.fnEasyValidate wrong format
     dialogTitle: "Information", //default jQuery.ui.dialog title
     dialogCancel: "Cancel", //default $.fnConfirm cancel text
     dialogOK: "Agree" //default $.fnConfirm approve text
@@ -138,6 +139,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [inputType](#inputtype)
 * [isDOM](#isdom-object)
 * [isFunction](#isfunction-object)
+* [handlerCreated](#handlercreated-dom-eventname-eventnamespace)
 * [fnStringify](#fnstringify-json)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
@@ -240,11 +242,29 @@ Determines if the entry parameter is a function.<br>
   if (jsu.isFunction(fn)) { fn(); } //true
 ```
 
+### handlerCreated *(dom, eventname, eventnamespace)*
+This utility allow us to determine if a event handler was created previously by specifying a event namespace.<br>
+**Note:** [Namespacing events](https://api.jquery.com/on/#event-names) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them. Check this article: [Namespaced Events in jQuery](http://css-tricks.com/namespaced-events-jquery/)<br>
+**Returns** `Boolean`
+* **dom:** `DOM` element
+* **eventname:** `String` name of the event
+* **eventnamespace:** `String` the namespace of event
+
+```javascript
+  var txb = $("#txtName").get(0);
+  // Checks if the event handler was defined previously
+  var defined = jsu.handlerCreated(txb, "blur", "fnHighlight");
+  // Creates the event handler by namespacing the event
+  !defined && $(txb).on("blur.fnHighlight", function(event) {
+    // Add your code here...
+  });
+```
+
 ### fnStringify *(json)*
-This is a reference to [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides support in old browsers.<br>
-fnStringify serializes a *JSON* object and returns its string representation.<br>
+This is a reference to [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides a polyfill for old browsers.<br>
+fnStringify serialize an object, array or primitive value and returns it as a *JSON string*.<br>
 **Returns** `String`
-* **json:** `JSON` object to be serialized
+* **json:** object to be serialized
 
 ```javascript
   var jsonPerson = {
