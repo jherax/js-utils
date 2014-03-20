@@ -139,8 +139,9 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [inputType](#inputtype)
 * [isDOM](#isdom-object)
 * [isFunction](#isfunction-object)
-* [handlerCreated](#handlercreated-dom-eventname-eventnamespace)
+* [handlerCreated](#handlercreated-dom-eventname-namespace)
 * [fnStringify](#fnstringify-json)
+* [fnAddScript](#fnaddscript-path-before)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
@@ -242,20 +243,22 @@ Determines if the entry parameter is a function.<br>
   if (jsu.isFunction(fn)) { fn(); } //true
 ```
 
-### handlerCreated *(dom, eventname, eventnamespace)*
-This utility allow us to determine if a event handler was created previously by specifying a event namespace.<br>
+### handlerCreated *(dom, eventname, namespace)*
+This utility allow us to determine if an event handler was created previously by specifying a namespace.<br>
 **Note:** [Namespacing events](https://api.jquery.com/on/#event-names) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them. Check this article: [Namespaced Events in jQuery](http://css-tricks.com/namespaced-events-jquery/)<br>
 **Returns** `Boolean`
 * **dom:** `DOM` element
-* **eventname:** `String` name of the event
-* **eventnamespace:** `String` the namespace of event
+* **eventname:** `String` event type
+* **namespace:** `String` event namespace
 
 ```javascript
   var txb = $("#txtName").get(0);
   // Checks if the event handler was defined previously
-  var defined = jsu.handlerCreated(txb, "blur", "fnHighlight");
+  var defined = jsu.handlerCreated(txb, "focus", "fnHighlight");
   // Creates the event handler by namespacing the event
-  !defined && $(txb).on("blur.fnHighlight", function(event) {
+  !defined && $(txb).on("focus.fnHighlight", function(e) {
+    console.log("Event type:", e.type);
+    console.log("Namespace:", e.namespace || e.handleObj.namespace);
     // Add your code here...
   });
 ```
@@ -264,7 +267,7 @@ This utility allow us to determine if a event handler was created previously by 
 This is a reference to [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides a polyfill for old browsers.<br>
 fnStringify serialize an object, array or primitive value and returns it as a *JSON string*.<br>
 **Returns** `String`
-* **json:** object to be serialized
+* **json:** `Object` to be serialized
 
 ```javascript
   var jsonPerson = {
@@ -279,6 +282,30 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
   // two or more objects together into the first object.
   var jsonNew = $.extend({ alias: 'jherax' }, jsonPerson);
   console.log(jsu.fnStringify(jsonNew));
+```
+
+### fnAddScript *(path, before)*
+Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that component.<br>
+**Returns** `undefined` this method does not return anything.
+* **path:** `String` source of the script to be added
+* **before:** `String` part of `src` attribute of element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
+
+```javascript
+  function fnShowWindow(o) {
+    var d = $.extend({
+      content: null,
+      title: "Information",
+      appendTo: "body",
+      width: "360px"
+    }, o);
+    //if(!window.kendo) throw new Error("Kendo is not loaded");
+    //Assuming that kendo core is loaded
+    if (!kendo.ui.Window)
+      jsu.fnAddScript('/scripts/kendo/kendo.window.min.js');
+    //previous call is the same as:
+    //jsu.fnAddScript('/scripts/kendo/kendo.window.min.js', 'jherax.js');
+    //Implementation...
+  }
 ```
 
 ### fnGetDate ()
