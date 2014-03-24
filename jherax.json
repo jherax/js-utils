@@ -1,0 +1,28 @@
+{
+	"name": "jsu",
+	"title": "js-utils",
+	"description": "javascript utilities",
+	"version": "2.3.5",
+	"dependencies": {
+		"jquery": ">=1.9.1"
+	},
+	"keywords": [
+		"validation",
+		"formatting",
+		"utilities",
+		"jQuery"
+	],
+	"author": {
+		"name": "David Rivera",
+		"url": "https://github.com/jherax/js-utils",
+		"email": "jherax@gmail.com"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		}
+	],
+	"homepage": "http://jherax.github.io/",
+	"demo": ""
+}
