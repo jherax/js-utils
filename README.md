@@ -137,11 +137,12 @@ If you want to provide additional languages to other plugins, you can pass a fun
 ---------------
 * [browser](#browser)
 * [inputType](#inputtype)
+* [handlerCreated](#handlercreated-dom-eventname-namespace)
 * [isDOM](#isdom-object)
 * [isFunction](#isfunction-object)
-* [handlerCreated](#handlercreated-dom-eventname-namespace)
 * [fnStringify](#fnstringify-json)
 * [fnAddScript](#fnaddscript-path-before)
+* [fnAddCSS](#fnaddcss-path-before)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
@@ -211,6 +212,26 @@ This object has two methods to determine the type of the `<input>` element.
   })();
 ```
 
+### handlerCreated *(dom, eventname, namespace)*
+This utility allow us to determine if an event handler was created previously by specifying a namespace.<br>
+**Note:** [Namespacing events](https://api.jquery.com/on/#event-names) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them. Check this article: [Namespaced Events in jQuery](http://css-tricks.com/namespaced-events-jquery/)<br>
+**Returns** `Boolean`
+* **dom:** `DOM` element
+* **eventname:** `String` event type
+* **namespace:** `String` event namespace
+
+```javascript
+  var txb = $("#txtName").get(0);
+  // Checks if the event handler was defined previously
+  var defined = jsu.handlerCreated(txb, "focus", "fnHighlight");
+  // Creates the event handler by namespacing the event
+  !defined && $(txb).on("focus.fnHighlight", function(e) {
+    console.log("Event type:", e.type);
+    console.log("Namespace:", e.namespace || e.handleObj.namespace);
+    // Add your code here...
+  });
+```
+
 ### isDOM *(object)*
 Determines if the entry parameter is a [DOM Element](http://api.jquery.com/Types/#Element).<br>
 **Returns** `Boolean`
@@ -243,26 +264,6 @@ Determines if the entry parameter is a function.<br>
   if (jsu.isFunction(fn)) { fn(); } //true
 ```
 
-### handlerCreated *(dom, eventname, namespace)*
-This utility allow us to determine if an event handler was created previously by specifying a namespace.<br>
-**Note:** [Namespacing events](https://api.jquery.com/on/#event-names) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them. Check this article: [Namespaced Events in jQuery](http://css-tricks.com/namespaced-events-jquery/)<br>
-**Returns** `Boolean`
-* **dom:** `DOM` element
-* **eventname:** `String` event type
-* **namespace:** `String` event namespace
-
-```javascript
-  var txb = $("#txtName").get(0);
-  // Checks if the event handler was defined previously
-  var defined = jsu.handlerCreated(txb, "focus", "fnHighlight");
-  // Creates the event handler by namespacing the event
-  !defined && $(txb).on("focus.fnHighlight", function(e) {
-    console.log("Event type:", e.type);
-    console.log("Namespace:", e.namespace || e.handleObj.namespace);
-    // Add your code here...
-  });
-```
-
 ### fnStringify *(json)*
 This is a reference to [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides a polyfill for old browsers.<br>
 fnStringify serialize an object, array or primitive value and returns it as a *JSON string*.<br>
@@ -288,7 +289,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that component.<br>
 **Returns** `undefined` this method returns nothing.
 * **path:** `String` source of the script to be added
-* **before:** `String` part of `src` attribute of element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
+* **before:** `String` part of `src` attribute of the element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
 
 ```javascript
   function fnShowWindow(o) {
@@ -306,6 +307,22 @@ Dynamically add an external script. This method is useful to inject dependencies
     //jsu.fnAddScript('/scripts/kendo/kendo.window.min.js', 'jherax.js');
     //Implementation...
   }
+```
+
+### fnAddCSS *(path, before)*
+Dynamically add an external stylesheet. This method is useful to inject a cascading style sheet resource from an external file, in case that you use some plugins requiring specific css and you don't want to include them inside your main stylesheet.<br>
+**Returns** `undefined` this method returns nothing.
+* **path:** `String` source of the stylesheet to be added
+* **before:** `String` part of `href` attribute of the element that identifies where the resource will be added. This parameter is optional and if it is not specified, the new stylesheet will be appended to `<head>`
+
+```javascript
+  (function(){
+    //Adds the stylesheet just before main.css link
+    jsu.fnAddCSS("/content/css/jquery.dataTables.css", "main.css");
+    //or appends the stylesheet to <head> element
+    //jsu.fnAddCSS("/content/css/jquery.dataTables.css");
+    $('.dataTable').wrap('<div class="tt-wrapper">').dataTable();
+  }());
 ```
 
 ### fnGetDate ()
