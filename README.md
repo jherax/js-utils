@@ -144,6 +144,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnAddScript](#fnaddscript-path-before)
 * [fnAddCSS](#fnaddcss-path-before)
 * [fnEscapeRegExp](#fnescaperegexp-text)
+* [fnGetQueryString](#fngetquerystring-query)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
@@ -339,6 +340,21 @@ e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
   var re2 = new RegExp(jsu.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
   console.log("re1: " + re1.test("ac1") + ", regexp: " + re1.source); //regexp: /[abc]+\d/
   console.log("re2: " + re2.test("ac1") + ", regexp: " + re2.source); //regexp: /\[abc\]\+\\d/
+```
+
+### fnGetQueryString *(query)*
+Gets the value of a specific parameter in the querystring (search in the address bar).<br>
+**Returns** `String`. If the parameter is not found, an empty string is returned.
+* **query:** `String`. Name of the parameter to search for.
+
+```javascript
+  //assuming you have the following url
+  //http://www.google.com.co/search?q=300+rise+of+an+empire
+  
+  //we want to retrieve the value of [q] parameter
+  var q = jsu.fnGetQueryString("q");
+  //prints: "300+rise+of+an+empire"
+  console.log(q);
 ```
 
 ### fnGetDate ()
