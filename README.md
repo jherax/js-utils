@@ -137,18 +137,18 @@ If you want to provide additional languages to other plugins, you can pass a fun
 ---------------
 * [browser](#browser)
 * [inputType](#inputtype)
-* [handlerCreated](#handlercreated-dom-eventname-namespace)
+* [handlerExist](#handlerexist-dom-eventname-namespace)
 * [isDOM](#isdom-object)
 * [isFunction](#isfunction-object)
 * [fnStringify](#fnstringify-json)
 * [fnAddScript](#fnaddscript-path-before)
 * [fnAddCSS](#fnaddcss-path-before)
+* [fnEscapeRegExp](#fnescaperegexp-text)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
 * [fnGetCaretPosition](#fngetcaretposition-dom)
 * [fnSetCaretPosition](#fnsetcaretposition-dom-position)
-* [fnEscapeRegExp](#fnescaperegexp-text)
 * [fnCapitalize](#fncapitalize-object-type)
 * [fnNumericFormat](#fnnumericformat-object)
 * [fnIsValidFormat](#fnisvalidformat-object-type)
@@ -212,7 +212,7 @@ This object has two methods to determine the type of the `<input>` element.
   })();
 ```
 
-### handlerCreated *(dom, eventname, namespace)*
+### handlerExist *(dom, eventname, namespace)*
 This utility allow us to determine if an event handler was created previously by specifying a namespace.<br>
 **Note:** [Namespacing events](https://api.jquery.com/on/#event-names) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them. Check this article: [Namespaced Events in jQuery](http://css-tricks.com/namespaced-events-jquery/)<br>
 **Returns** `Boolean`
@@ -223,7 +223,7 @@ This utility allow us to determine if an event handler was created previously by
 ```javascript
   var txb = $("#txtName").get(0);
   // Checks if the event handler was defined previously
-  var defined = jsu.handlerCreated(txb, "focus", "fnHighlight");
+  var defined = jsu.handlerExist(txb, "focus", "fnHighlight");
   // Creates the event handler by namespacing the event
   !defined && $(txb).on("focus.fnHighlight", function(e) {
     console.log("Event type:", e.type);
@@ -327,6 +327,20 @@ Dynamically add an external stylesheet. This method is useful to inject a cascad
   }());
 ```
 
+### fnEscapeRegExp *(text)*
+Escapes user input to be treated as a literal string in a regular expression.<br>
+This mean that special characters will be treated as literals.<br>
+e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
+**Returns** `String`, or `null` if ***text*** parameter is not a string
+* **text:** `String` to literalize
+
+```javascript
+  var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
+  var re2 = new RegExp(jsu.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
+  console.log("re1: " + re1.test("ac1") + ", regexp: " + re1.source); //regexp: /[abc]+\d/
+  console.log("re2: " + re2.test("ac1") + ", regexp: " + re2.source); //regexp: /\[abc\]\+\\d/
+```
+
 ### fnGetDate ()
 Gets the text of current date according to [regional setting](#jsuregional).<br>
 **Returns** `Object` with the following properties:
@@ -407,20 +421,6 @@ Sets the cursor ***position*** in the ***dom*** element.<br>
   text.focus();
   jsu.fnSetCaretPosition(text, 5);
   //cursor is positioned after "Hello"
-```
-
-### fnEscapeRegExp *(text)*
-Escapes user input to be treated as a literal string in a regular expression.<br>
-This mean that special characters will be treated as literals.<br>
-e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
-**Returns** `String`, or `null` if ***text*** parameter is not a string
-* **text:** `String` to literalize
-
-```javascript
-  var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
-  var re2 = new RegExp(jsu.fnEscapeRegExp("[abc]+\\d")); //treats the string as a literal
-  console.log("re1: " + re1.test("ac1") + ", regexp: " + re1.source); //regexp: /[abc]+\d/
-  console.log("re2: " + re2.test("ac1") + ", regexp: " + re2.source); //regexp: /\[abc\]\+\\d/
 ```
 
 ### fnCapitalize *(object, type)*
