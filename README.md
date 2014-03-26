@@ -145,6 +145,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnAddCSS](#fnaddcss-path-before)
 * [fnEscapeRegExp](#fnescaperegexp-text)
 * [fnGetQueryString](#fngetquerystring-query)
+* [fnGetQueryJSON](#fngetqueryjson-query)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
@@ -289,7 +290,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 ### fnAddScript *(path, before)*
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that component.<br>
 **Returns** `undefined` this method returns nothing.
-* **path:** `String` source of the script to be added. Also it can be a `JSON` object with a set of attributes of *script* element: `{ src: String, async: Boolean, defer: Boolean, charset: String, before: String }`
+* **path:** `String` source of the script to be added. It can also be a `JSON` object with a set of attributes for *script* tag: `{ src: String, async: Boolean, defer: Boolean, charset: String, before: String }`
 * **before:** `String` part of `src` attribute of the element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
 
 ```javascript
@@ -345,16 +346,35 @@ e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
 ### fnGetQueryString *(query)*
 Gets the value of a specific parameter in the querystring (search in the address bar).<br>
 **Returns** `String`. If the parameter is not found, an empty string is returned.
-* **query:** `String`. Name of the parameter to search for.
+* **query:** `String` with name of the parameter to search for.
 
 ```javascript
   //assuming you have the following url
-  //http://www.google.com.co/search?q=300+rise+of+an+empire
+  //http://www.google.com.co/search?q=300+rise+of+an+empire&oq=300
   
   //we want to retrieve the value of [q] parameter
   var q = jsu.fnGetQueryString("q");
   //prints: "300+rise+of+an+empire"
   console.log(q);
+```
+
+### fnGetQueryJSON *(query)*
+Gets the querystring from address bar and is returned as a JSON object.<br>
+**Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will be retrieved in a JSON object.<br>
+**Returns** `Object` with querystring as *key:value* object.
+* **query:** `String` with name of the parameter to search for.
+
+```javascript
+  //assuming you have the following url
+  //http://www.youtube.com/watch?v=hrZl_EQUbRQ&hd=1
+  
+  //we want to retrieve all values from querystring
+  var q = jsu.fnGetQueryJSON();
+  console.log(q); //prints: {v: "hrZl_EQUbRQ", hd: "1"}
+  
+  //we want to retrieve the variable [v] and its value
+  var v = jsu.fnGetQueryJSON("v");
+  console.log(v); //prints: {v: "hrZl_EQUbRQ"}
 ```
 
 ### fnGetDate ()
