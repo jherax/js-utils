@@ -144,8 +144,8 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnAddScript](#fnaddscript-path-before)
 * [fnAddCSS](#fnaddcss-path-before)
 * [fnEscapeRegExp](#fnescaperegexp-text)
-* [fnGetQueryString](#fngetquerystring-query)
-* [fnGetQueryJSON](#fngetqueryjson-query)
+* [fnGetQueryToString](#fngetquerytostring-query)
+* [fnGetQueryToJSON](#fngetquerytojson-query)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
@@ -343,7 +343,7 @@ e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
   console.log("re2: " + re2.test("ac1") + ", regexp: " + re2.source); //regexp: /\[abc\]\+\\d/
 ```
 
-### fnGetQueryString *(query)*
+### fnGetQueryToString *(query)*
 Gets the value of a specific parameter in the querystring (search in the address bar).<br>
 **Returns** `String`. If the parameter is not found, an empty string is returned.
 * **query:** `String` with name of the parameter to search for.
@@ -353,12 +353,12 @@ Gets the value of a specific parameter in the querystring (search in the address
   //http://www.google.com.co/search?q=300+rise+of+an+empire&oq=300
   
   //we want to retrieve the value of [q] parameter
-  var q = jsu.fnGetQueryString("q");
+  var q = jsu.fnGetQueryToString("q");
   //prints: "300+rise+of+an+empire"
   console.log(q);
 ```
 
-### fnGetQueryJSON *(query)*
+### fnGetQueryToJSON *(query)*
 Gets the querystring from address bar and is returned as a JSON object.<br>
 **Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will be retrieved in a JSON object.<br>
 **Returns** `Object` with querystring as *key:value* object.
@@ -369,11 +369,11 @@ Gets the querystring from address bar and is returned as a JSON object.<br>
   //http://www.youtube.com/watch?v=hrZl_EQUbRQ&hd=1
   
   //we want to retrieve all values from querystring
-  var q = jsu.fnGetQueryJSON();
+  var q = jsu.fnGetQueryToJSON();
   console.log(q); //prints: {v: "hrZl_EQUbRQ", hd: "1"}
   
   //we want to retrieve the variable [v] and its value
-  var v = jsu.fnGetQueryJSON("v");
+  var v = jsu.fnGetQueryToJSON("v");
   console.log(v); //prints: {v: "hrZl_EQUbRQ"}
 ```
 
