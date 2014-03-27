@@ -146,6 +146,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnEscapeRegExp](#fnescaperegexp-text)
 * [fnGetQueryToString](#fngetquerytostring-query)
 * [fnGetQueryToJSON](#fngetquerytojson-query)
+* [fnCloneObject](#fncloneobject-object)
 * [fnGetDate](#fngetdate-)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
@@ -375,6 +376,31 @@ Gets the querystring from address bar and is returned as a JSON object.<br>
   //we want to retrieve the variable [v] and its value
   var v = jsu.fnGetQueryToJSON("v");
   console.log(v); //prints: {v: "hrZl_EQUbRQ"}
+```
+
+### fnCloneObject *(object)*
+Clones an object and set all its properties to read-only.<br>
+In some cases, you may need to lock an object to prevent being modified.<br>
+This could be useful, for example, if you need preserve a model object.<br>
+**Returns** `Object`
+* **object:** `Object` to be cloned
+
+```javascript
+  var ajaxResponse = {
+    serie: "Lenovo IdeaPad Z710",
+    features: {
+      processor: "Intel Core i7-4700MQ",
+      graphics: "NVIDIA GeForce GT 745M",
+      memory: "PC3-12800 DDR3L",
+      ram: 8
+    }
+  };
+  // Clone the original object
+  var readOnly = jsu.fnCloneObject(ajaxResponse);
+  console.log("READ-ONLY OBJECT:", readOnly);
+  readOnly.serie = "ThinkPad W540";
+  readOnly.features.ram = 16;
+  console.log("READ-ONLY OBJECT:", readOnly);
 ```
 
 ### fnGetDate ()
