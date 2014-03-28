@@ -148,6 +148,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnGetQueryToJSON](#fngetquerytojson-query)
 * [fnCloneObject](#fncloneobject-object)
 * [fnGetDate](#fngetdate-options)
+* [fnDateFromISO8601](#fndatefromiso8601-date)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
 * [fnGetCaretPosition](#fngetcaretposition-dom)
@@ -405,6 +406,7 @@ This could be useful, for example, if you need preserve a model object.<br>
 
 ### fnGetDate *(options)*
 Gets the string representation of the specified date according to [regional setting](#jsuregional).<br>
+**Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the *value* attribute must be a valid date-time as defined in [RFC 3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
 **Returns** `Object`
 * **options:** `Object` Optional. If not provided, the current date and time is returned. If you pass an argument, you can specify some of the following options:
 
@@ -430,15 +432,42 @@ Gets the string representation of the specified date according to [regional sett
     // No arguments, gets the current date
     var d = jsu.fnGetDate();
     $("#date").html(d.date +" <b>"+ d.time +"</b>");
-    // We provide a specific date and format
+    
+    // We provide a specific date and format (output ISO-8601)
     var dt = "12/24/2013 23:59:13";
     var iso = jsu.fnGetDate({ date: dt, ISO8601: true });
     console.log("ISO 8601:", iso.dateTime);
+    
+    // We provide a date in ISO 8601 (output regional)
+    dt = "1995-12-17T03:24:59Z"; //Z UTC
+    iso = jsu.fnGetDate({ date: dt });
+    console.log("UTC:", iso.dateTime);
+    
+    // We provide a date in ISO 8601 (output regional)
+    dt = "1995-12-17T03:24:59-05:00"; //-05:00 offset
+    iso = jsu.fnGetDate({ date: dt });
+    console.log("Time offset:", iso.dateTime);
+    
     // We provide a specific date
     dt = new Date(1395971368528);
     d = jsu.fnGetDate({ date: dt });
     console.log("Regional:", d.dateTime);
   })();
+```
+
+### fnDateFromISO8601 *(date)*
+Gets the date object from a string in [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) [format](http://www.w3.org/TR/NOTE-datetime).<br>
+It is mandatory that input parameter be a string in ISO 8601, otherwise null is returned.<br>
+**Note:** Time offset and UTC are omitted for the entry parameter.<br>
+**Returns** `Date` or `Null`
+* **date:** `String` date as string in ISO 8601 [format](http://www.w3.org/TR/NOTE-datetime)
+
+```javascript
+  jsu.fnDateFromISO8601(0);
+  jsu.fnDateFromISO8601(null);
+  jsu.fnDateFromISO8601("12/17/1995");
+  var date = jsu.fnDateFromISO8601("1995-12-17T03:24:59Z");
+  console.log("Date:", date);
 ```
 
 ### fnGetHtmlText *(index, value)*
@@ -904,7 +933,7 @@ License
 Licensed under the MIT License
 
 <!-- links -->
-[js-utils]: https://github.com/jherax/js-utils.git
+[js-utils]: http://jherax.github.io/
 [jQuery.js]: http://code.jquery.com/jquery-1.10.2.min.js
 [jQuery.ui]: http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js
 [category.text]: #categorytext
