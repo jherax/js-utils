@@ -404,7 +404,7 @@ This could be useful, for example, if you need preserve a model object.<br>
 ```
 
 ### fnGetDate *(options)*
-Gets the text of current date according to [regional setting](#jsuregional).<br>
+Gets the string representation of the specified date according to [regional setting](#jsuregional).<br>
 **Returns** `Object`
 * **options:** `Object` Optional. If not provided, the current date and time is returned. If you pass an argument, you can specify some of the following options:
 
