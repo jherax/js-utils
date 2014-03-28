@@ -147,7 +147,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnGetQueryToString](#fngetquerytostring-query)
 * [fnGetQueryToJSON](#fngetquerytojson-query)
 * [fnCloneObject](#fncloneobject-object)
-* [fnGetDate](#fngetdate-)
+* [fnGetDate](#fngetdate-options)
 * [fnGetHtmlText](#fngethtmltext-index-value)
 * [fnGetSelectedText](#fngetselectedtext-)
 * [fnGetCaretPosition](#fngetcaretposition-dom)
@@ -403,9 +403,18 @@ This could be useful, for example, if you need preserve a model object.<br>
   console.log("READ-ONLY OBJECT:", readOnly);
 ```
 
-### fnGetDate ()
+### fnGetDate *(options)*
 Gets the text of current date according to [regional setting](#jsuregional).<br>
-**Returns** `Object` with the following properties:
+**Returns** `Object`
+* **options:** `Object` Optional. If not provided, the current date and time is returned. If you pass an argument, you can specify some of the following options:
+
+```javascript
+{
+  date: Date|String|Number //date to parse according to regional setting (Default: new Date())
+  ISO8601: Boolean //the date will be formatted according to ISO 8601 (Default: false)
+}
+```
+**Note:** The object returned has the following properties:
 ```javascript
 {
   date: String //gets the date according to [dateFormat]
@@ -417,8 +426,18 @@ Gets the text of current date according to [regional setting](#jsuregional).<br>
   (function() {
     // We set the language setting
     jsu.regional.set(jsu.regional.english);
+    
+    // No arguments, gets the current date
     var d = jsu.fnGetDate();
     $("#date").html(d.date +" <b>"+ d.time +"</b>");
+    // We provide a specific date and format
+    var dt = "12/24/2013 23:59:13";
+    var iso = jsu.fnGetDate({ date: dt, ISO8601: true });
+    console.log("ISO 8601:", iso.dateTime);
+    // We provide a specific date
+    dt = new Date(1395971368528);
+    d = jsu.fnGetDate({ date: dt });
+    console.log("Regional:", d.dateTime);
   })();
 ```
 
