@@ -149,7 +149,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnCloneObject](#fncloneobject-object)
 * [fnGetDate](#fngetdate-options)
 * [fnDateFromISO8601](#fndatefromiso8601-date)
-* [fnGetHtmlText](#fngethtmltext-index-value)
+* [fnGetHtmlText](#fngethtmltext-value)
 * [fnGetSelectedText](#fngetselectedtext-)
 * [fnGetCaretPosition](#fngetcaretposition-dom)
 * [fnSetCaretPosition](#fnsetcaretposition-dom-position)
@@ -470,29 +470,48 @@ It is mandatory that input parameter be a string in ISO 8601, otherwise null is 
   console.log("Date:", date);
 ```
 
-### fnGetHtmlText *(index, value)*
-Gets the text as encoded html, so if you have the text `<p>hello</p>`,<br>
+### fnGetHtmlText *(value)*
+Converts a pure HTML string to encoded html, so if you have the string `<p>hello</p>`,<br>
 fnGetHtmlText will encoded it to `&lt;p&gt;hello&lt;/p&gt;`<br>
-This function is a delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.text()](http://api.jquery.com/text/#text2)<br>
+This method can be used as single function `fnGetHtmlText(value)`<br>
+or as delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.text()](http://api.jquery.com/text/#text2) `fnGetHtmlText(index, value)`<br>
 **Returns** `String` with encoded html
+* **value:** `String` html to be encoded
+
 ```html
   <textarea rows="4"></textarea>
-  <textarea rows="6" id="target"></textarea>
+  <textarea rows="6" id="target-v"></textarea>
   <div id="demo-wrapper">
     <h3>fnGetHtmlText</h3>
     <p><u>Delegated function</u></p>
   </div>
 ```
 ```javascript
-  var html = $("#demo-wrapper").html();
-  $("textarea").val($.trim(html));
-  $("#target").val(jsu.fnGetHtmlText);
-  // invoke the function programmatically
-  console.log(jsu.fnGetHtmlText(html));
+  setTimeout(function() {
+    var html = $("#demo-wrapper").html();
+    $("textarea").val($.trim(html));
+    // you can run it as a function
+    var htmlEncoded = jsu.fnGetHtmlText(html);
+    console.log("Encoded:", htmlEncoded);
+    $("#target-v").fnShowTooltip("This html will be encoded ...3");
+  }, 1);
+  
+  setTimeout(function() {
+    $(".vld-tooltip").remove();
+    $("#target-v").fnShowTooltip("This html will be encoded ...2");
+  }, 1000);
+  
+  setTimeout(function() {
+    $(".vld-tooltip").remove();
+    // you can also run it as a delegate for $().val() or $().text()
+    // note that we just pass the reference to the function
+    $("#target-v").val(jsu.fnGetHtmlText).fnShowTooltip("Encoded");
+  }, 2000);
 ```
 
 ### fnGetSelectedText ()
 Gets the selected text in the document.<br>
+**Note:** There are some `<input>` elements that not support text selection.<br>
 **Returns** `Object` with the following properties:
 ```javascript
 {
@@ -511,6 +530,7 @@ Gets the selected text in the document.<br>
 
 ### fnGetCaretPosition *(dom)*
 Gets the cursor position of ***dom*** element.<br>
+**Note:** There are some `<input>` elements that not support text selection.<br>
 **Returns** `Number`
 * **dom:** `DOM` element [category:text][category.text]
 
@@ -522,6 +542,7 @@ Gets the cursor position of ***dom*** element.<br>
 
 ### fnSetCaretPosition *(dom, position)*
 Sets the cursor ***position*** in the ***dom*** element.<br>
+**Note:** There are some `<input>` elements that not support text selection.<br>
 * **dom:** `DOM` element [category:text][category.text]
 * **position:** `Number` that indicates where the cursor is set
 
