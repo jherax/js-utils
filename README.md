@@ -6,8 +6,12 @@ These are a suite of utilities for javascript and jquery, including tools for va
 Getting Started
 ---------------
 The tools has a dependency on [jQuery 1.10+][jQuery.js], which must be loaded before [js-utils][jherax.js].<br>
-Also require some [CSS][jherax.css] for tooltip, loading, and other methods.<br>
-Some functions have a dependency on [jQuery.UI 1.9+][jQuery.ui]
+It also requires some [CSS][jherax.css] for functions showing tooltips, *fnLoading*, and other methods.
+
+If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using jQuery.ui, otherwise an internal positioning function will be used.
+
+*[fnShowDialog](#fnshowdialog-options)* is a facade for [ui dialog widget](https://jqueryui.com/dialog/) and has a dependency on [jQuery.UI 1.9+][jQuery.ui].<br>
+But if you don't want to use jQuery.ui, this method can be overridden by specifying the `source` property to the function that will replace it.
 
 The library has the following structure:
 - `jsu:` main namespace
@@ -556,23 +560,26 @@ Sets the cursor ***position*** in the ***dom*** element.<br>
 
 ### fnCapitalize *(object, type)*
 Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
-**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when `type = "word"`<br>
+**Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to transform.<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
+**Note:** You can use this function as a jQuery extension, see [jQuery.fnCapitalize](#jqueryfncapitalize-type).<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
   * `"title"` turns the first letter of each word into uppercase
-  * `"first"` only the first letter is uppercase
-  * `"lower"` transform to lowercase
+  * `"first"` turns only the first letter to uppercase
   * `"upper"` transform to uppercase
+  * `"lower"` transform to lowercase
 
 ```javascript
   var text = "\n  make  your\t  code DRY  \n ";
   console.log('original text: "' + text + '"');
   console.log('word : "' + jsu.fnCapitalize(text, "word" ) + '"');
   console.log('title: "' + jsu.fnCapitalize(text, "title") + '"');
-  console.log('lower: "' + jsu.fnCapitalize(text, "lower") + '"');
+  console.log('first: "' + jsu.fnCapitalize(text, "first") + '"');
   console.log('upper: "' + jsu.fnCapitalize(text, "upper") + '"');
+  console.log('lower: "' + jsu.fnCapitalize(text, "lower") + '"');
 ```
 If you want to lowercase specific words, you can do it this way:
 ```javascript
@@ -581,7 +588,7 @@ If you want to lowercase specific words, you can do it this way:
     // The following words will always be lowercase
     jsu.regional.english.wordPattern = /\s(?:And|Are|At|A|O[nrf]|By|In|The)\b/g;
     jsu.regional.set(jsu.regional.english);
-    var text = " pc AND KEYBOARD\t ARE on the table ";
+    var text = " pc AND KEYBOARD\t ArE oN tHe table ";
     console.log("Before: ", '"' + text + '"');
     // Transforms the text after 2 seconds
     setTimeout(function() {
@@ -777,26 +784,30 @@ It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [c
 ```
 
 ### jQuery.fnCapitalize *(type)*
-This is the jQuery version of [fnCapitalize](#fncapitalize-object-type).<br>
+This is the jQuery extension for [fnCapitalize](#fncapitalize-object-type) function.<br>
 Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
-**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when `type = "word"`<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** The text is transformed when the `blur` event occurs.<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
   * `"title"` turns the first letter of each word into uppercase
-  * `"first"` only the first letter is uppercase
-  * `"lower"` transform to lowercase
+  * `"first"` turns only the first letter to uppercase
   * `"upper"` transform to uppercase
+  * `"lower"` transform to lowercase
 
 ```javascript
-  var text = "\n do\t it  with\t  jQuery\t\n ";
-  var $input = $("#txtName").val(text);
-  $input.fnCapitalize("title").focus();
+  setTimeout(function() {
+    var text = "\n do\t it  with\t  jQuery\t\n ";
+    var $input = $("#txtName").val(text).width(180);
+    $input.fnShowTooltip("This text will be transformed");
+    $input.fnCapitalize("title").focus();
+  }, 1);
+
   //raise blur event to transform text
   setTimeout(function() {
-    alert("capitalize");
-    $input.blur();
+    alert("click to transform");
+    $("#txtName").blur();
   }, 2000);
 ```
 If you want to lowercase specific words, you can do it this way:
@@ -808,11 +819,11 @@ If you want to lowercase specific words, you can do it this way:
     jsu.regional.set(jsu.regional.english);
     // You can bind the event handler at beginning
     var $input = $("#txtName").fnCapitalize("word");
-    var text = " pc AND KEYBOARD\t ARE on the table ";
+    var text = " pc AND KEYBOARD\t ArE oN tHe table ";
     // Raise blur event to transform text
     $input.val(text).focus();
     setTimeout(function() {
-      alert("capitalize");
+      alert("transform");
       $input.blur();
     }, 2000);
   })();
