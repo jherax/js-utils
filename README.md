@@ -561,7 +561,7 @@ Sets the cursor ***position*** in the ***dom*** element.<br>
 ### fnCapitalize *(object, type)*
 Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to transform.<br>
-**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to&nbsp; lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnCapitalize](#jqueryfncapitalize-type).<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
@@ -786,7 +786,7 @@ It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [c
 ### jQuery.fnCapitalize *(type)*
 This is the jQuery extension for [fnCapitalize](#fncapitalize-object-type) function.<br>
 Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
-**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to&nbsp; lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** The text is transformed when the `blur` event occurs.<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
