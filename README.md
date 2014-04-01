@@ -168,12 +168,14 @@ If you want to provide additional languages to other plugins, you can pass a fun
 
 [jQuery extensions](#jquery-extensions)
 -----------------
-* [$.fnCenter](#jqueryfncenter-)
-* [$.fnMaxLength](#jqueryfnmaxlength-length)
+<!---* [$.position](#jqueryposition-options)-->
+* [$.fnCenter](#jqueryfncenter-options)
+* [$.fnMaxLength](#jqueryfnmaxlength-length-options)
 * [$.fnCapitalize](#jqueryfncapitalize-type)
-* [$.fnShowTooltip](#jqueryfnshowtooltip-message)
-* [$.fnIsValidFormat](#jqueryfnisvalidformat-type)
-* [$.fnIsValidDate](#jqueryfnisvaliddate-options)
+
+<!---* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)-->
+<!---* [$.fnIsValidFormat](#jqueryfnisvalidformat-type)-->
+<!---* [$.fnIsValidDate](#jqueryfnisvaliddate-options)-->
 * [$.fnNumericFormat](#jqueryfnnumericformat-)
 * [$.fnNumericInput](#jqueryfnnumericinput-)
 * [$.fnCustomInput](#jqueryfncustominput-mask)
@@ -599,8 +601,9 @@ If you want to lowercase specific words, you can do it this way:
 ```
 
 ### fnNumericFormat *(object)*
-Sets the numeric format according to **es-CO** culture.<br>
-Places the decimal`.` and thousand`,` separator.<br>
+Sets numeric format according to **es-CO** culture by placing the decimal`.` and thousands`,` separator.<br>
+**Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to format.<br>
+**Note:** You can use this function as a jQuery extension, see [jQuery.fnNumericFormat](#jqueryfnnumericformat-).<br>
 **Returns** `String` with the formatted number
 * **object:** `String` or `DOM` element [category:text][category.text]
 
@@ -755,7 +758,7 @@ This is a set of utilities for [jQuery](http://jquery.com/).<br>
 jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy API that works cross-browser.<br>
 If you want to learn more about jQuery, here is a full guide: [How jQuery Works](http://learn.jquery.com/about-jquery/how-jquery-works/).
 
-### jQuery.fnCenter ()
+### jQuery.fnCenter (options)
 Sets the collection of jquery objects in the center of screen.<br>
 Elements are centered using fixed position.<br>
 **Returns** `jQuery`
@@ -771,7 +774,7 @@ Elements are centered using fixed position.<br>
   div.fnCenter();
 ```
 
-### jQuery.fnMaxLength *(length)*
+### jQuery.fnMaxLength *(length, options)*
 Limits the maximum length of characters allowed in the elements [category:text][category.text]<br>
 A tooltip will be placed on the right side of input element showing the characters remaining.<br>
 It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [css class][jherax.css] `.vld-tooltip`<br>
@@ -830,10 +833,10 @@ If you want to lowercase specific words, you can do it this way:
 ```
 
 ### jQuery.fnNumericFormat ()
-This is the jQuery version of [fnNumericFormat](#fnnumericformat-object).<br>
-Sets the numeric format according to **es-CO** culture.<br>
-Places the decimal`.` and thousand`,` separator.<br>
-**Note:** Text is formatted when the `keyup, blur` events occurs.<br>
+This is the jQuery extension for [fnNumericFormat](#fnnumericformat-object).<br>
+Sets numeric format according to **es-CO** culture.<br>
+Places the decimal`.` and thousands`,` separator.<br>
+**Note:** Text is formatted when `keyup, blur` events occurs.<br>
 **Returns** `jQuery`
 ```javascript
   var num = "123456789,47.15";
