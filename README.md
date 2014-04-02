@@ -172,16 +172,17 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [$.fnCenter](#jqueryfncenter-options)
 * [$.fnMaxLength](#jqueryfnmaxlength-length-options)
 * [$.fnCapitalize](#jqueryfncapitalize-type)
-
-<!---* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)-->
-<!---* [$.fnIsValidFormat](#jqueryfnisvalidformat-type)-->
-<!---* [$.fnIsValidDate](#jqueryfnisvaliddate-options)-->
 * [$.fnNumericFormat](#jqueryfnnumericformat-)
 * [$.fnNumericInput](#jqueryfnnumericinput-)
 * [$.fnCustomInput](#jqueryfncustominput-mask)
 * [$.fnDisableKey](#jqueryfndisablekey-keys)
+
+<!---* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)-->
+<!---* [$.fnIsValidDate](#jqueryfnisvaliddate-options)-->
+* [$.fnIsValidFormat](#jqueryfnisvalidformat-type)
 * [$.fnEasyValidate](#jqueryfneasyvalidate-options)
-* [$.fnConfirm](#jqueryfnconfirm-options)
+
+<!---* [$.fnConfirm](#jqueryfnconfirm-options)-->
 
 Usage
 -----
@@ -616,16 +617,17 @@ Sets numeric format according to **es-CO** culture by placing the decimal`.` and
 ```
 
 ### fnIsValidFormat *(object, type)*
-Validates the text format, depending on the ***type*** supplied.<br>
-**Note:** Date validations are run according to [regional setting](#jsuregional).<br>
+Validates the format, depending on ***type*** supplied. Date validations are run according to [regional setting](#jsuregional).<br>
+**Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to validate.<br>
+**Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
 **Returns** `Boolean`
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the type of validation:
-  * `"t"` validates the time format (Default HH:mm)
-  * `"d"` validates the date format (Default dd/MM/yyyy)
-  * `"dt"` validates full date format (Default dd/MM/yyyy HH:mm)
-  * `"email"` validates an email address
+  * `"t"` validates the time format ([timeFormat](#jsuregional))
+  * `"d"` validates the date format ([dateFormat](#jsuregional))
+  * `"dt"` validates full date format ([dateFormat + timeFormat](#jsuregional))
   * `"pass"` validates the password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
+  * `"email"` validates the email address
   * `"lat"` validates the latitude
   * `"lon"` validates the longitude
 
@@ -872,6 +874,30 @@ To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-
   $(document).fnDisableKey(" ");
   // avoids pressing the keys q,w,e,r,t on the input
   $("#txtName").fnDisableKey("qwert");
+```
+
+### jQuery.fnIsValidFormat *(type)*
+This is the jQuery extension for [fnIsValidFormat](#fnisvalidformat-object-type).<br>
+Validates the format of `value`, depending on ***type*** supplied.<br>
+Date validations are run according to [regional setting](#jsuregional).<br>
+**Returns** `jQuery`
+* **type:** `String` specifying the type of validation:
+  * `"t"` validates the time format ([timeFormat](#jsuregional))
+  * `"d"` validates the date format ([dateFormat](#jsuregional))
+  * `"dt"` validates full date format ([dateFormat + timeFormat](#jsuregional))
+  * `"pass"` validates the password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
+  * `"email"` validates the email address
+  * `"lat"` validates the latitude
+  * `"lon"` validates the longitude
+
+```javascript
+  (function() {
+    //We configure the global language setting
+    jsu.regional.set(jsu.regional.english);
+    var dt = $("#date").val("12/31/2013 23:10");
+    var isValid = dt.fnIsValidFormat("dt");
+    console.log("Is dateTime: ", isValid);
+  })();
 ```
 
 ### jQuery.fnEasyValidate *(options)*
