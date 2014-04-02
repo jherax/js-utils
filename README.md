@@ -77,7 +77,7 @@ For example, you need to create the following object structure:
 
 ### jsu.regional
 This namespace exposes objects and methods to setup your language preferences.<br>
-As we are using [jQuery.UI][jQuery.ui], we can provide a [language](http://github.com/jquery/jquery-ui/tree/master/ui/i18n) to configure [datepicker](http://api.jqueryui.com/datepicker/) widget.<br>
+If we are using [jQuery.UI][jQuery.ui], we can provide a [language](http://github.com/jquery/jquery-ui/tree/master/ui/i18n) to configure the [datepicker](http://api.jqueryui.com/datepicker/) widget.<br>
 Available predefined languages are `jsu.regional.english` and `jsu.regional.spanish`<br>
 By default spanish language is set, although you can specify language using method `set()`<br>
 e.g. `jsu.regional.set(jsu.regional.english);`<br>
