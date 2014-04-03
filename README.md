@@ -176,12 +176,11 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [$.fnNumericInput](#jqueryfnnumericinput-)
 * [$.fnCustomInput](#jqueryfncustominput-mask)
 * [$.fnDisableKey](#jqueryfndisablekey-keys)
-
-<!---* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)-->
 * [$.fnIsValidFormat](#jqueryfnisvalidformat-type)
 * [$.fnIsValidDate](#jqueryfnisvaliddate-options)
 * [$.fnEasyValidate](#jqueryfneasyvalidate-options)
 
+<!---* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)-->
 <!---* [$.fnConfirm](#jqueryfnconfirm-options)-->
 
 Usage
@@ -647,7 +646,7 @@ Validates the format, depending on ***type*** supplied. Date validations are run
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the entry `DOM` element has the date format for the `value` property.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip will be rendered using jQuery.ui, otherwise an overloaded function for jQuery.position is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidDate](#jqueryfnisvaliddate-options).<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
@@ -903,7 +902,7 @@ Date validations are performed according to [regional setting](#jsuregional).<br
 This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options).<br>
 Evaluates whether the first element in the collection has the `value` with date format.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip will be rendered using jQuery.ui, otherwise an overloaded function for jQuery.position is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
 **Returns** `jQuery`
