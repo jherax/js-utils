@@ -1,16 +1,16 @@
 [js-utils][js-utils]
 ========
 
-These are a suite of utilities for javascript and jquery, including tools for validating, text formatting, and misc.
+This is a suite of utilities for JavaScript and jQuery, which includes tools for validating, text formatting, and other features.
 
 Getting Started
 ---------------
-The tools has a dependency on [jQuery 1.10+][jQuery.js], which must be loaded before [js-utils][jherax.js].<br>
-It also requires some [CSS][jherax.css] for functions showing tooltips, *fnLoading*, and other methods.
+The utility has a dependency on [jQuery 1.10+][jQuery.js] which must be loaded before [js-utils][jherax.js].<br>
+It also requires some [CSS][jherax.css] rules for functions showing tooltips, and other methods.
 
-If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using jQuery.ui, otherwise an internal positioning function will be used.
+If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using jQuery.ui, otherwise an internal function for positioning will be used.
 
-*[fnShowDialog](#fnshowdialog-options)* is a facade for [ui dialog widget](https://jqueryui.com/dialog/) and has a dependency on [jQuery.UI 1.9+][jQuery.ui].<br>
+[fnShowDialog](#fnshowdialog-options) is a facade for [ui dialog widget](https://jqueryui.com/dialog/) and has a dependency on [jQuery.UI 1.9+][jQuery.ui].<br>
 But if you don't want to use jQuery.ui, this method can be overridden by specifying the `source` property to the function that will replace it.
 
 The library has the following structure:
@@ -178,8 +178,8 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [$.fnDisableKey](#jqueryfndisablekey-keys)
 
 <!---* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)-->
-<!---* [$.fnIsValidDate](#jqueryfnisvaliddate-options)-->
 * [$.fnIsValidFormat](#jqueryfnisvalidformat-type)
+* [$.fnIsValidDate](#jqueryfnisvaliddate-options)
 * [$.fnEasyValidate](#jqueryfneasyvalidate-options)
 
 <!---* [$.fnConfirm](#jqueryfnconfirm-options)-->
@@ -204,7 +204,7 @@ For detecting capabilities, is better to use [Modernizr](http://modernizr.com/do
 ### inputType
 This object has two methods to determine the type of the `<input>` element.
 * **`isText (dom)`**: This function returns `true` when the ***dom*** parameter is a writable  `<input>`<br>Elements classified in this category are: [Category:text](#categorytext)
-* **`isCheck (dom)`**: This function returns `true` when the ***dom*** parameter is a checkable `<input>`<br>Elements classified in this category are: `"checkbox"` and `"radio"` input elements.
+* **`isCheck (dom)`**: This function returns `true` when the ***dom*** parameter is a checkable `<input>`<br>Elements classified in this category are: input type *checkbox* and *radio.*
 
 ```html
   <input type="radio" id="radio" />
@@ -370,7 +370,7 @@ Gets the value of a specific parameter in the querystring (search in the address
 ### fnGetQueryToJSON *(query)*
 Gets the querystring from address bar and is returned as a JSON object.<br>
 **Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will be retrieved in a JSON object.<br>
-**Returns** `Object` with querystring as *key:value* object.
+**Returns** `Object` in JSON notation.
 * **query:** `String` with name of the parameter to search for.
 
 ```javascript
@@ -412,14 +412,14 @@ This could be useful, for example, if you need preserve a model object.<br>
 ```
 
 ### fnGetDate *(options)*
-Gets the string representation of the specified date according to [regional setting](#jsuregional).<br>
+Gets the string representation of the specified date according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
 **Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the *value* attribute must be a valid date-time as defined in [RFC 3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
 **Returns** `Object`
 * **options:** `Object` Optional. If not provided, the current date and time is returned. If you pass an argument, you can specify some of the following options:
 
 ```javascript
 {
-  date: Date|String|Number //date to parse according to regional setting (Default: new Date())
+  date: Date|String|Number //date to parse according to regional setting (Default: new Date)
   ISO8601: Boolean //the date will be formatted according to ISO 8601 (Default: false)
 }
 ```
@@ -464,7 +464,7 @@ Gets the string representation of the specified date according to [regional sett
 
 ### fnDateFromISO8601 *(date)*
 Gets the date object from a string in [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) [format](http://www.w3.org/TR/NOTE-datetime).<br>
-It is mandatory that input parameter be a string in ISO 8601, otherwise null is returned.<br>
+It is mandatory that input parameter be a string in ISO 8601, otherwise `null` is returned.<br>
 **Note:** Time offset and UTC are omitted for the entry parameter.<br>
 **Returns** `Date` or `Null`
 * **date:** `String` date as string in ISO 8601 [format](http://www.w3.org/TR/NOTE-datetime)
@@ -479,9 +479,9 @@ It is mandatory that input parameter be a string in ISO 8601, otherwise null is 
 
 ### fnGetHtmlText *(value)*
 Converts a pure HTML string to encoded html, so if you have the string `<p>hello</p>`,<br>
-fnGetHtmlText will encoded it to `&lt;p&gt;hello&lt;/p&gt;`<br>
-This method can be used as single function `fnGetHtmlText(value)`<br>
-or as delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.text()](http://api.jquery.com/text/#text2) `fnGetHtmlText(index, value)`<br>
+this function will encode the hmtl text to `&lt;p&gt;hello&lt;/p&gt;`<br>
+This method can be used just as a function: *fnGetHtmlText (value)*<br>
+or as delegate for jQuery [.val()](http://api.jquery.com/val/#val2) or [.text()](http://api.jquery.com/text/#text2) *fnGetHtmlText (index, value)*<br>
 **Returns** `String` with encoded html
 * **value:** `String` html to be encoded
 
@@ -497,7 +497,7 @@ or as delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.te
   setTimeout(function() {
     var html = $("#demo-wrapper").html();
     $("textarea").val($.trim(html));
-    // you can run it as a function
+    // you can run it just as a function
     var htmlEncoded = jsu.fnGetHtmlText(html);
     console.log("Encoded:", htmlEncoded);
     $("#target-v").fnShowTooltip("This html will be encoded ...3");
@@ -510,7 +510,7 @@ or as delegate for [jQuery.val()](http://api.jquery.com/val/#val2) or [jQuery.te
   
   setTimeout(function() {
     $(".vld-tooltip").remove();
-    // you can also run it as a delegate for $().val() or $().text()
+    // you can also run it as a delegate for .val() or .text()
     // note that we just pass the reference to the function
     $("#target-v").val(jsu.fnGetHtmlText).fnShowTooltip("Encoded");
   }, 2000);
@@ -645,23 +645,20 @@ Validates the format, depending on ***type*** supplied. Date validations are run
 ```
 
 ### fnIsValidDate *(dom, options)*
-Evaluates whether the input value is a date or not.<br>
-The validation result will be shown in a tooltip.<br>
-The tooltip is positioned via [jQuery.ui.position()](http://api.jqueryui.com/position/)<br>
-**Note:** Date validations are run according to [regional setting](#jsuregional).<br>
+Evaluates whether the entry `DOM` element has the date format for the `value` property.<br>
+Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip will be rendered using jQuery.ui, otherwise an overloaded function for jQuery.position is used.<br>
+**Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidDate](#jqueryfnisvaliddate-options).<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
-`jsu.regional.<language>.dateIsGreater`<br>
-`jsu.regional.<language>.dateIsLesser`<br>
-`jsu.regional.<language>.dateFormatError`
-
+`dateIsGreater` `dateIsLesser` `dateFormatError`<br>
 **Returns** `Boolean`
 * **dom:** `DOM` element [category:text][category.text]
 * **options:** `Object` that provides the following settings:
 
 ```javascript
 {
-  compareTo: Date|String //date against which to compare the dom value (Default: new Date())
-  isFuture: Boolean //determines whether entry date must be greater than [compareTo] (Default:false)
+  compareTo: Date|String //date against which to compare the dom value (Default: new Date)
+  isFuture: Boolean //does entry date must be greater than [compareTo] (Default: false)
   warning: String //message indicating that entry date did not meet the requirements
 }
 ```
@@ -669,23 +666,25 @@ The tooltip is positioned via [jQuery.ui.position()](http://api.jqueryui.com/pos
   (function() {
     //We configure the global language setting
     jsu.regional.set(jsu.regional.english);
-  })();
+    var d = new Date();
+    $("#txtLicence").val(
+      jsu.fnGetDate({ date: d.setHours(24) }).date);
+    $("#txtBirthday").val(
+      jsu.fnGetDate({ date: d.setHours(24) }).date);
+  }());
 
-  //Validates some form fields
-  $("#btnSendForm").on("click", function() {
-  	var dBirthday = $("#txtBirthday").get(0);
-  	dBirthday.value = jsu.fnGetDate().date;
-  	var dDriverLic = $("#txtDriverLic").val("02/28/2010").get(0);
-  
-  	if (!jsu.fnIsValidDate(dDriverLic, {
-  	  //uncomment the following line to set a custom message
-  	  //warning: "The driver's license expedition can't be greater than today"
-  	})) return false;
-  
-  	if (!jsu.fnIsValidDate(dBirthday, {
-  		compareTo: dDriverLic.value,
-  		warning: "Your birthday can't be greater than driver's license expedition"
-  	})) return false;
+  //Validates elements in the form
+  $("#btnSend").on("click", function() {
+    var dBirthday = $("#txtBirthday").get(0);
+    var dDriverLic = $("#txtLicence").get(0);
+
+    if (!jsu.fnIsValidDate(dDriverLic)) return false;
+    if (!jsu.fnIsValidDate(dBirthday, {
+        compareTo: dDriverLic.value,
+        warning: "Your birthday can't be greater than driver's license expedition"
+    })) return false;
+
+    alert("Submit form");
   });
 ```
 
@@ -879,7 +878,7 @@ To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-
 ### jQuery.fnIsValidFormat *(type)*
 This is the jQuery extension for [fnIsValidFormat](#fnisvalidformat-object-type).<br>
 Validates the format of `value`, depending on ***type*** supplied.<br>
-Date validations are run according to [regional setting](#jsuregional).<br>
+Date validations are performed according to [regional setting](#jsuregional).<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the type of validation:
   * `"t"` validates the time format ([timeFormat](#jsuregional))
@@ -898,6 +897,46 @@ Date validations are run according to [regional setting](#jsuregional).<br>
     var isValid = dt.fnIsValidFormat("dt");
     console.log("Is dateTime: ", isValid);
   })();
+```
+
+### jQuery.fnIsValidDate *(options)*
+This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options).<br>
+Evaluates whether the first element in the collection has the `value` with date format.<br>
+Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip will be rendered using jQuery.ui, otherwise an overloaded function for jQuery.position is used.<br>
+**Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
+`dateIsGreater` `dateIsLesser` `dateFormatError`<br>
+**Returns** `jQuery`
+* **options:** `Object` that provides the following settings:
+
+```javascript
+{
+  compareTo: Date|String //date against which to compare the dom value (Default: new Date)
+  isFuture: Boolean //does entry date must be greater than [compareTo] (Default: false)
+  warning: String //message indicating that entry date did not meet the requirements
+}
+```
+```javascript
+  (function() {
+    //We configure the global language setting
+    jsu.regional.set(jsu.regional.english);
+    var d = new Date();
+    $("#txtLicence").val(
+      jsu.fnGetDate({ date: d.setHours(24) }).date);
+    $("#txtBirthday").val(
+      jsu.fnGetDate({ date: d.setHours(24) }).date);
+  }());
+
+  //Validates elements in the form
+  $("#btnSend").on("click", function() {
+    if (!$("#txtLicence").fnIsValidDate()) return false;
+    if (!$("#txtBirthday").fnIsValidDate({
+        compareTo: $("#txtLicence").val(),
+        warning: "Your birthday can't be greater than driver's license expedition"
+    })) return false;
+
+    alert("Submit form");
+  });
 ```
 
 ### jQuery.fnEasyValidate *(options)*
