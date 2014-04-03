@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.3.5
+//  Version: 2.4.6
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.3.5",
+    version: "2.4.6",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -345,8 +345,7 @@ jsu.wrapper = "body"; //#main-section
         }
         //-----------------------------------
         // Converts an inconsistent JSON string to its object representation
-        function fnGetDataToJSON(data) {
-            var params = {};
+        var fnGetDataToJSON = (function() {
             var parser = function(value) {
                 if (+value) return +value;
                 if ((/true/i).test(value)) return true;
@@ -354,15 +353,18 @@ jsu.wrapper = "body"; //#main-section
                 if ((/null/i).test(value)) return null;
                 return value;
             };
-            data = !data ? "" : data.toString();
-            $.each(data.split(/[\{\},]/g),
-                function (i, item) {
-                    var m = item.match(/['"]?(\w+)['"]?:['"]?([^'"]+)/);
-                    if (!m) return true;
-                    params[$.trim(m[1])] = parser(m[2]);
-                });
-            return params;
-        }
+            return function(data) {
+                var params = {};
+                data = !data ? "" : data.toString();
+                $.each(data.split(/[\{\},]/g),
+                    function (i, item) {
+                        var m = item.match(/['"]?(\w+)['"]?:['"]?([^'"]+)/);
+                        if (!m) return true;
+                        params[$.trim(m[1])] = parser(m[2]);
+                    });
+                return params;
+            };
+        }());
         //-----------------------------------
         // Clone an object and set all its properties to read-only
         function fnCloneObject(obj) {
@@ -380,42 +382,47 @@ jsu.wrapper = "body"; //#main-section
         }
         //-----------------------------------
         // Gets the string representation of the specified date according to regional setting.
-        // Allows ISO 8601 formats: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
-        function fnGetDate(o) {
-            o = $.extend({ ISO8601: false }, o);
-            if (typeof o.date === "string" && /Date/.test(o.date))
-                o.date = +o.date.replace(/\D+/g, "");
-            var f = o.date ? new Date(o.date) : new Date();
-            if(!f.getDate()) throw new CustomException("Invalid Date: {0}", o.date);
+        // Output formats ISO 8601: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
+        var fnGetDate = (function () {
             var fillZero = function(n) { return ("0" + n.toString()).slice(-2); };
-            var fnDate = function() {
+            var fnDate = function(o) {
                 return (o.ISO8601 ? "yyyy-MM-dd" : _language.dateFormat).replace(/[dMy]+/g, function(m) {
                     switch (m.toString()) {
-                        case "dd": return fillZero(f.getDate());
-                        case "MM": return fillZero(f.getMonth() + 1);
-                        case "yyyy": return f.getFullYear();
+                        case "dd": return fillZero(o.date.getDate());
+                        case "MM": return fillZero(o.date.getMonth() + 1);
+                        case "yyyy": return o.date.getFullYear();
                     }
                 });
             };
-            var fnTime = function() {
+            var fnTime = function(o) {
                 return (o.ISO8601 ? "HH:mm" : _language.timeFormat).replace(/[Hhms]+/g, function(m) {
-                    var h = f.getHours();
+                    var h = o.date.getHours();
                     switch (m.toString()) {
-                        case "HH": return fillZero(f.getHours());
+                        case "HH": return fillZero(o.date.getHours());
                         case "hh": return fillZero(h === 12 ? 12 : h % 12);
-                        case "mm": return fillZero(f.getMinutes());
-                        case "ss": return fillZero(f.getSeconds());
+                        case "mm": return fillZero(o.date.getMinutes());
+                        case "ss": return fillZero(o.date.getSeconds());
                     }
                 });
             };
-            var fnDateTime = function() { return fnDate() + (o.ISO8601 ? "T" : " ") + fnTime(); };
-            // Public API
-            return {
-                date: fnDate(),
-                time: fnTime(),
-                dateTime: fnDateTime()
+            var fnDateTime = function(o) {
+                return fnDate(o) + (o.ISO8601 ? "T" : " ") + fnTime(o);
             };
-        }
+            // Return Module
+            return function(o) {
+                o = $.extend({ date: new Date(), ISO8601: false }, o);
+                if (typeof o.date === "string" && /Date/.test(o.date))
+                    o.date = +o.date.replace(/\D+/g, "");
+                if (o.date instanceof Date === false) o.date = new Date(o.date);
+                if (!o.date.valueOf()) throw new CustomException("Invalid Date: {0}", o.date);
+                // Public API
+                return {
+                    date: fnDate(o),
+                    time: fnTime(o),
+                    dateTime: fnDateTime(o)
+                };
+            };
+        }());
         //-----------------------------------
         // Gets the date object from a string in ISO 8601 format
         function fnDateFromISO8601(date) {
@@ -520,10 +527,8 @@ jsu.wrapper = "body"; //#main-section
         }
         //-----------------------------------
         // Validates the text format, depending on the type supplied.
-        // Date validations are run according to regional setting
-        function fnIsValidFormat(obj, _type) {
-            var _pattern = null,
-                _text = input.isText(obj) ? obj.value : obj.toString();
+        // Date validations are run according to regional setting.
+        var fnIsValidFormat = (function() {
             var _formatter = function(format) {
                 return "^" +
                 fnEscapeRegExp(format).replace(/[dMyHhms]+/g, function(m) {
@@ -538,46 +543,44 @@ jsu.wrapper = "body"; //#main-section
                     }
                 }) + "$";
             };
-            switch (_type) {
-                case "d": //Validates Date format according to regional setting
-                    _pattern = new RegExp(_formatter(_language.dateFormat));
-                    break;
-                case "t": //Validates Time format: HH:mm:ss
-                    _pattern = /^([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/;
-                    break;
-                case "dt": //Validates DateTime format according to regional setting
-                    _pattern = new RegExp(_formatter(_language.dateFormat + " " + _language.timeFormat));
-                    break;
-                case "email": //Validates an email address
-                    _pattern = /^([0-9a-zA-Zñ](?:[\-.\w]*[0-9a-zA-Zñ])*@(?:[0-9a-zA-Zñ][\-\wñ]*[0-9a-zA-Zñ]\.)+[a-zA-Z]{2,9})$/i;
-                    break;
-                case "pass": //Validates the password strength (must have 8-20 characters, 1+ number, 1+ uppercase)
-                    _pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
-                    break;
-                case "lat": //Validates the latitude
-                    _pattern = /^-?([1-8]?[1-9]|[1-9]0|0)\,{1}\d{1,6}$/;
-                    break;
-                case "lon": //Validates the longitude
-                    _pattern = /^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\,{1}\d{1,6}$/;
-                    break;
-            }
-            return !!_pattern && _pattern.test(_text);
-        }
+            return function(obj, _type) {
+                var _pattern = null,
+                    _text = input.isText(obj) ? obj.value : obj.toString();
+                switch (_type) {
+                    case "d": //Validates Date format according to regional setting
+                        _pattern = new RegExp(_formatter(_language.dateFormat));
+                        break;
+                    case "t": //Validates Time format: HH:mm:ss
+                        _pattern = /^([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/;
+                        break;
+                    case "dt": //Validates DateTime format according to regional setting
+                        _pattern = new RegExp(_formatter(_language.dateFormat + " " + _language.timeFormat));
+                        break;
+                    case "email": //Validates an email address
+                        _pattern = /^([0-9a-zA-Zñ](?:[\-.\w]*[0-9a-zA-Zñ])*@(?:[0-9a-zA-Zñ][\-\wñ]*[0-9a-zA-Zñ]\.)+[a-zA-Z]{2,9})$/i;
+                        break;
+                    case "pass": //Validates the password strength (must have 8-20 characters, 1+ number, 1+ uppercase)
+                        _pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
+                        break;
+                    case "lat": //Validates the latitude
+                        _pattern = /^-?([1-8]?[1-9]|[1-9]0|0)\,{1}\d{1,6}$/;
+                        break;
+                    case "lon": //Validates the longitude
+                        _pattern = /^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\,{1}\d{1,6}$/;
+                        break;
+                }
+                return !!_pattern && _pattern.test(_text);
+            };
+        }());
         //-----------------------------------
         // Evaluates whether the input value is a date or not.
         // The validation result will be shown in a tooltip
-        function fnIsValidDate(_dom, o) {
-            if (!input.isText(_dom)) return false;
-            o = $.extend({
-                isFuture: false,
-                compareTo: new Date(),
-                warning: null }, o);
-            var error = false,
-                _type = _dom.value.length > 10 ? "dt" : "d";
+        var fnIsValidDate = (function() {
+            var error = false, type = "d";
             var parser = function(date) {
                 if (date instanceof Date) return date;
                 if (typeof date !== "string") return new Date();
-                if (!fnIsValidFormat(date, _type)) { error = true; return new Date(); }
+                if (!fnIsValidFormat(date, type)) { error = true; return new Date(); }
                 var d = date.split(/\D/); date = "y/M/d";
                 var p = _language.dateFormat.split(/[^yMd]/);
                 for (var x = 0; x < p.length; x++) {
@@ -588,12 +591,21 @@ jsu.wrapper = "body"; //#main-section
                 d.splice(0, 3);
                 return new Date(date +" "+ d.join(":"));
             };
-            var dif = (parser(_dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
-            if (error) return fnShowTooltip(_dom, _language.dateFormatError);
-            if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _language.dateIsLesser);
-            if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _language.dateIsGreater);
-            return true;
-        }
+            return function (_dom, o) {
+                if (!input.isText(_dom)) return false;
+                o = $.extend({
+                    isFuture: false,
+                    compareTo: new Date(),
+                    warning: null
+                }, o);
+                type = _dom.value.length > 10 ? "dt" : "d";
+                var dif = (parser(_dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
+                if (error) return fnShowTooltip(_dom, _language.dateFormatError);
+                if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _language.dateIsLesser);
+                if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _language.dateIsGreater);
+                return true;
+            };
+        }());
         //-----------------------------------
         // Displays a tooltip next to DOM element
         function fnShowTooltip(_dom, _msg, _pos) {
@@ -758,6 +770,7 @@ jsu.wrapper = "body"; //#main-section
 
         //-----------------------------------
         // Sets the jquery objects in the center of screen
+        // See css:calc [http://jsfiddle.net/apaul34208/e4y6F]
         $.fn.fnCenter = function(o) {
             o = $.extend({}, o);
             if (o.at) {
@@ -1155,11 +1168,11 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         /* PUBLIC API */
         //-----------------------------------
-        jherax.bool = bool;
+        jherax.bool = bool; //undocumented
         jherax.browser = browser;
         jherax.inputType = input;
         jherax.handlerExist = handlerExist;
-        jherax.nsEvents = nsEvents;
+        jherax.nsEvents = nsEvents; //undocumented
         jherax.isDOM = isDOM;
         jherax.isFunction = isFunction;
         jherax.fnStringify = fnStringify;
@@ -1168,7 +1181,7 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnEscapeRegExp = fnEscapeRegExp;
         jherax.fnGetQueryToString = fnGetQueryToString;
         jherax.fnGetQueryToJSON = fnGetQueryToJSON;
-        jherax.fnGetDataToJSON = fnGetDataToJSON;
+        jherax.fnGetDataToJSON = fnGetDataToJSON; //undocumented
         jherax.fnCloneObject = fnCloneObject;
         jherax.fnGetDate = fnGetDate;
         jherax.fnDateFromISO8601 = fnDateFromISO8601;
