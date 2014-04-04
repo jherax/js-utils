@@ -298,7 +298,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 ### fnAddScript *(path, before)*
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that component.<br>
 **Returns** `undefined` this method returns nothing.
-* **path:** `String` source of the script to be added. It can also be a `JSON` object with a set of attributes for *script* tag: `{ src: String, async: Boolean, defer: Boolean, charset: String, before: String }`
+* **path:** `String` source of the script to be added. It can also be a `JSON` object with a set of attributes for *[script tag](http://www.quackit.com/html_5/tags/html_script_tag.cfm):* `{ src: String, async: Boolean, defer: Boolean, charset: String }`<br>We can also specify other properties like `{ execute: Bolean, before: String }` which dictate whether to run the script once loaded, or indicate where to insert it (see the *before* parameter).
 * **before:** `String` part of `src` attribute of the element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
 
 ```javascript
@@ -309,13 +309,12 @@ Dynamically add an external script. This method is useful to inject dependencies
       appendTo: "body",
       width: "360px"
     }, o);
-    //if(!window.kendo) throw new Error("Kendo is not loaded");
-    //Assuming that kendo core is loaded
+    if(!window.kendo)
+      jsu.fnAddScript({ src: '/scripts/kendo/kendo.core.js', execute: true });
+    //After the kendo core is loaded
     if (!kendo.ui.Window)
-      jsu.fnAddScript('/scripts/kendo/kendo.window.min.js');
-    //previous call is the same as:
-    //jsu.fnAddScript('/scripts/kendo/kendo.window.min.js', 'jherax.js');
-    //or you can provide an object with a set of attributes
+      jsu.fnAddScript({ src: '/scripts/kendo/kendo.window.js', execute: true });
+    //Adds another script asynchronously
     jsu.fnAddScript({ src: '/scripts/fullscreen.js', before: 'kendo.core.js', async: true });
     //Implementation...
   }
