@@ -690,8 +690,9 @@ The validation message is displayed with a tooltip. If [jQuery.ui.position](http
 ### fnShowTooltip *(dom, message, position)*
 This function is very useful when you need display a validation message.<br>
 Shows the ***message*** in a tooltip at the right side of the ***dom*** element and focuses that element.<br>
-The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class and has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
-If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
+The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class.<br>
+It has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
+**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
 **Note:** The position for all tooltips can be overridden by specifying the object [`jsu.settings.position`](#jsu.settings.position)<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnShowTooltip](#jqueryfnshowtooltip-message-position).<br>
 **Returns** `Boolean`, always returns `false`
