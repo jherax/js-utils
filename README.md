@@ -323,7 +323,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 ```
 
 ### fnAddScript *(path, before)*
-Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that component.<br>
+Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that&nbsp;component.<br>
 **Returns** `undefined` this method returns nothing.
 * **path:** `String` source of the script to be added. It can also be a `JSON` object with a set of attributes for *[script tag](http://www.quackit.com/html_5/tags/html_script_tag.cfm):* `{ src: String, async: Boolean, defer: Boolean, charset: String }`, we can also specify other properties like `{ execute: Bolean, before: String }` which dictate whether to run the script once loaded, or indicate where to insert it (see the *before* parameter).
 * **before:** `String` part of `src` attribute of the element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
@@ -351,7 +351,7 @@ Dynamically add an external script. This method is useful to inject dependencies
 Dynamically add an external stylesheet. This method is useful to inject a cascading style sheet resource from an external file, in case that you use some plugins requiring specific css and you don't want to include them inside your main stylesheet.<br>
 **Returns** `undefined` this method returns nothing.
 * **path:** `String` source of the stylesheet to be added
-* **before:** `String` part of `href` attribute of the element that identifies where the resource will be added. This parameter is optional and if it is not specified, the new stylesheet will be appended to `<head>`
+* **before:** `String` part of `href` attribute of the element that identifies where the resource will be added. This&nbsp;parameter is optional and if it is not specified, the new stylesheet will be appended to `<head>`
 
 ```javascript
   (function(){
@@ -394,7 +394,7 @@ Gets the value of a specific parameter in the querystring (search in the address
 
 ### fnGetQueryToJSON *(query)*
 Gets the querystring from address bar and is returned as a JSON object.<br>
-**Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will be retrieved in a JSON object.<br>
+**Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will&nbsp;be&nbsp;retrieved in a JSON object.<br>
 **Returns** `Object` in JSON notation.
 * **query:** `String` with name of the parameter to search for.
 
@@ -438,7 +438,7 @@ This could be useful, for example, if you need preserve a model object.<br>
 
 ### fnGetDate *(options)*
 Gets the string representation of the specified date according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-**Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the *value* attribute must be a valid date-time as defined in [RFC 3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
+**Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the *value* attribute must be a valid date-time as defined in [RFC&nbsp;3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
 **Returns** `Object`
 * **options:** `Object` Optional. If not provided, the current date and time is returned. If you pass an argument, you can specify some of the following options:
 
@@ -587,7 +587,7 @@ Sets the cursor ***position*** in the ***dom*** element.<br>
 ```
 
 ### fnCapitalize *(object, type)*
-Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
+Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to transform.<br>
 **Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to&nbsp; lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnCapitalize](#jqueryfncapitalize-type).<br>
@@ -672,7 +672,7 @@ Validates the format, depending on ***type*** supplied. Date validations are run
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the entry `DOM` element has the date format for the `value` property.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extended method for built-in jQuery.position is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by&nbsp;jQuery.ui.position, otherwise an extended method for built-in jQuery.position is used.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidDate](#jqueryfnisvaliddate-options).<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
@@ -719,13 +719,13 @@ This function is very useful when you need display a validation message.<br>
 It shows the ***message*** in a tooltip at the right side of ***dom*** and focuses that element.<br>
 The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class.<br>
 It has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
-**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extended method for built-in jQuery.position is used.<br>
+**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in jQuery.position is used.<br>
 **Note:** The position for all tooltips can be overridden by specifying the object [`jsu.settings.position`](#jsusettings)<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnShowTooltip](#jqueryfnshowtooltip-message-position).<br>
 **Returns** `Boolean`, always returns `false`
 * **message:** `String` with the message to display
 * **dom:** `DOM` element to where the tooltip is positioned
-* **position** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and have the following [properties](#jsusettings):
+* **position** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and&nbsp;have the following [properties](#jsusettings):
 
 ```javascript
 {
@@ -867,7 +867,7 @@ It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [c
 
 ### jQuery.fnCapitalize *(type)*
 This is the jQuery extension for [fnCapitalize](#fncapitalize-object-type) function.<br>
-Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
+Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to&nbsp; lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** The text is transformed when the `blur` event occurs.<br>
 **Returns** `jQuery`
@@ -981,7 +981,7 @@ Date validations are performed according to [regional setting](#jsuregional).<br
 This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options).<br>
 Evaluates whether the first element in the collection has the `value` with date format.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by&nbsp;jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
 **Returns** `jQuery`
