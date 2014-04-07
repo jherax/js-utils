@@ -161,7 +161,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [fnNumericFormat](#fnnumericformat-object)
 * [fnIsValidFormat](#fnisvalidformat-object-type)
 * [fnIsValidDate](#fnisvaliddate-dom-options)
-* [fnShowTooltip](#fnshowtooltip-dom-message)
+* [fnShowTooltip](#fnshowtooltip-dom-message-position)
 * [fnShowDialog](#fnshowdialog-options)
 * [fnSetFocus](#fnsetfocus-)
 * [fnLoading](#fnloading-options)
@@ -179,8 +179,8 @@ If you want to provide additional languages to other plugins, you can pass a fun
 * [$.fnIsValidFormat](#jqueryfnisvalidformat-type)
 * [$.fnIsValidDate](#jqueryfnisvaliddate-options)
 * [$.fnEasyValidate](#jqueryfneasyvalidate-options)
+* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)
 
-<!---* [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)-->
 <!---* [$.fnConfirm](#jqueryfnconfirm-options)-->
 
 Usage
@@ -658,6 +658,7 @@ The validation message is displayed with a tooltip. If [jQuery.ui.position](http
   compareTo: Date|String //date against which to compare the dom value (Default: new Date)
   isFuture: Boolean //does entry date must be greater than [compareTo] (Default: false)
   warning: String //message indicating that entry date did not meet the requirements
+  position: Object //tooltip position { at, my, collision } (Default: see fnShowTooltip)
 }
 ```
 ```javascript
@@ -686,20 +687,48 @@ The validation message is displayed with a tooltip. If [jQuery.ui.position](http
   });
 ```
 
-### fnShowTooltip *(dom, message)*
-Shows a tooltip ***message*** at the right side of the ***dom*** element and focuses that element.<br>
-This feature is very useful when you need to display a validation message.<br>
-It has a dependency on [jQuery.UI][jQuery.ui] for positioning.<br>
-Also has a [css class][jherax.css] named `.vld-tooltip`<br>
+### fnShowTooltip *(dom, message, position)*
+This function is very useful when you need display a validation message.<br>
+Shows the ***message*** in a tooltip at the right side of the ***dom*** element and focuses that element.<br>
+The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class and has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
+If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
+**Note:** The position for all tooltips can be overridden by specifying the object [`jsu.settings.position`](#jsu.settings.position)<br>
+**Note:** You can use this function as a jQuery extension, see [jQuery.fnShowTooltip](#jqueryfnshowtooltip-message-position).<br>
 **Returns** `Boolean`, always returns `false`
-* **message:** `String` to display
-* **dom:** `DOM` element
+* **message:** `String` with the message to display
+* **dom:** `DOM` element to where the tooltip is positioned
+* **position** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and have the following properties:
 
 ```javascript
-  var _email = document.getElementById("txtEmail");
-  if (!jsu.fnIsValidFormat(_email, "email")) {
-    return jsu.fnShowTooltip(_email, "The email address is not valid");
-  }
+{
+  at: String. Default "right center". //Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment.
+  my: String. Default "left+6 center". //Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment.
+  collision: String. Default "flipfit". //Only works when jQuery.ui.position is available.
+}
+```
+
+```javascript
+  (function() {
+    //configure the global language setting
+    jsu.regional.set(jsu.regional.english);
+  
+    var email = $("#txtEmail").get(0);
+    var admission = $("#txtDate").get(0);
+    
+    if (!jsu.fnIsValidFormat(email, "email")) {
+      // Displays the tooltip at the default position
+      return jsu.fnShowTooltip(email, "The email address is not valid");
+    }
+    if (!jsu.fnIsValidFormat(admission, "d")) {
+      // Displays the tooltip at the specified position
+      return jsu.fnShowTooltip(
+        admission,
+        "The admission date is not valid", {
+            at: "left bottom",
+            my: "left+2 top+5"
+        });
+    }
+  }());
 ```
 
 ### fnShowDialog *(options)*
