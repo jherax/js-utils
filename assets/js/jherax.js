@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.4.6
+//  Version: 2.5.6
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.4.6",
+    version: "2.5.6",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -166,6 +166,13 @@ jsu.wrapper = "body"; //#main-section
     // Create the namespace for languages
 
     //-----------------------------------
+    // We provide an object to override default settings
+    (function(jherax, $, undefined) {
+        jherax.position = null;
+        // { at: null, my: null, collision: null };
+    })(jsu.createNS("jsu.settings"), jQuery);
+
+    //-----------------------------------
     // Immediately-invoked Function Expressions (IIFE)
     // We pass the namespace as an argument to a self-invoking function.
     // jherax is the local namespace context, and $ is the jQuery object
@@ -276,8 +283,15 @@ jsu.wrapper = "body"; //#main-section
                 async: false,
                 defer: false,
                 charset: null,
+                execute: false,
                 before: before || "jherax.js"
             }, $.isPlainObject(path) ? path : { src: path });
+            if (o.execute) {
+                $.ajaxSetup({ async: false });
+                return $.getScript(o.src, function () {
+                    $.ajaxSetup({ async: true });
+                });
+            }
             before = new RegExp(fnEscapeRegExp(o.before));
             var js = document.createElement('script');
             js.type = 'text/javascript';
@@ -576,11 +590,16 @@ jsu.wrapper = "body"; //#main-section
         // Evaluates whether the input value is a date or not.
         // The validation result will be shown in a tooltip
         var fnIsValidDate = (function() {
-            var error = false, type = "d";
+            var error = false;
             var parser = function(date) {
                 if (date instanceof Date) return date;
-                if (typeof date !== "string") return new Date();
-                if (!fnIsValidFormat(date, type)) { error = true; return new Date(); }
+                if (typeof date !== "string") {
+                    if (+date) return new Date(+date);
+                    return new Date();
+                }
+                var type = date.length > 10 ? "dt" : "d";
+                error = error || !fnIsValidFormat(date, type);
+                if (error) return new Date();
                 var d = date.split(/\D/); date = "y/M/d";
                 var p = _language.dateFormat.split(/[^yMd]/);
                 for (var x = 0; x < p.length; x++) {
@@ -596,35 +615,38 @@ jsu.wrapper = "body"; //#main-section
                 o = $.extend({
                     isFuture: false,
                     compareTo: new Date(),
-                    warning: null
+                    warning: null,
+                    position: null
                 }, o);
-                type = _dom.value.length > 10 ? "dt" : "d";
+                error = false;
                 var dif = (parser(_dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
                 if (error) return fnShowTooltip(_dom, _language.dateFormatError);
-                if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _language.dateIsLesser);
-                if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _language.dateIsGreater);
+                if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _language.dateIsLesser, o.position);
+                if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _language.dateIsGreater, o.position);
                 return true;
             };
         }());
+        //-----------------------------------
+        // Delegates the blur event for removing tooltip
+        $(document).on(nsEvents("blur", "tooltip"), "[data-role=tooltip]", function() {
+            $(".vld-tooltip").remove();
+        });
         //-----------------------------------
         // Displays a tooltip next to DOM element
         function fnShowTooltip(_dom, _msg, _pos) {
             if (isDOM(_dom)) _dom = $(_dom);
             _pos = $.extend({
                 at: "right center",
-                my: "left+6 center"
-            }, _pos);
-            // Checks if the event handler was defined previously
-            var defined = handlerExist(_dom, "blur", "fnShowTooltip");
-            // Creates the event handler to manage the "blur" event on the current element
-            !defined && _dom.on(nsEvents("blur", "fnShowTooltip"), { handler: "fnShowTooltip" },
-                function() { $(".vld-tooltip").remove(); });
+                my: "left+6 center",
+                collision: "flipfit"
+            }, jsu.settings.position, _pos);
+            _dom.attr("data-role", "tooltip").trigger(nsEvents("blur", "tooltip"));
             var vld = $('<span class="vld-tooltip">' + _msg + '</span>');
             vld.appendTo(jsu.wrapper).position({
                 of: _dom,
                 at: _pos.at,
                 my: _pos.my,
-                collision: "flipfit"
+                collision: _pos.collision
             }).hide().fadeIn(400);
             _dom.focus();
             return false;
@@ -795,7 +817,11 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Limits the max length in the input:text
         $.fn.fnMaxLength = function(length, o) {
-            o = $.extend({}, o);
+            o = $.extend({
+                at: "right bottom",
+                my: "right top+6",
+                collision: "flipfit"
+            }, jsu.settings.position, o);
             return this.each(function(i, dom) {
                 var count = "Max: " + length;
                 var vld = '#max' + dom.id;
@@ -816,9 +842,9 @@ jsu.wrapper = "body"; //#main-section
                         $('<span class="vld-tooltip" id="max' + dom.id + '">')
                         .text(count).appendTo(jsu.wrapper).position({
                             of: dom,
-                            at: o.at || "right bottom",
-                            my: o.my || "right top+6",
-                            collision: o.collision || "flipfit"
+                            at: o.at,
+                            my: o.my,
+                            collision: o.collision
                         }).hide().fadeIn(400);
                     }
                 });
@@ -969,19 +995,21 @@ jsu.wrapper = "body"; //#main-section
                     of: dom,
                     at: pos.at,
                     my: pos.my,
-                    collision: "flipfit"
+                    collision: pos.collision
                 }).hide().fadeIn(400);
                 dom.focus();
             };
             $.fn.fnEasyValidate = function(o) {
+                var position = $.extend({
+                    at: "right center",
+                    my: "left+6 center",
+                    collision: "flipfit"
+                }, jsu.settings.position);
                 var d = $.extend({
                     fnValidator: null,
                     firstItemInvalid: true,
                     requiredForm: false,
-                    position: {
-                        at: "right center",
-                        my: "left+6 center"
-                    }
+                    position: position
                 }, o);
                 var fnValidateFirstItem = function(dom) {
                     if (dom.length === 0) return true;
@@ -1197,7 +1225,6 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
         jherax.fnSetFocus = fnSetFocus;
-
     })(jsu, jQuery);
     // Set default namespace
 })();
