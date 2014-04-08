@@ -720,12 +720,12 @@ It shows the ***message*** in a tooltip at the right side of ***dom*** and focus
 The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class.<br>
 It has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
 **Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in jQuery.position is used.<br>
-**Note:** The position for all tooltips can be overridden by specifying the object [`jsu.settings.position`](#jsusettings)<br>
+**Note:** By specifying [`jsu.settings.position`](#jsusettings) you can override the position for all tooltips.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnShowTooltip](#jqueryfnshowtooltip-message-position).<br>
 **Returns** `Boolean`, always returns `false`
-* **message:** `String` with the message to display
 * **dom:** `DOM` element to where the tooltip is positioned
-* **position** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and&nbsp;have the following [properties](#jsusettings):
+* **message:** `String` with the message to display
+* **position:** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and&nbsp;have the following [properties](#jsusettings):
 
 ```javascript
 {
@@ -736,7 +736,7 @@ It has the following `DOM` structure: `<span class="vld-tooltip"> your message <
 ```
 
 ```javascript
-  (function() {
+  $(function() {
     // Configure the global language setting
     jsu.regional.set(jsu.regional.english);
   
@@ -756,7 +756,7 @@ It has the following `DOM` structure: `<span class="vld-tooltip"> your message <
             my: "left+2 top+5"
         });
     }
-  }());
+  });
 ```
 Sets the default setting for all functions showing [tooltips](#jsusettings)
 ```javascript
@@ -771,13 +771,13 @@ Sets the default setting for all functions showing [tooltips](#jsusettings)
   $(function() {
     // Validates some fields
     if (!$("#txtBirthday").fnIsValidDate({
-        isFuture: true,
-        warning: "Your next birthday can't be lesser than today"
+        warning: "Your next birthday can't be lesser than today",
+        isFuture: true
     })) return false;
     
     var pass = $("#txtPassword");
     if (!pass.fnIsValidFormat("pass")) {
-      return pass.fnShowTooltip("The password did not meet the requirements");
+      return !pass.fnShowTooltip("The password did not meet the requirements");
     }
   });
 ```
@@ -954,10 +954,10 @@ To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-
 ```
 
 ### jQuery.fnIsValidFormat *(type)*
-This is the jQuery extension for [fnIsValidFormat](#fnisvalidformat-object-type).<br>
+This is the jQuery extension for [fnIsValidFormat](#fnisvalidformat-object-type) function.<br>
 Validates the format of `value`, depending on ***type*** supplied.<br>
 Date validations are performed according to [regional setting](#jsuregional).<br>
-**Returns** `jQuery`
+**Returns** `Boolean`
 * **type:** `String` specifying the type of validation:
   * `"t"` validates the time format ([timeFormat](#jsuregional))
   * `"d"` validates the date format ([dateFormat](#jsuregional))
@@ -978,13 +978,13 @@ Date validations are performed according to [regional setting](#jsuregional).<br
 ```
 
 ### jQuery.fnIsValidDate *(options)*
-This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options).<br>
+This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options) function.<br>
 Evaluates whether the first element in the collection has the `value` with date format.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
 The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by&nbsp;jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
-**Returns** `jQuery`
+**Returns** `Boolean`
 * **options:** `Object` that provides the following settings:
 
 ```javascript
@@ -1056,6 +1056,60 @@ $(document).on("ready", function () {
   	}
   });
 });
+```
+
+### jQuery.fnShowTooltip *(message, position)*
+This is the jQuery extension for [fnShowTooltip](#fnshowtooltip-dom-message-position) function.<br>
+This function is very useful when you need display a validation message.<br>
+A tooltip is shown at the right side of current element, and set focus on that element.<br>
+The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class.<br>
+It has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
+**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in jQuery.position is used.<br>
+**Note:** By specifying [`jsu.settings.position`](#jsusettings) you can override the position for all tooltips.<br>
+**Returns** `jQuery`
+* **message:** `String` with the message to display
+* **position:** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and&nbsp;have the following [properties](#jsusettings):
+
+```javascript
+{
+  at: String. Default "right center". //Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment.
+  my: String. Default "left+6 center". //Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment.
+  collision: String. Default "flipfit". //Only works when jQuery.ui.position is available.
+}
+```
+
+```javascript
+  (function() {
+    // Configure the global language setting
+    jsu.regional.set(jsu.regional.english);
+    // Sets default setting for tooltips
+    jsu.settings.position = {
+      at: "left bottom",
+      my: "left+2 top+5"
+    };
+  }());
+
+  $(function() {
+    var email = $("#txtEmail");
+    var admission = $("#txtDate");
+    
+    if (!email.fnIsValidFormat("email")) {
+      // Displays the tooltip at the default position
+      return !email.fnShowTooltip("The email address is not valid");
+    }
+    if (!admission.fnIsValidFormat("d")) {
+      // Displays the tooltip at the specified position
+      return !admission.fnShowTooltip(
+        "The admission date is not valid", {
+            at: "left+2 top-5",
+            my: "left bottom"
+        });
+    }
+    if (!$("#txtBirthday").fnIsValidDate({
+        warning: "Your next birthday can't be lesser than today",
+        isFuture: true
+    })) return false;
+  });
 ```
 
 ### jQuery.fnConfirm *(options)*
