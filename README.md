@@ -324,10 +324,12 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 
 ### fnAddScript *(path, before)*
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that&nbsp;component.<br>
-**Returns** `undefined` this method returns nothing.
+**Returns** `undefined;` but if you set the property `{ execute: true }` then a [`jqXHR`](http://api.jquery.com/Types/#jqXHR) object is returned.
 * **path:** `String` source of the script to be added. It can also be an `Object` with a set of attributes for *[script&nbsp;tag](http://www.quackit.com/html_5/tags/html_script_tag.cfm):* `{ src: String, async: Boolean, defer: Boolean, charset: String }`<br>
-Other property you can set is `{ execute: Bolean }` wich loads a JavaScript file from the server using a&nbsp;GET&nbsp;HTTP request, and then execute it in the global context. The property&nbsp;`{ before: String }` indicates where to insert the script (see ***before*** parameter).
-* **before:** `String` part of `src` attribute of the element that identifies where the script will be added. This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
+Other property you can set is `{ execute: Bolean }` wich loads a JavaScript file from the server using&nbsp;a&nbsp;GET&nbsp;HTTP request, and then execute it in the global context through [jQuery.getScript()](https://api.jquery.com/jQuery.getScript/).<br>
+The property `{ before: String }` indicates where to insert the script (see ***before*** parameter).
+* **before:** `String` part of `src` attribute of the element that identifies where the script will be added.<br>
+This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
 
 ```javascript
   function fnShowWindow(o) {
@@ -339,12 +341,12 @@ Other property you can set is `{ execute: Bolean }` wich loads a JavaScript file
     }, o);
     if(!window.kendo)
       jsu.fnAddScript({ src: '/scripts/kendo/kendo.core.js', execute: true });
-    //After the kendo core is loaded
+    //after the kendo core is loaded
     if (!kendo.ui.Window)
       jsu.fnAddScript({ src: '/scripts/kendo/kendo.window.js', execute: true });
-    //Adds another script asynchronously
+    //adds another script asynchronously
     jsu.fnAddScript({ src: '/scripts/fullscreen.js', before: 'kendo.core.js', async: true });
-    //Implementation...
+    //implementation...
   }
 ```
 
