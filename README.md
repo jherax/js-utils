@@ -440,7 +440,7 @@ This could be useful, for example, if you need preserve a model object.<br>
 ```
 
 ### fnGetDate *(options)*
-Gets the string representation of the specified date according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
+Gets string representation of the specified date according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
 **Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the *value* attribute must be a valid date-time as defined in [RFC&nbsp;3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
 **Returns** `Object`
 * **options:** `Object` Optional. If not provided, the current date and time is returned. If you pass an argument, you can specify some of the following options:
@@ -654,7 +654,7 @@ Validates the format, depending on ***type*** supplied. Date validations are run
   * `"t"` validates the time format ([timeFormat](#jsuregional))
   * `"d"` validates the date format ([dateFormat](#jsuregional))
   * `"dt"` validates full date format ([dateFormat + timeFormat](#jsuregional))
-  * `"pass"` validates the password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
+  * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address
   * `"lat"` validates the latitude
   * `"lon"` validates the longitude
@@ -732,9 +732,9 @@ It has the following `DOM` structure: `<span class="vld-tooltip"> your message <
 
 ```javascript
 {
-  at: String. Default "right center". //Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment.
-  my: String. Default "left+6 center". //Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment.
-  collision: String. Default "flipfit". //Only works when jQuery.ui.position is available.
+  at: String [Default: "right center"] //defines which position on the target element to align the positioned element against: "horizontal vertical" alignment.
+  my: String [Default: "left+6 center"] //defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment.
+  collision: String [Default: "flipfit"] //only works when jQuery.ui.position is available.
 }
 ```
 
@@ -787,15 +787,64 @@ Sets the default setting for all functions showing [tooltips](#jsusettings)
 
 ### fnShowDialog *(options)*
 This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements. 
-You can display text as html by passing the string to `content` property. Generated HTML is appended by default 
+You can create dynamic html by passing the html string to the `content` property. Generated HTML is appended by default 
 to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into a specific element,
-then you can provide the wrapper selector to `appendTo` property.<br>
-There are some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) used to display an icon to the left side of text, only if `content` parameter is a string.<br>
-Also you can display existing HTML elements by passing the *DOM* or *jQuery* object to the `content` property.<br>
-The `closeOnPageUnload` option determines whether dialog should be closed on `window.beforeunload` event.<br>
-**Note:** It has a dependency on [jQuery.UI][jQuery.ui] and also has some [css rules][jherax.css].<br>
+then you can set the `appendTo` property with the selector for the container element.
+
+Some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) are used to display an icon to the left of text, but only works when `content` is plain text.<br>
+Also you can display existing HTML elements by passing the [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) object to the `content` property.
+
+**Note:** By default, it has a dependency on [jQuery.ui.dialog](http://api.jqueryui.com/dialog/) and has some [css overrides][jherax.css], but you can redefine the functionality by providing a function reference to the `jsu.fnShowDialog.source` property, this way the dependency to *jQuery.ui.dialog* is removed. For consistency, the supplied function should have the same signature as the original fnShowDialog function (but is not mandatory).<br>
 **Returns** `jQuery` dialog element
-* options: Object that provides the following properties: //TODO
+* **options:** `Object` that provides the following settings:
+  * **appendTo:** `String`. Specifies the selector to where the dialog window should be appended; default value is [`jsu.wrapper`](#getting-started)
+  * **title:** `String`. Title of the dialog window; default value is [`jsu.regional.<language>.dialogTitle`](#jsuregional)
+  * **content:** `String` or `DOM` or `jQuery`. The content to display in the dialog window. If content is plain&nbsp;text, you can add some icons, or else you can create dynamic html.
+  * **icon:** `String`. Name of [css class][jherax.css] to display to the left of text, if content is plain text. Available names are: *"info", "alert", "success", "cancel", "error".* You can also add new icons.
+  * **width:** `Number` indicating the width of the dialog window, in pixels.
+  * **height:** `Number` indicating the height of the dialog window, in pixels.
+  * **closeOnPageUnload:** `Boolean`. Specifies whether the dialog should close when the event `beforeunload` is raised. This feature is useful if you are sending a form in the document.
+  * **buttons:** `Object` or `Array`. Specifies which buttons should be displayed on the dialog window. The context of the callback is the dialog element; if you need access to the button, it is available as&nbsp;`event.target` object.
+    * `Object:` The keys are the button labels and the values are the callbacks for when the associated button is clicked.
+    * `Array:` Each element of the array must be an object defining the attributes, properties, and event handlers to set on the button.
+
+```html
+
+```
+```javascript
+  (function() {
+    //sets the default container
+    jsu.wrapper = "#page-wrapper";
+    //configure the global language setting
+    jsu.regional.english.dialogTitle = "System message";
+    jsu.regional.set(jsu.regional.english);
+  }());
+  
+  //document.ready
+  $(function() {
+    //simple dialog window
+    jsu.fnShowDialog({
+      icon: "info",
+      content: "This is the default dialog which is useful for displaying information."
+    });
+    //modal confirmation window
+    jsu.fnShowDialog({
+      icon: "alert",
+      title: "Delete selected elements?",
+      content: "These items will be permanently deleted<br>and cannot be recovered. Are you sure?",
+      width: 300,
+      buttons: {
+        "Delete": function() {
+          $(this).dialog("close");
+        },
+        "Cancel": function() {
+          $(this).dialog("close");
+        }
+      }
+    });
+    //jsu.fnShowDialog({ appendTo: "#page-wrapper", content: $("#lista"), icon:"success" });
+  });
+```
 
 ### fnSetFocus ()
 Sets the focus on all `input:text` and `textarea` elements, except those that have `.no-auto-focus` class.<br>
@@ -965,7 +1014,7 @@ Date validations are performed according to [regional setting](#jsuregional).<br
   * `"t"` validates the time format ([timeFormat](#jsuregional))
   * `"d"` validates the date format ([dateFormat](#jsuregional))
   * `"dt"` validates full date format ([dateFormat + timeFormat](#jsuregional))
-  * `"pass"` validates the password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
+  * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address
   * `"lat"` validates the latitude
   * `"lon"` validates the longitude
