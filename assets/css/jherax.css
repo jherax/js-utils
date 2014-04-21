@@ -8,7 +8,7 @@ img { border: 0 none; }
 }
 
 /* PAGE VIEW */
-#main-section { height: auto; min-height: 100%; overflow: auto; }
+#main-section { margin: 0; height: auto; min-height: 100%; overflow: auto; }
 #page-wrapper { margin: 0; padding: 60px 30px; /* must be grater than footer height */ }
 .footer { position: relative; bottom: 0; clear: both; height: 32px; margin-top: -35px; /* footer height + border */ border-top: 3px solid #E42639; line-height: 32px; text-align: center; background-color: #F2F2F2; }
 
@@ -23,10 +23,21 @@ img { border: 0 none; }
 .gv-link:hover, .gv-link > a:hover { color: #FF7200; cursor: pointer; }
 .text-ellipsis { width: 210px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* VALIDATOR TOOLTIP */
-.vld-tooltip { display: inline-block; z-index: 2999; white-space: nowrap; padding: 4px 7px; background: #f5f6f6; background: -moz-linear-gradient(top, #f5f6f6 0%, #e3e4ea 50%, #f5f6f6 100%); background: -webkit-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -o-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -ms-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: linear-gradient(to bottom, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); text-align: left; color: #555; font-size: 11px; box-shadow: 0 0 6px rgba(0,0,0,0.7); border: 1px solid #fff; border-radius: 4px; }
+/* TOOLTIP */
+/* .vld-tooltip { display: inline-block; z-index: 2999; white-space: nowrap; padding: 4px 7px; text-align: left; color: #555; font-size: 11px; box-shadow: 0 0 6px rgba(0,0,0,0.7); border: 1px solid #fff; border-radius: 4px; background: #f5f6f6; background: -moz-linear-gradient(top, #f5f6f6 0%, #e3e4ea 50%, #f5f6f6 100%); background: -webkit-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -o-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -ms-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: linear-gradient(to bottom, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); } */
+.vld-tooltip.arrow-left:before { content: ""; position: absolute; width: 0; height: 0; right: 100%; top: 5px; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-right: 9px solid rgba(0,88,109,0.9); }
+.vld-tooltip.arrow-right:before { content: ""; position: absolute; width: 0; height: 0; left: 100%; top: 5px; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 9px solid rgba(0,88,109,0.9); }
+.vld-tooltip.arrow-top:before { content: ""; position: absolute; width: 0; height: 0; bottom: 100%; left: 10px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid rgba(0,59,77,0.9); }
+.vld-tooltip.arrow-bottom:before { content: ""; position: absolute; width: 0; height: 0; top: 100%; left: 10px; border-left: 0 none; border-right: 11px solid transparent; border-top: 8px solid rgba(0,90,112,0.67); }
+.vld-tooltip { position: relative; display: inline-block; z-index: 2999; white-space: nowrap; padding: 4px 7px; text-align: left; color: #eee; font-family: sans-serif; font-size: 11px; font-style: italic; box-shadow: 0 0 6px rgba(0,0,0,0.7); border: 1px solid #fff; border-radius: 4px; background: #005A70;
+    background: -moz-linear-gradient(top, rgba(0,59,77,0.9) 0%, rgba(0,90,112,0.67) 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top, rgba(0,59,77,0.9) 0%,rgba(0,90,112,0.67) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(0,59,77,0.9) 0%,rgba(0,90,112,0.67) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, rgba(0,59,77,0.9) 0%,rgba(0,90,112,0.67) 100%); /* IE10+ */
+    background: linear-gradient(to bottom, rgba(0,59,77,0.9) 0%,rgba(0,90,112,0.67) 100%); /* W3C */
+}
 
-/* BACKGROUND LOADING */
+/* LOADING & BACKGROUND */
 .bg-fixed { z-index: 2999; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: #000; }
 .bg-opacity { opacity: 0.36; -moz-opacity: 0.36; -khtml-opacity: 0.36; filter: alpha(opacity=36); }
 #floatingBarsG { position: relative; display: inline-block; z-index: 3000; width: 32px; height: 40px; }
@@ -65,16 +76,7 @@ img { border: 0 none; }
     100% { background-color: #FFFFFF; }
 }
 
-/* GRIDVIEW */
-.gridDialog th { padding: 6px 8px; }
-.gridDialog td { padding: 3px 4px; }
-.gridview-parent { position: relative; clear: both; }
-.gridview-parent > div { clear: both; /* fixes mozilla issue with the div containing gridview */ }
-
-/* FLOAT BUTTON FOR GRIDVIEW */
-.add-item { position: relative; float: right; right: 5px; top: 20px; }
-
-/* PRETTIFY TABLE */
+/* PRETTY TABLE */
 .pretty-table { margin: 12px 6px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #666; text-align: left; text-shadow: 1px 1px 0px #fff; box-shadow: 0 1px 2px #d1d1d1; background: #eaebec; border-collapse: separate !important; border: 1px solid #ccc; border-radius: 3px; }
 .pretty-table td, .inner-table th { border: none; }
 .pretty-table tr:first-child th { padding: 12px 6px; text-align: center; border-top: 1px solid #fafafa; border-bottom: 1px solid #e0e0e0; background: #ededed; background: -moz-linear-gradient(top, #ededed 0%, #ebebeb 100%); background: -webkit-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: -o-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: -ms-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: linear-gradient(to bottom, #ededed 0%,#ebebeb 100%); }
@@ -90,9 +92,9 @@ img { border: 0 none; }
 .pretty-table tr:last-child td { border-bottom: 0; }
 .pretty-table tfoot td { border-top: 1px solid #e0e0e0; }
 
-/*--------------------*/
-/* STYLES FOR FACADES */
-/*--------------------*/
+/*-----------------*/
+/* BEGIN OVERRIDES */
+/*-----------------*/
 
 /* JQUERY UI DIALOG */
 #dialog { max-height: 500px; }
@@ -148,3 +150,7 @@ img { border: 0 none; }
 .tabletools-wrapper.tabla .ui-widget-header { background: none; border: none; padding: 5px 0; }
 .tabletools-wrapper.tabla > div.dataTables_wrapper > table.dataTable tr td:first-child { border-left: 1px solid #E0E0E0; }
 .tabletools-wrapper.tabla div.dataTables_scroll table.dataTable tr > *:last-child { border-right: none; }
+
+/*---------------*/
+/* END OVERRIDES */
+/*---------------*/
