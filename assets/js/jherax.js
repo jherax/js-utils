@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.5.6
+//  Version: 2.6.6
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.5.6",
+    version: "2.6.6",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -658,19 +658,25 @@ jsu.wrapper = "body"; //#main-section
                 show: true,
                 hide: false,
                 delay: 2600,
-                at: null
+                of: null
             }, o);
             $("#floatingBarsG,#backBarsG").remove();
-            var target = $(d.at || jsu.wrapper);//.css("overflow", "auto");
+            var target = $(d.of || jsu.wrapper);
             if (d.hide) return true;
             var blockG = [];
             for (var i = 1; i < 9; i++) blockG.push('<div class="blockG"></div>');
             var loading = $('<div id="floatingBarsG">').append(blockG.join(""));
             var overlay = $('<div id="backBarsG" class="bg-fixed bg-opacity">');
-            if (d.at) overlay.css('border-radius', $(d.at).css('border-radius'));
-            //target.css("overflow", "hidden");
+            if (d.of) overlay.css({
+                'border-radius': $(d.of).css('border-radius'),
+                'position': 'absolute',
+                'top': target.position().top,
+                'left': target.position().left,
+                'height': target.outerHeight(),
+                'width': target.outerWidth()
+            });
             overlay.add(loading).appendTo(target).hide().fadeIn(d.delay);
-            loading.fnCenter({ at: d.at });
+            loading.fnCenter({ of: d.of });
             return true;
         }
         //-----------------------------------
@@ -795,11 +801,11 @@ jsu.wrapper = "body"; //#main-section
         // See css:calc [http://jsfiddle.net/apaul34208/e4y6F]
         $.fn.fnCenter = function(o) {
             o = $.extend({}, o);
-            if (o.at) {
+            if (o.of) {
                 return this.position({
                     my: "center",
                     at: "center",
-                    of: o.at
+                    of: o.of
                 });
             } else {
                 return this.each(function(i, dom) {
@@ -1225,6 +1231,7 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
         jherax.fnSetFocus = fnSetFocus;
+
     })(jsu, jQuery);
     // Set default namespace
 })();
