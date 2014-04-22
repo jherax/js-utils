@@ -787,24 +787,23 @@ Sets the default setting for all functions showing [tooltips](#jsusettings)
 
 ### fnShowDialog *(options)*
 This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements. 
-You can create dynamic html by passing the html string to the `content` property. Generated HTML is appended by default 
-to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into a specific element,
-then you can set the `appendTo` property with the selector for the container element.
+You can create dynamic html by passing the html string to the `content` property.<br>
+Generated HTML is appended by default to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into a specific element, then you can set the `appendTo` property with the selector for the container element.
 
 Some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) are used to display an icon to the left of text, but only works when `content` is plain text.<br>
 Also you can display existing HTML elements by passing the [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) object to the `content` property.
 
-**Note:** By default, it has a dependency on [jQuery.ui.dialog](http://api.jqueryui.com/dialog/) and has some [css overrides][jherax.css], but you can redefine the functionality by providing a function reference to the `jsu.fnShowDialog.source` property, this way the dependency to *jQuery.ui.dialog* is removed. For consistency, the supplied function should have the same signature as the original fnShowDialog function (but is not mandatory).<br>
+**Note:** By default, it has a dependency on [jQuery.ui.dialog](http://api.jqueryui.com/dialog/) and has some [css overrides][jherax.css], but you can redefine the&nbsp;functionality by providing a function reference to the `jsu.fnShowDialog.source` property, this way the dependency to *jQuery.ui.dialog* is removed. For consistency, the supplied function should have the same signature as the original fnShowDialog function (but is not mandatory).<br>
 **Returns** `jQuery` dialog element
 * **options:** `Object` that provides the following settings:
-  * **appendTo:** `String`. Specifies the selector to where the dialog window should be appended; default value is [`jsu.wrapper`](#getting-started)
+  * **appendTo:** `String` or `DOM` or `jQuery`. Specifies the element to where the dialog window should&nbsp;be&nbsp;appended; default value is [`jsu.wrapper`](#getting-started)
   * **title:** `String`. Title of the dialog window; default value is [`jsu.regional.<language>.dialogTitle`](#jsuregional)
   * **content:** `String` or `DOM` or `jQuery`. The content to display in the dialog window. If content is plain&nbsp;text, you can add some icons, or else you can create dynamic html.
-  * **icon:** `String`. Name of [css class][jherax.css] to display to the left of text, if content is plain text. Available names are: *"info", "alert", "success", "cancel", "error".* You can also add new icons.
+  * **icon:** `String`. Name of [css class][jherax.css] to display to the left of text, if content is plain text.<br> Available names are: *"info", "alert", "success", "cancel", "error".* You can also add new icons.
   * **width:** `Number` indicating the width of the dialog window, in pixels.
   * **height:** `Number` indicating the height of the dialog window, in pixels.
   * **closeOnPageUnload:** `Boolean`. Specifies whether the dialog should close when the event `beforeunload` is raised. This feature is useful if you are sending a form in the document.
-  * **buttons:** `Object` or `Array`. Specifies which buttons should be displayed on the dialog window. The context of the callback is the dialog element; if you need access to the button, it is available as&nbsp;`event.target` object.
+  * **buttons:** `Object` or `Array`. Specifies which buttons should be displayed on the dialog window. The&nbsp;context of the callback is the dialog element; if you need access to the button, it is available as&nbsp;`event.target` object.
     * `Object:` The keys are the button labels and the values are the callbacks for when the associated button is clicked.
     * `Array:` Each element of the array must be an object defining the attributes, properties, and event handlers to set on the button.
 
@@ -820,14 +819,16 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
     jsu.regional.set(jsu.regional.english);
   }());
   
-  //document.ready
-  $(function() {
-    //simple dialog window
+  //simple dialog window
+  $("#sample-1").on("click", function(){
     jsu.fnShowDialog({
       icon: "info",
       content: "This is the default dialog which is useful for displaying information."
     });
-    //modal confirmation window
+  });
+  
+  //modal confirmation window
+  $("#sample-2").on("click", function(){
     jsu.fnShowDialog({
       icon: "alert",
       title: "Delete selected elements?",
@@ -842,7 +843,15 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
         }
       }
     });
-    //jsu.fnShowDialog({ appendTo: "#page-wrapper", content: $("#lista"), icon:"success" });
+  });
+  
+  //loads an existing element
+  $("#sample-3").on("click", function(){
+    jsu.fnShowDialog({
+      appendTo: "#list-wrapper",
+      content: $("#lista"),
+      icon: "success"
+    });
   });
 ```
 
