@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.6.6
+//  Version: 2.6.7
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.6.6",
+    version: "2.6.7",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -1135,8 +1135,8 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Shows a jquery.ui modal window
         // It also provides a mechanism for redefinition
-        function fnShowDialog(o) {
-            arguments.callee.source = arguments.callee.source || function () {
+        function fnShowDialog(options) {
+            arguments.callee.source = arguments.callee.source || function(o) {
                 if (!jQuery.ui || !jQuery.ui.dialog)
                     throw new CustomException("jQuery.ui.dialog is required");
                 $('#dialog,.ui-widget-overlay').remove();
@@ -1166,7 +1166,7 @@ jsu.wrapper = "body"; //#main-section
                 if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //scrollbar
                 $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
                 // Determines whether the dialog should be closed when the page is unloaded
-                if (d.closeOnPageUnload && !($._data(window, 'events') || {}).beforeunload)
+                if (d.closeOnPageUnload === true && !($._data(window, 'events') || {}).beforeunload)
                     $(window).on(nsEvents('beforeunload', 'fnShowDialog'), function () { $('#dialog').dialog("close"); });
                 // Check the version of jquery.ui dependency
                 var v110 = (/^1\.1[0-9]/).test(jQuery.ui.version);
@@ -1196,7 +1196,8 @@ jsu.wrapper = "body"; //#main-section
                 });
                 return _dialog;
             }; //end fnShowDialog.source
-            return (fnShowDialog = arguments.callee.source)(o);
+            fnShowDialog = arguments.callee.source;
+            return fnShowDialog(options);
         }
 
         //-----------------------------------
