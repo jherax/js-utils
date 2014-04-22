@@ -788,7 +788,7 @@ Sets the default setting for all functions showing [tooltips](#jsusettings)
 ### fnShowDialog *(options)*
 This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements. 
 You can create dynamic html by passing the html string to the `content` property.<br>
-Generated HTML is appended by default to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into a specific element, then you can set the `appendTo` property with the selector for the container element.
+Generated HTML is appended by default to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into&nbsp;a specific element, then you can set the `appendTo` property with the selector for the container element.
 
 Some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) are used to display an icon to the left of text, but only works when `content` is plain text.<br>
 Also you can display existing HTML elements by passing the [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) object to the `content` property.
@@ -799,7 +799,7 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   * **appendTo:** `String` or `DOM` or `jQuery`. Specifies the element to where the dialog window should&nbsp;be&nbsp;appended; default value is [`jsu.wrapper`](#getting-started)
   * **title:** `String`. Title of the dialog window; default value is [`jsu.regional.<language>.dialogTitle`](#jsuregional)
   * **content:** `String` or `DOM` or `jQuery`. The content to display in the dialog window. If content is plain&nbsp;text, you can add some icons, or else you can create dynamic html.
-  * **icon:** `String`. Name of [css class][jherax.css] to display to the left of text, if content is plain text.<br> Available names are: *"info", "alert", "success", "cancel", "error".* You can also add new icons.
+  * **icon:** `String`. Name of [css class][jherax.css] to display an [icon](https://dl.dropboxusercontent.com/u/91579606/img.zip) to the left of text, if content is `String`.<br> The available icon names are: *"info", "alert", "success", "cancel", "error".*
   * **width:** `Number` indicating the width of the dialog window, in pixels.
   * **height:** `Number` indicating the height of the dialog window, in pixels.
   * **closeOnPageUnload:** `Boolean`. Specifies whether the dialog should close when the event `beforeunload` is raised. This feature is useful if you are sending a form in the document.
@@ -807,9 +807,6 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
     * `Object:` The keys are the button labels and the values are the callbacks for when the associated button is clicked.
     * `Array:` Each element of the array must be an object defining the attributes, properties, and event handlers to set on the button.
 
-```html
-
-```
 ```javascript
   (function() {
     //sets the default container
@@ -820,7 +817,7 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   }());
   
   //simple dialog window
-  $("#sample-1").on("click", function(){
+  $("#sample-1").on("click", function() {
     jsu.fnShowDialog({
       icon: "info",
       content: "This is the default dialog which is useful for displaying information."
@@ -828,12 +825,12 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   });
   
   //modal confirmation window
-  $("#sample-2").on("click", function(){
+  $("#sample-2").on("click", function() {
     jsu.fnShowDialog({
       icon: "alert",
       title: "Delete selected elements?",
       content: "These items will be permanently deleted<br>and cannot be recovered. Are you sure?",
-      width: 300,
+      width: 310,
       buttons: {
         "Delete": function() {
           $(this).dialog("close");
@@ -845,12 +842,47 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
     });
   });
   
-  //loads an existing element
-  $("#sample-3").on("click", function(){
+  //dialog window with an existing element
+  $("#sample-3").on("click", function() {
     jsu.fnShowDialog({
-      appendTo: "#list-wrapper",
-      content: $("#lista"),
-      icon: "success"
+      appendTo: "#target-wrapper",
+      content: $("#list-view"),
+      closeOnPageUnload: true
+    });
+  });
+```
+Redefine the original function to use kendo.ui instead of jquery.ui
+```javascript
+  // basic implementation of kendo.ui.Window
+  function fnShowWindow(options) {
+    $("#wnd-dialog").remove();
+    //TODO: check for dependencies to prevent code breaks.
+    var wnd = $("<div id='wnd-dialog'>").html(options.content).appendTo(options.appendTo);
+    var dialog = wnd.data("kendoWindow");
+    if (!dialog) {
+        (dialog = wnd.kendoWindow({
+            width: options.width || 360,
+            title: options.title || "",
+            actions: ["Close"],
+            modal: true
+        }).data('kendoWindow')).center();
+    }
+    else dialog.open();
+    return dialog;
+  }
+  
+  (function() {
+    //overrides the original function, and removes the jquery.ui dependency
+    jsu.fnShowDialog.source = fnShowWindow;
+  }());
+  
+  $(function() {
+    //displays the new dialog window
+    jsu.fnShowDialog({
+      title: "System Message",
+      content:
+        '<div class="wnd-icon alert"></div>' + 
+        '<p>Open console to view results » <em>F12</em> or <em>shift + ctrl + i</em></p>'
     });
   });
 ```
