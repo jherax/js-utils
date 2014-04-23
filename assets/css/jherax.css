@@ -97,21 +97,20 @@ img { border: 0 none; }
 /*-----------------*/
 
 /* JQUERY UI DIALOG */
-#dialog { max-height: 500px; }
-.ui-dialog { color: #222; font-size: 11px !important; padding: 0; }
-.ui-dialog-custom { display: table; margin: 0 auto; vertical-align: middle; border-collapse: separate; border-spacing: 2px; box-sizing: content-box; }
-.ui-dialog-custom > p { display: table-cell; padding: 10px 4px; vertical-align: middle; cursor: default; }
-.ui-dialog-custom > div.wnd-icon { display: table-cell; width: 54px; height: 64px; padding: 0!important; }
-.ui-dialog-custom > div.wnd-icon + p { white-space: nowrap; }
-.ui-dialog-custom > div.wnd-icon.info { background: url("assets/img/ico_info.png") no-repeat; background-position: left center; }
-.ui-dialog-custom > div.wnd-icon.alert { background: url("assets/img/ico_alert.png") no-repeat; background-position: left center; }
-.ui-dialog-custom > div.wnd-icon.success { background: url("assets/img/ico_success.png") no-repeat; background-position: left center; }
-.ui-dialog-custom > div.wnd-icon.cancel { background: url("assets/img/ico_cancel.png") no-repeat; background-position: left center; }
-.ui-dialog-custom > div.wnd-icon.error { background: url("assets/img/ico_error.png") no-repeat; background-position: left center; }
+.ui-dialog { padding: 2px; }
+.ui-widget { font-size: 1em; }
+.ui-widget-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+.ui-dialog-custom { display: table; margin: 0 auto; border-collapse: separate; border-spacing: 2px; -moz-box-sizing: border-box; box-sizing: border-box; }
+.ui-dialog-custom .wnd-text { display: table-cell; padding: 10px 4px; vertical-align: middle; cursor: default; }
+.ui-dialog-custom .wnd-icon { display: table-cell; width: 54px; height: 64px; padding: 0; }
+.ui-dialog-custom .wnd-icon.info { background: url("assets/img/ico_info.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.alert { background: url("assets/img/ico_alert.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.success { background: url("assets/img/ico_success.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.cancel { background: url("assets/img/ico_cancel.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.error { background: url("assets/img/ico_error.png") no-repeat; background-position: left center; }
 .ui-dialog-buttonpane button { min-width: 54px; margin: .5em .4em .1em .4em !important; }
 .ui-button-text-only .ui-button-text { padding: .3em .8em; line-height: 1.5em; }
 .ui-button:focus, .ui-button:active { outline: none; }
-.ui-widget-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
 
 /* JQUERY UI DATE-PICKER */
 .ui-datepicker { font-family: Lucida Grande,Lucida Sans,Arial,sans-serif !important; font-size: 11px !important; }
