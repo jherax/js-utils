@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.6.7
+//  Version: 2.6.9
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.6.7",
+    version: "2.6.9",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -28,7 +28,7 @@ jsu.wrapper = "body"; //#main-section
 // We provide encapsulation for global scope
 (function() {
     // Create a custom exception notifier
-    var CustomException = function(message) {
+    var CustomException = function (message) {
         for (var i = 1; i < arguments.length; i++)
             message = message.replace(new RegExp("\\{" + (i - 1) + "}"), arguments[i]);
         this.name = "js-utils exception";
@@ -47,7 +47,7 @@ jsu.wrapper = "body"; //#main-section
         return new F();
     });
     // Create a general purpose namespace method
-    jsu.createNS || (jsu.createNS = function(namespace) {
+    jsu.createNS || (jsu.createNS = function (namespace) {
         var nsparts = namespace.toString().split(".");
         var cparent = window;
         // we want to be able to include or exclude the root namespace so we strip it if it's in the namespace
@@ -73,7 +73,7 @@ jsu.wrapper = "body"; //#main-section
     // Immediately-invoked Function Expressions (IIFE)
     // We pass the namespace as an argument to a self-invoking function.
     // jherax is the local namespace context, and $ is the jQuery object
-    (function(jherax, $) {
+    (function(jherax, $, undefined) {
         //-----------------------------------
         /* PUBLIC API */
         //-----------------------------------
@@ -154,7 +154,7 @@ jsu.wrapper = "body"; //#main-section
         })();
         //-----------------------------------
         // Sets the default language configuration
-        jherax.set = function(obj, fnSetCustom) {
+        jherax.set = function (obj, fnSetCustom) {
             $.extend(jherax.current, obj);
             // This code segment must be called before the plugin initialization
             // You can find more languages: [http://github.com/jquery/jquery-ui/tree/master/ui/i18n]
@@ -185,7 +185,7 @@ jsu.wrapper = "body"; //#main-section
         var _language = Object.create(jsu.regional.current);
         //-----------------------------------
         // Returns the boolean value of the parameter
-        var bool = function(value) {
+        var bool = function (value) {
             return (/true/i).test(value);
         };
         //-----------------------------------
@@ -212,13 +212,13 @@ jsu.wrapper = "body"; //#main-section
         // Determines whether entry parameter is a writable or checkable <input>
         // http://www.quackit.com/html_5/tags/html_input_tag.cfm
         var input = {
-            isText: function(_dom) {
+            isText: function (_dom) {
                 if(!isDOM(_dom)) return false;
                 if ((/textarea/i).test(_dom.nodeName)) return true;
                 var regx = /text|password|file|number|search|tel|url|email|datetime|datetime-local|date|time|month|week/i;
                 return regx.test(_dom.type) && (/input/i).test(_dom.nodeName);
             },
-            isCheck: function(_dom) {
+            isCheck: function (_dom) {
                 if(!isDOM(_dom)) return false;
                 var regx = /checkbox|radio/i;
                 return regx.test(_dom.type) && (/input/i).test(_dom.nodeName);
@@ -226,7 +226,7 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Determines if an event handler was created previously by specifying a namespace
-        var handlerExist = function(dom, eventName, namespace) {
+        var handlerExist = function (dom, eventName, namespace) {
             var handler = ($._data(dom, 'events') || {})[eventName] || [];
             for (var h = 0; h < handler.length; h++) {
                 if (handler[h].namespace === namespace || (handler[h].data || {}).handler === namespace) return true;
@@ -235,26 +235,26 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Utility to create namespaced events
-        var nsEvents = function(eventName, namespace) {
+        var nsEvents = function (eventName, namespace) {
             namespace = "." + namespace;
             eventName = $.trim(eventName) + namespace;
             return eventName.replace(" ", namespace + " ");
         };
         //-----------------------------------
         // Determines if the entry parameter is a DOM element
-        var isDOM = function(obj) {
+        var isDOM = function (obj) {
             return (!!obj && typeof obj === "object" && !!obj.nodeType);
         };
         //-----------------------------------
         // Determines if the entry parameter is a function
-        var isFunction = $.isFunction || function(obj) {
+        var isFunction = $.isFunction || function (obj) {
             return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
         };
         //-----------------------------------
         // Fix: failed to read the 'selectionStart' property from 'HTMLInputElement'
         // Second parameter provides a callback to execute additional instructions
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
-        var fixSelection = function(dom, fn) {
+        var fixSelection = function (dom, fn) {
             var ok = (/text|search|password|url|tel/).test(dom.type);
             var selection = { 
                 start: ok ? dom.selectionStart : 0,
@@ -265,9 +265,9 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // This is a reference to JSON.stringify and provides a polyfill for old browsers
-        var fnStringify = typeof JSON !== undefined ? JSON.stringify : function(json) {
+        var fnStringify = typeof JSON !== undefined ? JSON.stringify : function (json) {
             var arr = [];
-            $.each(json, function(key, val) {
+            $.each(json, function (key, val) {
                 var prop = "\"" + key + "\":";
                 prop += ($.isPlainObject(val) ? fnStringify(val) : 
                     (typeof val === "string" ? "\"" + val + "\"" : val));
@@ -360,14 +360,14 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Converts an inconsistent JSON string to its object representation
         var fnGetDataToJSON = (function() {
-            var parser = function(value) {
+            var parser = function (value) {
                 if (+value) return +value;
                 if ((/true/i).test(value)) return true;
                 if ((/false/i).test(value)) return false;
                 if ((/null/i).test(value)) return null;
                 return value;
             };
-            return function(data) {
+            return function (data) {
                 var params = {};
                 data = !data ? "" : data.toString();
                 $.each(data.split(/[\{\},]/g),
@@ -493,7 +493,7 @@ jsu.wrapper = "body"; //#main-section
         // Sets the position of the cursor in the DOM element
         function fnSetCaretPosition(dom, pos) {
             if ('selectionStart' in dom) {
-                fixSelection(dom, function(_input) {
+                fixSelection(dom, function (_input) {
                     _input.setSelectionRange(pos, pos);
                 });
             } else { // IE below version 9
@@ -543,9 +543,9 @@ jsu.wrapper = "body"; //#main-section
         // Validates the text format, depending on the type supplied.
         // Date validations are run according to regional setting.
         var fnIsValidFormat = (function() {
-            var _formatter = function(format) {
+            var _formatter = function (format) {
                 return "^" +
-                fnEscapeRegExp(format).replace(/[dMyHhms]+/g, function(m) {
+                fnEscapeRegExp(format).replace(/[dMyHhms]+/g, function (m) {
                     switch (m.toString()) {
                         case "dd": return "((0[1-9])|([1-2][0-9])|(3[0-1]))";
                         case "MM": return "((0[1-9])|(1[0-2]))";
@@ -557,7 +557,7 @@ jsu.wrapper = "body"; //#main-section
                     }
                 }) + "$";
             };
-            return function(obj, _type) {
+            return function (obj, _type) {
                 var _pattern = null,
                     _text = input.isText(obj) ? obj.value : obj.toString();
                 switch (_type) {
@@ -591,7 +591,7 @@ jsu.wrapper = "body"; //#main-section
         // The validation result will be shown in a tooltip
         var fnIsValidDate = (function() {
             var error = false;
-            var parser = function(date) {
+            var parser = function (date) {
                 if (date instanceof Date) return date;
                 if (typeof date !== "string") {
                     if (+date) return new Date(+date);
@@ -785,7 +785,7 @@ jsu.wrapper = "body"; //#main-section
                     return { "left": left, "top": top };
                 };
                 //positioning each element
-                return this.each(function(i, dom) {
+                return this.each(function (i, dom) {
                     var element = $(dom).css({ "position": "absolute", "margin": 0 }),
                         my = myPosition(element);
                     element.offset({
@@ -808,7 +808,7 @@ jsu.wrapper = "body"; //#main-section
                     of: o.of
                 });
             } else {
-                return this.each(function(i, dom) {
+                return this.each(function (i, dom) {
                     var elem = $(dom);
                     elem.css({
                         'position': 'fixed',
@@ -822,13 +822,13 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Limits the max length in the input:text
-        $.fn.fnMaxLength = function(length, o) {
+        $.fn.fnMaxLength = function (length, o) {
             o = $.extend({
                 at: "right bottom",
                 my: "right top+6",
                 collision: "flipfit"
             }, jsu.settings.position, o);
-            return this.each(function(i, dom) {
+            return this.each(function (i, dom) {
                 var count = "Max: " + length;
                 var vld = '#max' + dom.id;
                 if (!input.isText(dom)) return true; //continue
@@ -858,8 +858,8 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Apply the capitalized format to text when blur event occurs
-        $.fn.fnCapitalize = function(type) {
-            return this.each(function(i, dom) {
+        $.fn.fnCapitalize = function (type) {
+            return this.each(function (i, dom) {
                 $(dom).off(".fnCapitalize").on(nsEvents("blur", "fnCapitalize"), function() {
                     fnCapitalize(this, type);
                 });
@@ -867,15 +867,15 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Displays a tooltip next to DOM element
-        $.fn.fnShowTooltip = function(msg, pos) {
-            return this.each(function(i, dom) {
+        $.fn.fnShowTooltip = function (msg, pos) {
+            return this.each(function (i, dom) {
                 fnShowTooltip(dom, msg, pos);
             });
         };
         //-----------------------------------
         // Validates the format of first element, depending on the type supplied.
         // Date validations are run according to regional setting
-        $.fn.fnIsValidFormat = function(type) {
+        $.fn.fnIsValidFormat = function (type) {
             return fnIsValidFormat(this.get(0), type);
         };
         //-----------------------------------
@@ -887,7 +887,7 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Sets numeric format with decimal/thousand separators
         $.fn.fnNumericFormat = function() {
-            return this.each(function(i, dom) {
+            return this.each(function (i, dom) {
                 $(dom).off(".fnNumericFormat").on(nsEvents("keyup blur", "fnNumericFormat"), function() {
                     fnNumericFormat(this);
                 });
@@ -896,7 +896,7 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Allows only numeric characters
         $.fn.fnNumericInput = function() {
-            return this.each(function(i, dom) {
+            return this.each(function (i, dom) {
                 var len = dom.maxLength;
                 dom.maxLength = 524000;
                 if (len < 1) len = 524000;
@@ -931,11 +931,11 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Sets a mask for the allowed characters
-        $.fn.fnCustomInput = function(mask) {
+        $.fn.fnCustomInput = function (mask) {
             mask = mask instanceof RegExp ? mask : fnEscapeRegExp(mask);
             if (!mask) throw new CustomException("Mask must be RegExp or string");
             if (typeof mask === "string") mask = "[" + mask + "]";
-            return this.each(function(i, dom) {
+            return this.each(function (i, dom) {
                 var len = dom.maxLength;
                 dom.maxLength = 524000;
                 if (len < 1) len = 524000;
@@ -966,7 +966,7 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Disables the specified keyboard keys.
         // To allow a set of keys, better use $.fnCustomInput
-        $.fn.fnDisableKey = function(key) {
+        $.fn.fnDisableKey = function (key) {
             if (!key) return this;
             var keys = key.toString().split("");
             keys = keys.filter(function(n){ return (n && n.length); });
@@ -994,7 +994,7 @@ jsu.wrapper = "body"; //#main-section
             };
             var allFilters = $.map(filters, function(value, key) { return "." + key; }).join(",");
             // Shows a tooltip for validation message
-            var fnTooltip = function(dom, event, messageType, pos) {
+            var fnTooltip = function (dom, event, messageType, pos) {
                 event.preventDefault(); //cancel the click event of button
                 var vld = $('<span class="vld-tooltip">').data("target-id", dom.id);
                 vld.appendTo(jsu.wrapper).html(messageType).position({
@@ -1044,7 +1044,7 @@ jsu.wrapper = "body"; //#main-section
                         btn.blur(); $(".vld-tooltip").remove();
                         var _submit = true; fnSetFocus();
                         // Validates each <input> and <select> element
-                        $(".vld-required," + allFilters).each(function(i, _dom) {
+                        $(".vld-required," + allFilters).each(function (i, _dom) {
                             var _tag = _dom.nodeName.toLowerCase();
                             // Gets the html5 validation data storage, modern browsers admit: _dom.dataset.validation
                             if (btn.getAttribute('data-validation') !== _dom.getAttribute('data-validation')) return true; //continue
@@ -1089,10 +1089,10 @@ jsu.wrapper = "body"; //#main-section
         $.fn.fnConfirm = function(o) {
             var type = "click", current = {};
             $.fn.fnConfirm.canSubmit = false;
-            var hasValidUrl = function(href) {
+            var hasValidUrl = function (href) {
                 return !!(href && href.length && (/(?:^\w+:\/\/[^\s\n]+)[^#]$/).test(href));
             };
-            return this.each(function(i, target) {
+            return this.each(function (i, target) {
                 $(target).off(".fnConfirm").on(nsEvents(type, "fnConfirm"), function(e) {
                     current = this;
                     // Allows to the fnEasyValidate function pass through
@@ -1109,7 +1109,7 @@ jsu.wrapper = "body"; //#main-section
                         text: _language.dialogOK,
                         click: function() {
                             if (hasValidUrl(current.href)) document.location = current.href;
-                            $("#dialog").on("dialogclose", function(ev, ui) {
+                            $("#dialog").on("dialogclose", function (ev, ui) {
                                 $.fn.fnConfirm.canSubmit = true;
                                 $(current).off(".fnConfirm").trigger(type);
                                 if ((/[_]{2}doPostBack/).test(current.href))
@@ -1143,32 +1143,31 @@ jsu.wrapper = "body"; //#main-section
                 if (!o.content) return false;
                 var cnt = null, body = $('body');
                 var d = $.extend({
-                    closeOnPageUnload: false,
-                    title: _language.dialogTitle,
                     appendTo: jsu.wrapper,
-                    icon: null,
+                    title: _language.dialogTitle,
                     content: null,
-                    buttons: {}
+                    icon: null,
+                    buttons: {},
+                    closeOnPageUnload: false
                 }, o);
                 if (!$.isPlainObject(d.buttons) && !$.isArray(d.buttons)) d.buttons = {};
                 if (d.content instanceof jQuery) cnt = d.content;
                 else if (isDOM(d.content)) cnt = $(d.content);
-                else if ($.type(d.content) === "string") {
+                else if (typeof d.content === "string") {
                     // If content is string, the html wrapper element will be created
-                    var icon = d.icon ? '<div class="wnd-icon ' + d.icon + '"></div>' : "";
-                    cnt = $(icon + '<p>' + d.content + '</p>').appendTo(jsu.wrapper).data("del", true);
+                    var icon = d.icon ? '<div class="wnd-icon ' + d.icon.toLowerCase() + '"></div>' : "";
+                    cnt = $(icon + '<div class="wnd-text">' + d.content + '</div>').appendTo(jsu.wrapper).data("del", true);
                 }
                 // Wraps the content into the created dialog element
                 cnt.wrapAll('<div id="dialog" title="' + d.title + '">')
-                   .wrapAll('<section class="ui-dialog-custom">');
-                var _dialog = $("#dialog");
+                   .wrapAll('<div class="ui-dialog-custom">');
+                var _dialog = $('#dialog');
                 if (!d.width) d.width = $('.ui-dialog-custom').width();
-                if ($('.ui-dialog-custom').height() > _dialog.height()) d.width += 15; //scrollbar
                 $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
                 // Determines whether the dialog should be closed when the page is unloaded
-                if (d.closeOnPageUnload === true && !($._data(window, 'events') || {}).beforeunload)
-                    $(window).on(nsEvents('beforeunload', 'fnShowDialog'), function () { $('#dialog').dialog("close"); });
-                // Check the version of jquery.ui dependency
+                if (d.closeOnPageUnload === true && !handlerExist(window, "beforeunload", "fnShowDialog"))
+                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function () { $('#dialog').dialog("close"); });
+                // Check the version of jquery.ui for "appendTo" feature
                 var v110 = (/^1\.1[0-9]/).test(jQuery.ui.version);
                 body.css("overflow", "hidden");
                 _dialog.dialog({
@@ -1177,20 +1176,28 @@ jsu.wrapper = "body"; //#main-section
                     modal: true,
                     hide: 'drop',
                     show: 'fade',
-                    minHeight: 134,
+                    maxHeight: +d.maxHeight || 500,
+                    minHeight: +d.minHeight || 134,
                     height: d.height || 'auto',
-                    width: d.width,
+                    maxWidth: +d.maxWidth || 800,
+                    minWidth: +d.minWidth || 150,
+                    width: +d.width,
                     buttons: d.buttons,
                     appendTo: d.appendTo,
-                    open: function (ev, ui) {
+                    create: function (ev, ui) {
+                        if (typeof d.content === "string") {
+                            var width = $(this).dialog("option", "width");
+                            var padding = +_dialog.css("padding-left").replace(/\D/g, "") * 2;
+                            $(this).dialog( "option", "width", width + padding);
+                        }
                         if (!v110) $(".ui-widget-overlay,.ui-dialog").appendTo(d.appendTo);
-                        _dialog.dialog("option", "position", v110 ? { my: "center", at: "center", of: window } : "center");
                     },
                     close: function (ev, ui) {
                         body.css("overflow", "");
                         if (_dialog.hasClass("ui-dialog-content")) {
                             _dialog.dialog("destroy");
-                            cnt.data("del") ? _dialog.remove() : cnt.unwrap().unwrap();
+                            if (cnt.data("del")) _dialog.remove();
+                            else cnt.unwrap().unwrap();
                         }
                     }
                 });
