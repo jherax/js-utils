@@ -800,8 +800,12 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   * **title:** `String`. Title of the dialog window; default value is [`jsu.regional.<language>.dialogTitle`](#jsuregional)
   * **content:** `String` or `DOM` or `jQuery`. The content to display in the dialog window. If content is plain&nbsp;text, you can add some icons, or else you can create dynamic html.
   * **icon:** `String`. Name of [css class][jherax.css] to display an [icon](https://dl.dropboxusercontent.com/u/91579606/img.zip) to the left of text, if content is `String`.<br> The available icon names are: *"info", "alert", "success", "cancel", "error".*
-  * **width:** `Number` indicating the width of the dialog window, in pixels.
   * **height:** `Number` indicating the height of the dialog window, in pixels.
+  * **maxHeight:** `Number` *default: 500*. The maximum height to which the dialog can be resized.
+  * **minHeight:** `Number` *default: 134*. The minimum height to which the dialog can be resized.
+  * **width:** `Number` indicating the width of the dialog window, in pixels.
+  * **maxWidth:** `Number` *default: 1024*. The maximum width to which the dialog can be resized.
+  * **minWidth:** `Number` *default: 150*. The minimum width to which the dialog can be resized.
   * **closeOnPageUnload:** `Boolean`. Specifies whether the dialog should close when the event `beforeunload` is raised. This feature is useful if you are sending a form in the document.
   * **buttons:** `Object` or `Array`. Specifies which buttons should be displayed on the dialog window. The&nbsp;context of the callback is the dialog element; if you need access to the button, it is available as&nbsp;`event.target` object.
     * `Object:` The keys are the button labels and the values are the callbacks for when the associated button is clicked.
@@ -845,13 +849,14 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   //dialog window with an existing element
   $("#sample-3").on("click", function() {
     jsu.fnShowDialog({
-      appendTo: "#target-wrapper",
-      content: $("#list-view"),
-      closeOnPageUnload: true
+      appendTo: "#main-form",
+      content: $("#wizard-view"),
+      closeOnPageUnload: true,
+      maxHeight: 300
     });
   });
 ```
-Redefine the original function to use kendo.ui instead of jquery.ui
+Redefine the original function to use **kendo.ui** instead of **jquery.ui**
 ```javascript
   // basic implementation of kendo.ui.Window
   function fnShowWindow(options) {
