@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.6.9
+//  Version: 2.7.0
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.6.9",
+    version: "2.7.0",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -686,9 +686,29 @@ jsu.wrapper = "body"; //#main-section
                 if (!$(this).hasClass("no-auto-focus")) $(this).focus();
             });
         }
+        //-----------------------------------
+        // Detects the width of scrollbar
+        function fnScrollBarWidth() {
+            var outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body'),
+                barWidth = $('<div>').css('width', '100%').appendTo(outer).outerWidth();
+            outer.remove();
+            return 100 - barWidth;
+        }
 
         //-----------------------------------
         /* jQUERY EXTENSIONS */
+        //-----------------------------------
+        // Detects if the element has vertical scrollbar
+        $.fn.hasVScroll = function() {
+            if (!this.length) return false;
+            return this.get(0).scrollHeight > this.get(0).clientHeight;
+        };
+        //-----------------------------------
+        // Detects if the element has horizontal scrollbar
+        $.fn.hasHScroll = function() {
+            if (!this.length) return false;
+            return this.get(0).scrollWidth > this.get(0).clientWidth;
+        };
         //-----------------------------------
         // Position an element relative to another element
         (function() {
@@ -876,12 +896,14 @@ jsu.wrapper = "body"; //#main-section
         // Validates the format of first element, depending on the type supplied.
         // Date validations are run according to regional setting
         $.fn.fnIsValidFormat = function (type) {
+            if (!this.length) return false;
             return fnIsValidFormat(this.get(0), type);
         };
         //-----------------------------------
         // Evaluates whether the input value is a date or not.
         // The validation result will be shown in a tooltip
         $.fn.fnIsValidDate = function(o) {
+            if (!this.length) return false;
             return fnIsValidDate(this.get(0), o);
         };
         //-----------------------------------
@@ -1139,7 +1161,7 @@ jsu.wrapper = "body"; //#main-section
             arguments.callee.source = arguments.callee.source || function(o) {
                 if (!jQuery.ui || !jQuery.ui.dialog)
                     throw new CustomException("jQuery.ui.dialog is required");
-                $('#dialog,.ui-widget-overlay').remove();
+                $('#jsu-dialog,.ui-widget-overlay').remove();
                 if (!o.content) return false;
                 var cnt = null, body = $('body');
                 var d = $.extend({
@@ -1154,15 +1176,15 @@ jsu.wrapper = "body"; //#main-section
                 if (d.content instanceof jQuery) cnt = d.content;
                 else if (isDOM(d.content)) cnt = $(d.content);
                 else if (typeof d.content === "string") {
-                    // If content is string, the html wrapper element will be created
+                    // Displays an icon to the left of text
                     var icon = d.icon ? '<div class="wnd-icon ' + d.icon.toLowerCase() + '"></div>' : "";
                     cnt = $(icon + '<div class="wnd-text">' + d.content + '</div>').appendTo(jsu.wrapper).data("del", true);
                 }
-                // Wraps the content into the created dialog element
-                cnt.wrapAll('<div id="dialog" title="' + d.title + '">')
+                // Wraps the content into the dialog window
+                cnt.wrapAll('<div id="jsu-dialog" title="' + d.title + '">')
                    .wrapAll('<div class="ui-dialog-custom">');
-                var _dialog = $('#dialog');
-                if (!d.width) d.width = $('.ui-dialog-custom').width();
+                var _dialog = $('#jsu-dialog');
+                if (!+o.width) d.width = $('.ui-dialog-custom')[0].clientWidth;
                 $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
                 // Determines whether the dialog should be closed when the page is unloaded
                 if (d.closeOnPageUnload === true && !handlerExist(window, "beforeunload", "fnShowDialog"))
@@ -1177,20 +1199,28 @@ jsu.wrapper = "body"; //#main-section
                     hide: 'drop',
                     show: 'fade',
                     maxHeight: +d.maxHeight || 500,
-                    minHeight: +d.minHeight || 134,
+                    minHeight: +d.minHeight || 130,
                     height: d.height || 'auto',
-                    maxWidth: +d.maxWidth || 800,
+                    maxWidth: +d.maxWidth || 1024,
                     minWidth: +d.minWidth || 150,
                     width: +d.width,
                     buttons: d.buttons,
                     appendTo: d.appendTo,
                     create: function (ev, ui) {
-                        if (typeof d.content === "string") {
+                        // Fixes the width of the dialog
+                        if (!o.width) {
                             var width = $(this).dialog("option", "width");
                             var padding = +_dialog.css("padding-left").replace(/\D/g, "") * 2;
-                            $(this).dialog( "option", "width", width + padding);
+                            $(this).dialog("option", "width", width + padding);
                         }
+                        // Add "appendTo" feature if it is not supported
                         if (!v110) $(".ui-widget-overlay,.ui-dialog").appendTo(d.appendTo);
+                    },
+                    open: function( event, ui ) {
+                        if (_dialog.hasVScroll()) {
+                            var width = _dialog.dialog("option", "width");
+                            _dialog.dialog("option", "width", width + fnScrollBarWidth());
+                        }
                     },
                     close: function (ev, ui) {
                         body.css("overflow", "");
@@ -1239,6 +1269,7 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
         jherax.fnSetFocus = fnSetFocus;
+        jherax.fnScrollBarWidth = fnScrollBarWidth; //undocumented
 
     })(jsu, jQuery);
     // Set default namespace
