@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.7.0
+//  Version: 2.7.1
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.7.0",
+    version: "2.7.1",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -648,7 +648,7 @@ jsu.wrapper = "body"; //#main-section
                 my: _pos.my,
                 collision: _pos.collision
             }).hide().fadeIn(400);
-            _dom.focus();
+            _dom.focus && _dom.focus();
             return false;
         }
         //-----------------------------------
@@ -682,8 +682,8 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Sets the focus on input elements
         function fnSetFocus() {
-            $($('input[type="text"], textarea').filter(':not(input:disabled)').get().reverse()).each(function() {
-                if (!$(this).hasClass("no-auto-focus")) $(this).focus();
+            $($('input, textarea').filter(':not(input:disabled)').get().reverse()).each(function() {
+                if (!$(this).hasClass("no-auto-focus") && input.isText(this)) $(this).focus();
             });
         }
         //-----------------------------------
@@ -1018,14 +1018,21 @@ jsu.wrapper = "body"; //#main-section
             // Shows a tooltip for validation message
             var fnTooltip = function (dom, event, messageType, pos) {
                 event.preventDefault(); //cancel the click event of button
-                var vld = $('<span class="vld-tooltip">').data("target-id", dom.id);
+
+                //TODO: (trigger custom event: button: event.target)
+                //executes a function before display the tooltip
+                //if (isFunction(fnTooltip.fnBeforeTooltip)) fnTooltip.fnBeforeTooltip(dom);
+
+                //removes the validation message when "blur" event is raised
+                $(dom).attr("data-role", "tooltip");
+                var vld = $('<span class="vld-tooltip">');
                 vld.appendTo(jsu.wrapper).html(messageType).position({
                     of: dom,
                     at: pos.at,
                     my: pos.my,
                     collision: pos.collision
                 }).hide().fadeIn(400);
-                dom.focus();
+                dom.focus && dom.focus();
             };
             $.fn.fnEasyValidate = function(o) {
                 var position = $.extend({
@@ -1044,24 +1051,17 @@ jsu.wrapper = "body"; //#main-section
                     // Look at first item of <select> as an invalid option
                     return (d.firstItemInvalid && dom.selectedIndex === 0);
                 };
-                // Removes the validation message when the "blur" event is raised
-                $(".vld-required," + allFilters).off(".fnEasyValidate")
-                .on(nsEvents("blur", "fnEasyValidate"), function(e) {
-                    var dom = e.target;
-                    if (dom.selectedIndex !== 0 || dom.checked || dom.value.length) {
-                        $(".vld-tooltip").each(function(i, _vld) {
-                            if (dom.id == $(_vld).data("target-id"))
-                            { $(_vld).remove(); return false; }
-                        });
-                    }
-                });
                 return this.each(function() {
                     var btn = this;
                     if (d.requiredForm && !$(btn).closest("form").length) {
                         fnShowTooltip(btn, _language.validateForm);
                         return true; //continue with next element
                     }
-                    // Prevents send the form if any field is not valid
+                    //TODO: (create as custom event for each button)
+                    //execute a function before display the tooltip
+                    //if (isFunction(d.fnBeforeTooltip)) fnTooltip.fnBeforeTooltip = d.fnBeforeTooltip;
+
+                    // Validate fields according to the specified rules
                     $(btn).off(".fnEasyValidate").on(nsEvents("click", "fnEasyValidate"), { handler: "fnEasyValidate" }, function(event) {
                         btn.blur(); $(".vld-tooltip").remove();
                         var _submit = true; fnSetFocus();
@@ -1084,15 +1084,17 @@ jsu.wrapper = "body"; //#main-section
                                 }
                                 fnTooltip(dom, event, _language.validateRequired, d.position);
                                 return (_submit = false); //break
-                            } //end if for required
+                            } //end required fields
+
                             if (!input.isText(_dom) || !_dom.value.length) return true; //continue
-                            // Validates the formats
+                            // Validates specific formats
                             for (var type in filters) {
                                 if ($(_dom).hasClass(type) && !fnIsValidFormat(_dom, filters[type])) {
                                     fnTooltip(_dom, event, _language.validateFormat, d.position);
                                     return (_submit = false); //break
                                 }
-                            }
+                            } //end format validation
+
                         }); //end $.each
                         // Calls the function to validate the form if it was provided
                         if (_submit && isFunction(d.fnValidator) && !d.fnValidator(btn)) {
@@ -1131,7 +1133,7 @@ jsu.wrapper = "body"; //#main-section
                         text: _language.dialogOK,
                         click: function() {
                             if (hasValidUrl(current.href)) document.location = current.href;
-                            $("#dialog").on("dialogclose", function (ev, ui) {
+                            $("#jsu-dialog").on("dialogclose", function (ev, ui) {
                                 $.fn.fnConfirm.canSubmit = true;
                                 $(current).off(".fnConfirm").trigger(type);
                                 if ((/[_]{2}doPostBack/).test(current.href))
@@ -1143,7 +1145,7 @@ jsu.wrapper = "body"; //#main-section
                         text: _language.dialogCancel,
                         click: function() {
                             $.fn.fnConfirm.canSubmit = false;
-                            $("#dialog").dialog("close");
+                            $("#jsu-dialog").dialog("close");
                         }
                     }
                 ];
@@ -1185,10 +1187,10 @@ jsu.wrapper = "body"; //#main-section
                    .wrapAll('<div class="ui-dialog-custom">');
                 var _dialog = $('#jsu-dialog');
                 if (!+o.width) d.width = $('.ui-dialog-custom')[0].clientWidth;
-                $('.close-dialog').one("click", function () { $('#dialog').dialog("close"); });
+                $('.close-dialog').one("click", function () { $('#jsu-dialog').dialog("close"); });
                 // Determines whether the dialog should be closed when the page is unloaded
                 if (d.closeOnPageUnload === true && !handlerExist(window, "beforeunload", "fnShowDialog"))
-                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function () { $('#dialog').dialog("close"); });
+                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function () { $('#jsu-dialog').dialog("close"); });
                 // Check the version of jquery.ui for "appendTo" feature
                 var v110 = (/^1\.1[0-9]/).test(jQuery.ui.version);
                 body.css("overflow", "hidden");
@@ -1208,7 +1210,7 @@ jsu.wrapper = "body"; //#main-section
                     appendTo: d.appendTo,
                     create: function (ev, ui) {
                         // Fixes the width of the dialog
-                        if (!o.width) {
+                        if (!+o.width) {
                             var width = $(this).dialog("option", "width");
                             var padding = +_dialog.css("padding-left").replace(/\D/g, "") * 2;
                             $(this).dialog("option", "width", width + padding);
