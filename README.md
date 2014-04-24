@@ -802,7 +802,7 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   * **icon:** `String`. Name of [css class][jherax.css] to display an [icon](https://dl.dropboxusercontent.com/u/91579606/img.zip) to the left of text, if content is `String`.<br> The available icon names are: *"info", "alert", "success", "cancel", "error".*
   * **height:** `Number` indicating the height of the dialog window, in pixels.
   * **maxHeight:** `Number` *default: 500*. The maximum height to which the dialog can be resized.
-  * **minHeight:** `Number` *default: 134*. The minimum height to which the dialog can be resized.
+  * **minHeight:** `Number` *default: 130*. The minimum height to which the dialog can be resized.
   * **width:** `Number` indicating the width of the dialog window, in pixels.
   * **maxWidth:** `Number` *default: 1024*. The maximum width to which the dialog can be resized.
   * **minWidth:** `Number` *default: 150*. The minimum width to which the dialog can be resized.
@@ -834,7 +834,7 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
       icon: "alert",
       title: "Delete selected elements?",
       content: "These items will be permanently deleted<br>and cannot be recovered. Are you sure?",
-      width: 310,
+      width: 330,
       buttons: {
         "Delete": function() {
           $(this).dialog("close");
