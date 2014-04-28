@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.7.1
+//  Version: 2.8.1
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.7.1",
+    version: "2.8.1",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -424,6 +424,7 @@ jsu.wrapper = "body"; //#main-section
             };
             // Return Module
             return function(o) {
+                if (typeof o === "string") o = { date: o };
                 o = $.extend({ date: new Date(), ISO8601: false }, o);
                 if (typeof o.date === "string" && /Date/.test(o.date))
                     o.date = +o.date.replace(/\D+/g, "");
@@ -641,14 +642,14 @@ jsu.wrapper = "body"; //#main-section
                 collision: "flipfit"
             }, jsu.settings.position, _pos);
             _dom.attr("data-role", "tooltip").trigger(nsEvents("blur", "tooltip"));
-            var vld = $('<span class="vld-tooltip">' + _msg + '</span>');
+            if (_dom.focus) _dom.focus(); //sets focus before showing the tooltip
+            var vld = $('<span class="vld-tooltip">').html(_msg);
             vld.appendTo(jsu.wrapper).position({
                 of: _dom,
                 at: _pos.at,
                 my: _pos.my,
                 collision: _pos.collision
             }).hide().fadeIn(400);
-            _dom.focus && _dom.focus();
             return false;
         }
         //-----------------------------------
@@ -1018,13 +1019,17 @@ jsu.wrapper = "body"; //#main-section
             // Shows a tooltip for validation message
             var fnTooltip = function (dom, event, messageType, pos) {
                 event.preventDefault(); //cancel the click event of button
-
-                //TODO: (trigger custom event: button: event.target)
+                var button = $(event.target);
                 //executes a function before display the tooltip
-                //if (isFunction(fnTooltip.fnBeforeTooltip)) fnTooltip.fnBeforeTooltip(dom);
+                var beforeTooltip = button.data("nsEvent");
+                if (beforeTooltip) button.trigger(beforeTooltip, [dom]);
+                //checks if DOM element was replaced by another one
+                if (dom.domTarget) dom = dom.domTarget;
 
                 //removes the validation message when "blur" event is raised
                 $(dom).attr("data-role", "tooltip");
+                if (dom.focus) dom.focus();
+
                 var vld = $('<span class="vld-tooltip">');
                 vld.appendTo(jsu.wrapper).html(messageType).position({
                     of: dom,
@@ -1032,7 +1037,6 @@ jsu.wrapper = "body"; //#main-section
                     my: pos.my,
                     collision: pos.collision
                 }).hide().fadeIn(400);
-                dom.focus && dom.focus();
             };
             $.fn.fnEasyValidate = function(o) {
                 var position = $.extend({
@@ -1051,26 +1055,34 @@ jsu.wrapper = "body"; //#main-section
                     // Look at first item of <select> as an invalid option
                     return (d.firstItemInvalid && dom.selectedIndex === 0);
                 };
-                return this.each(function() {
-                    var btn = this;
+                var selector = this.selector;
+                return this.each(function(index, btn) {
                     if (d.requiredForm && !$(btn).closest("form").length) {
                         fnShowTooltip(btn, _language.validateForm);
                         return true; //continue with next element
                     }
-                    //TODO: (create as custom event for each button)
-                    //execute a function before display the tooltip
-                    //if (isFunction(d.fnBeforeTooltip)) fnTooltip.fnBeforeTooltip = d.fnBeforeTooltip;
-
-                    // Validate fields according to the specified rules
+                    // Delegate the handler to execute a function before display the tooltip
+                    if (isFunction(d.fnBeforeTooltip)) {
+                        var event = nsEvents("beforeTooltip", "fnEasyValidate-" + index);
+                        $(btn).data("nsEvent", event);
+                        $(document).off(event).on(event, selector, function(e, args) {
+                            //args is the DOM element to which "tooltip" is attached
+                            if (args) d.fnBeforeTooltip(args);
+                        });
+                    }
+                    // Each button validates the fields according to the specified rules
                     $(btn).off(".fnEasyValidate").on(nsEvents("click", "fnEasyValidate"), { handler: "fnEasyValidate" }, function(event) {
-                        btn.blur(); $(".vld-tooltip").remove();
-                        var _submit = true; fnSetFocus();
-                        // Validates each <input> and <select> element
+                        fnSetFocus(); $(btn).focus().blur();
+                        $(".vld-tooltip").remove();
+                        var _submit = true; 
+
+                        // Validates each field according to specific rules
                         $(".vld-required," + allFilters).each(function (i, _dom) {
                             var _tag = _dom.nodeName.toLowerCase();
-                            // Gets the html5 validation data storage, modern browsers admit: _dom.dataset.validation
+                            // Gets the html5 data- attribute; modern browsers admit: dom.dataset[attribute]
                             if (btn.getAttribute('data-validation') !== _dom.getAttribute('data-validation')) return true; //continue
-                            // If the element is a <select>, evaluates the first option, and options with value="0" will be marked as invalid
+                            
+                            // Validates empty <input> fields, <select> elements and those with property [value] equal to "0"
                             if ($(_dom).hasClass("vld-required") && ((_tag == "select" && (fnValidateFirstItem(_dom) || _dom.value === "0")) ||
                                 (input.isText(_dom) && !_dom.value.length) || (input.isCheck(_dom) && !_dom.checked) || _tag == "span")) {
                                 var dom = _dom;
@@ -1094,17 +1106,18 @@ jsu.wrapper = "body"; //#main-section
                                     return (_submit = false); //break
                                 }
                             } //end format validation
+                        }); //end $.each field
 
-                        }); //end $.each
-                        // Calls the function to validate the form if it was provided
+                        // Calls the custom function to validate, if it was provided
                         if (_submit && isFunction(d.fnValidator) && !d.fnValidator(btn)) {
                             event.preventDefault();
                             _submit = false;
                         }
                         $.fn.fnEasyValidate.canSubmit = _submit;
                         return _submit;
-                    }); //end $.click
-                }); //return jquery
+                        
+                    }); //end btn.click
+                }); //end $.each btn
             }; //end fnEasyValidate
         })();
         
