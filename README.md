@@ -788,7 +788,7 @@ Sets the default setting for all functions showing [tooltips](#jsusettings)
 ### fnShowDialog *(options)*
 This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements. 
 You can create dynamic html by passing the html string to the `content` property.<br>
-Generated HTML is appended by default to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into&nbsp;a specific element, then you can set the `appendTo` property with the selector for the container element.
+Generated HTML is appended by default to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into&nbsp;a specific element, then you can set the `appendTo` property by specifying the container element.
 
 Some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) are used to display an icon to the left of text, but only works when `content` is plain text.<br>
 Also you can display existing HTML elements by passing the [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) object to the `content` property.
@@ -801,7 +801,7 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   * **content:** `String` or `DOM` or `jQuery`. The content to display in the dialog window. If content is plain&nbsp;text, you can add some icons, or else you can create dynamic html.
   * **icon:** `String`. Name of [css class][jherax.css] to display an [icon](https://dl.dropboxusercontent.com/u/91579606/img.zip) to the left of text, if content is `String`.<br> The available icon names are: *"info", "alert", "success", "cancel", "error".*
   * **height:** `Number` indicating the height of the dialog window, in pixels.
-  * **maxHeight:** `Number` *default: 500*. The maximum height to which the dialog can be resized.
+  * **maxHeight:** `Number` *default: 86%*. The maximum height to which the dialog can be resized.
   * **minHeight:** `Number` *default: 130*. The minimum height to which the dialog can be resized.
   * **width:** `Number` indicating the width of the dialog window, in pixels.
   * **maxWidth:** `Number` *default: 1024*. The maximum width to which the dialog can be resized.
@@ -862,11 +862,14 @@ Redefine the original function to use **kendo.ui** instead of **jquery.ui**
   function fnShowWindow(options) {
     $("#wnd-dialog").remove();
     //TODO: check for dependencies to prevent code breaks.
-    var wnd = $("<div id='wnd-dialog'>").html(options.content).appendTo(options.appendTo);
+    var wnd = $("<div id='wnd-dialog'>").append(options.content).appendTo(options.appendTo || "body");
     var dialog = wnd.data("kendoWindow");
     if (!dialog) {
         (dialog = wnd.kendoWindow({
-            width: options.width || 360,
+            minHeight: +options.minHeight || 50,
+            height: +options.height || null,
+            minWidth: +options.minWidth || 90,
+            width: +options.width || 320,
             title: options.title || "",
             actions: ["Close"],
             modal: true
