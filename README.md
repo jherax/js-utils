@@ -11,7 +11,7 @@ It also requires some [CSS][jherax.css] rules for functions showing tooltips, an
 If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using *jQuery.ui,* otherwise an internal function for&nbsp;positioning will be used.
 
 [fnShowDialog](#fnshowdialog-options) is a facade for [ui dialog widget](https://jqueryui.com/dialog/) and has a dependency on [jQuery.UI 1.9+][jQuery.ui].<br>
-But if you don't want to use jQuery.ui, this method can be overridden by specifying the `source` property to the&nbsp;function that will replace it.
+But if you don't want to use *jQuery.ui,* this method can be overridden by specifying the `source` property to the&nbsp;function that will replace it.
 
 The library has the following structure:
 - `jsu:` main namespace
@@ -148,8 +148,8 @@ If you want to provide additional languages to other plugins, you can pass a fun
 ### jsu.settings
 This namespace is used to define a default behaviour for some functions.
 - **`position:`** This object sets the default setting for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
-  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"`. Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the *at* option for full details on possible values)
+  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the **at** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -324,7 +324,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 
 ### fnAddScript *(path, before)*
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the&nbsp;*kendo.ui.window* component to build a window, you can check for dependencies before trying to access that&nbsp;component.<br>
-**Returns** `undefined;` but if you set the property `{ execute: true }` then a [`jqXHR`](http://api.jquery.com/Types/#jqXHR) object is returned.
+**Returns** `undefined` but if you set the property `{ execute: true }` then a [`jqXHR`](http://api.jquery.com/Types/#jqXHR) object is returned.
 * **path:** `String` source of the script to be added. It can also be an `Object` with a set of attributes for *[script&nbsp;tag](http://www.quackit.com/html_5/tags/html_script_tag.cfm):* `{ src: String, async: Boolean, defer: Boolean, charset: String }`<br>
 Other property you can set is `{ execute: Bolean }` wich loads a JavaScript file from the server using&nbsp;a&nbsp;GET&nbsp;HTTP request, and then execute it in the global context through [jQuery.getScript()](https://api.jquery.com/jQuery.getScript/).<br>
 The property `{ before: String }` indicates where to insert the script (see ***before*** parameter).
@@ -369,8 +369,8 @@ Dynamically add an external stylesheet. This method is useful to inject a cascad
 ### fnEscapeRegExp *(text)*
 Escapes user input to be treated as a literal string in a regular expression.<br>
 This mean that special characters will be treated as literals.<br>
-e.g. The expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
-**Returns** `String`, or `null` if ***text*** parameter is not a string
+e.g. the expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
+**Returns** `String`, or `null` if ***text*** parameter is not *string*
 * **text:** `String` to literalize
 
 ```javascript
@@ -397,7 +397,7 @@ Gets the value of a specific parameter in the querystring (search in the address
 
 ### fnGetQueryToJSON *(query)*
 Gets the querystring from address bar and is returned as a JSON object.<br>
-**Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will&nbsp;be&nbsp;retrieved in a JSON object.<br>
+**Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will&nbsp;be&nbsp;retrieved in a `JSON` object.<br>
 **Returns** `Object` in JSON notation.
 * **query:** `String` with name of the parameter to search for.
 
@@ -409,7 +409,7 @@ Gets the querystring from address bar and is returned as a JSON object.<br>
   var q = jsu.fnGetQueryToJSON();
   console.log(q); //prints: {v: "hrZl_EQUbRQ", hd: "1"}
   
-  //we want to retrieve the variable [v] and its value
+  //we want to retrieve the value of [v]
   var v = jsu.fnGetQueryToJSON("v");
   console.log(v); //prints: {v: "hrZl_EQUbRQ"}
 ```
@@ -630,7 +630,7 @@ If you want to lowercase specific words, you can do it this way:
 ```
 
 ### fnNumericFormat *(object)*
-Sets numeric format according to **es-CO** culture by placing the decimal`.` and thousands`,` separator.<br>
+Sets numeric format according to **es-CO** culture by placing the decimal `.` and thousands `,` separator.<br>
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to format.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnNumericFormat](#jqueryfnnumericformat-).<br>
 **Returns** `String` with the formatted number
@@ -674,7 +674,7 @@ Validates the format, depending on ***type*** supplied. Date validations are run
 
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the entry `DOM` element has the date format for the `value` property.<br>
-Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
+Date validations are performed according to [regional setting](#jsuregional) by `dateFormat` and `timeFormat`<br>
 The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extended method for built-in *jQuery.position* is used.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidDate](#jqueryfnisvaliddate-options).<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
@@ -799,13 +799,13 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   * **appendTo:** `String` or `DOM` or `jQuery`. Specifies the element to where the dialog window should&nbsp;be&nbsp;appended; default value is [`jsu.wrapper`](#getting-started)
   * **title:** `String`. Title of the dialog window; default value is [`jsu.regional.<language>.dialogTitle`](#jsuregional)
   * **content:** `String` or `DOM` or `jQuery`. The content to display in the dialog window. If content is plain&nbsp;text, you can add some icons, or else you can create dynamic html.
-  * **icon:** `String`. Name of [css class][jherax.css] to display an [icon](https://dl.dropboxusercontent.com/u/91579606/img.zip) to the left of text, if content is `String`.<br> The available icon names are: *"info", "alert", "success", "cancel", "error".*
+  * **icon:** `String`. Name of [css class][jherax.css] to display an [icon](https://dl.dropboxusercontent.com/u/91579606/img.zip) to the left of text, if content is `String`<br> The available icon names are: *"info", "alert", "success", "cancel", "error".*
   * **height:** `Number` indicating the height of the dialog window, in pixels.
-  * **maxHeight:** `Number` *default: 86%*. The maximum height to which the dialog can be resized.
-  * **minHeight:** `Number` *default: 130*. The minimum height to which the dialog can be resized.
+  * **maxHeight:** `Number` *default: 86%.* The maximum height to which the dialog can be resized.
+  * **minHeight:** `Number` *default: 130.* The minimum height to which the dialog can be resized.
   * **width:** `Number` indicating the width of the dialog window, in pixels.
-  * **maxWidth:** `Number` *default: 1024*. The maximum width to which the dialog can be resized.
-  * **minWidth:** `Number` *default: 150*. The minimum width to which the dialog can be resized.
+  * **maxWidth:** `Number` *default: 1024.* The maximum width to which the dialog can be resized.
+  * **minWidth:** `Number` *default: 150.* The minimum width to which the dialog can be resized.
   * **closeOnPageUnload:** `Boolean`. Specifies whether the dialog should close when the event `beforeunload` is raised. This feature is useful if you are sending a form in the document.
   * **buttons:** `Object` or `Array`. Specifies which buttons should be displayed on the dialog window. The&nbsp;context of the callback is the dialog element; if you need access to the button, it is available as&nbsp;`event.target` object.
     * `Object:` The keys are the button labels and the values are the callbacks for when the associated&nbsp;button is clicked.
@@ -896,31 +896,40 @@ Redefine the original function to use **kendo.ui** instead of **jquery.ui**
 ```
 
 ### fnLoading *(options)*
-Shows a overlay screen with the "loading" indicator at the center.<br>
+Shows an overlay screen with the "loading" animation at the center.<br>
 The progress animation is done via CSS3, so you must add the following [css][jherax.css]:<br>
 `#floatingBarsG` `.blockG` `@keyframes fadeG` `.bg-fixed` `.bg-opacity`<br>
 **Returns** `Boolean`, always returns `true`
 * **options:** `Object` that provides the following settings:
+  * **show:** `Boolean` *default: true.* Shows the loading screen.
+  * **hide:** `Boolean` *default: false.* Hides the loading screen.
+  * **delay:** `Number` *default: 2600.* FadeIn animation, in milliseconds.
+  * **of:** `String` or `jQuery` or `DOM` *default: null.* Which element to position against. If you provide a selector or jQuery object, the first matching element will be used, otherwise, the viewport is set by `jsu.wrapper`
 
-```javascript
-{
-  show: Boolean //shows the loading screen (Default: true)
-  hide: Boolean //hides the loading screen (Default: false)
-  delay: Number //miliseconds of fadeIn animation (Default: 2600)
-}
+```html
+<div id="target" style="display: inline-block; width: 200px; height: 200px; border:1px solid #bbb; border-radius:10px; background: #eee;"></div>
 ```
 ```javascript
-  $("#btnTest").on("click", function() {
+  $(function() {
+    //Shows the loading animation at the center of screen
     jsu.fnLoading();
     setTimeout(function() {
-      jsu.fnLoading({ hide:true });
-    }, 8000);
+      jsu.fnLoading({ hide: true });
+    }, 3000);
+
+    //Shows the loading animation at the center of #target
+    setTimeout(function() {
+      jsu.fnLoading({ of: "#target" });
+    }, 3200);
+    setTimeout(function() {
+      jsu.fnLoading({ hide: true });
+    }, 6200);
   });
 ```
 
 ### fnSetFocus ()
 Sets the focus on all elements [category:text][category.text], except on those having `.no-auto-focus` class.<br>
-This function is useful when you are using methods that alter the behaviour on input fields, *e.g.&nbsp;[$.fnCapitalize](#jqueryfncapitalize-type), [$.fnNumericFormat](#jqueryfnnumericformat-), [$.fnNumericInput](#jqueryfnnumericinput-), [$.fnCustomInput](#jqueryfncustominput-mask).*
+This function is useful when you are using methods that alter the behaviour on input fields, *e.g. [$.fnCapitalize](#jqueryfncapitalize-type),&bnsp;[$.fnNumericFormat](#jqueryfnnumericformat-), [$.fnNumericInput](#jqueryfnnumericinput-), [$.fnCustomInput](#jqueryfncustominput-mask).*
 ```javascript
   $(document).on("ready", function() {
 	  $("#txtDate").datepicker().addClass("no-auto-focus");
@@ -928,7 +937,7 @@ This function is useful when you are using methods that alter the behaviour on i
 	  $("#txtID").fnNumericInput();
   });
   $("#btnSendForm").on("click", function() {
-    //Ensure the fields are well formatted by triggering focus-blur events
+	  //Ensure the fields are well formatted by triggering focus-blur events
 	  jsu.fnSetFocus();
 	  //Get back the focus to button
 	  $(this).focus();
