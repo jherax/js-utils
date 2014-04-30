@@ -8,10 +8,10 @@ Getting Started
 The utility has a dependency on [jQuery 1.10+][jQuery.js] which must be loaded before [js-utils][jherax.js].<br>
 It also requires some [CSS][jherax.css] rules for functions showing tooltips, and other methods.
 
-If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using jQuery.ui, otherwise an internal function for positioning will be used.
+If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using *jQuery.ui,* otherwise an internal function for&nbsp;positioning will be used.
 
 [fnShowDialog](#fnshowdialog-options) is a facade for [ui dialog widget](https://jqueryui.com/dialog/) and has a dependency on [jQuery.UI 1.9+][jQuery.ui].<br>
-But if you don't want to use jQuery.ui, this method can be overridden by specifying the `source` property to the function that will replace it.
+But if you don't want to use jQuery.ui, this method can be overridden by specifying the `source` property to the&nbsp;function that will replace it.
 
 The library has the following structure:
 - `jsu:` main namespace
@@ -148,9 +148,9 @@ If you want to provide additional languages to other plugins, you can pass a fun
 ### jsu.settings
 This namespace is used to define a default behaviour for some functions.
 - **`position:`** This object sets the default setting for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
-  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"`. Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"`. Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the *at* option for full details on possible values)
-  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   (function() {
@@ -190,8 +190,8 @@ This namespace is used to define a default behaviour for some functions.
 * [fnIsValidDate](#fnisvaliddate-dom-options)
 * [fnShowTooltip](#fnshowtooltip-dom-message-position)
 * [fnShowDialog](#fnshowdialog-options)
-* [fnSetFocus](#fnsetfocus-)
 * [fnLoading](#fnloading-options)
+* [fnSetFocus](#fnsetfocus-)
 
 [jQuery extensions](#jquery-extensions)
 -----------------
@@ -214,7 +214,7 @@ Usage
 -----
 
 ### browser
-Adds support for browser detect, because jquery 1.9+ deprecates the *[browser](http://api.jquery.com/category/deprecated/#post-301)* property.<br>
+Adds support for browser detect, because jQuery 1.9+ deprecates the *[browser](http://api.jquery.com/category/deprecated/#post-301)* property.<br>
 For detecting capabilities, is better to use [Modernizr](http://modernizr.com/docs/).<br>
 **Returns** `Object`
 ```javascript
@@ -323,7 +323,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 ```
 
 ### fnAddScript *(path, before)*
-Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the  kendo.ui.window component to build a window, you can check for dependencies before trying to access that&nbsp;component.<br>
+Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the&nbsp;*kendo.ui.window* component to build a window, you can check for dependencies before trying to access that&nbsp;component.<br>
 **Returns** `undefined;` but if you set the property `{ execute: true }` then a [`jqXHR`](http://api.jquery.com/Types/#jqXHR) object is returned.
 * **path:** `String` source of the script to be added. It can also be an `Object` with a set of attributes for *[script&nbsp;tag](http://www.quackit.com/html_5/tags/html_script_tag.cfm):* `{ src: String, async: Boolean, defer: Boolean, charset: String }`<br>
 Other property you can set is `{ execute: Bolean }` wich loads a JavaScript file from the server using&nbsp;a&nbsp;GET&nbsp;HTTP request, and then execute it in the global context through [jQuery.getScript()](https://api.jquery.com/jQuery.getScript/).<br>
@@ -351,7 +351,7 @@ This parameter is optional and if it is not specified, the new script will be in
 ```
 
 ### fnAddCSS *(path, before)*
-Dynamically add an external stylesheet. This method is useful to inject a cascading style sheet resource from an external file, in case that you use some plugins requiring specific css and you don't want to include them inside your main stylesheet.<br>
+Dynamically add an external stylesheet. This method is useful to inject a cascading style sheet resource from an&nbsp;external file, in case that you use some plugins requiring specific css and you don't want to include them inside&nbsp;your main stylesheet.<br>
 **Returns** `undefined` this method returns nothing.
 * **path:** `String` source of the stylesheet to be added
 * **before:** `String` part of `href` attribute of the element that identifies where the resource will be added. This&nbsp;parameter is optional and if it is not specified, the new stylesheet will be appended to `<head>`
@@ -590,9 +590,9 @@ Sets the cursor ***position*** in the ***dom*** element.<br>
 ```
 
 ### fnCapitalize *(object, type)*
-Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
+Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the&nbsp;supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to transform.<br>
-**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to&nbsp; lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnCapitalize](#jqueryfncapitalize-type).<br>
 **Returns** `String`
 * **object:** `String` or `DOM` element [category:text][category.text]
@@ -675,7 +675,7 @@ Validates the format, depending on ***type*** supplied. Date validations are run
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the entry `DOM` element has the date format for the `value` property.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by&nbsp;jQuery.ui.position, otherwise an extended method for built-in jQuery.position is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extended method for built-in *jQuery.position* is used.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidDate](#jqueryfnisvaliddate-options).<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
@@ -722,7 +722,7 @@ This function is very useful when you need display a validation message.<br>
 It shows the ***message*** in a tooltip at the right side of ***dom*** and focuses that element.<br>
 The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class.<br>
 It has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
-**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in jQuery.position is used.<br>
+**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by *jQuery.ui.position,* otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in *jQuery.position* is used.<br>
 **Note:** By specifying [`jsu.settings.position`](#jsusettings) you can override the position for all tooltips.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnShowTooltip](#jqueryfnshowtooltip-message-position).<br>
 **Returns** `Boolean`, always returns `false`
@@ -788,7 +788,7 @@ Sets the default setting for all functions showing [tooltips](#jsusettings)
 ### fnShowDialog *(options)*
 This is a facade for [`jQuery.ui.dialog`](http://api.jqueryui.com/dialog/) which is a modal window useful for displaying text, [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) elements. 
 You can create dynamic html by passing the html string to the `content` property.<br>
-Generated HTML is appended by default to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into&nbsp;a specific element, then you can set the `appendTo` property by specifying the container element.
+Generated HTML is appended by default to where [`jsu.wrapper`](#getting-started) selector indicate, but if you want to place it into&nbsp;a&nbsp;specific element, then you can set the `appendTo` property by specifying the container element.
 
 Some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) are used to display an icon to the left of text, but only works when `content` is plain text.<br>
 Also you can display existing HTML elements by passing the [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) object to the `content` property.
@@ -808,8 +808,8 @@ Also you can display existing HTML elements by passing the [DOM](http://api.jque
   * **minWidth:** `Number` *default: 150*. The minimum width to which the dialog can be resized.
   * **closeOnPageUnload:** `Boolean`. Specifies whether the dialog should close when the event `beforeunload` is raised. This feature is useful if you are sending a form in the document.
   * **buttons:** `Object` or `Array`. Specifies which buttons should be displayed on the dialog window. The&nbsp;context of the callback is the dialog element; if you need access to the button, it is available as&nbsp;`event.target` object.
-    * `Object:` The keys are the button labels and the values are the callbacks for when the associated button is clicked.
-    * `Array:` Each element of the array must be an object defining the attributes, properties, and event handlers to set on the button.
+    * `Object:` The keys are the button labels and the values are the callbacks for when the associated&nbsp;button is clicked.
+    * `Array:` Each element of the array must be an object defining the attributes, properties, and&nbsp;event&nbsp;handlers to set on the button.
 
 ```javascript
   (function() {
@@ -895,20 +895,6 @@ Redefine the original function to use **kendo.ui** instead of **jquery.ui**
   });
 ```
 
-### fnSetFocus ()
-Sets the focus on all `input:text` and `textarea` elements, except those that have `.no-auto-focus` class.<br>
-This function is useful when you need validate form fields using any of the below [jQuery plugins](#jquery-plugins).
-```javascript
-  $(document).on("ready", function() {
-	  $("#txtDate").datepicker().addClass("no-auto-focus");
-	  $("#txtName").fnCapitalize("word");
-	  $("#txtID").fnNumericInput();
-  });
-  $("#btnSendForm").on("click", function() {
-	  jsu.fnSetFocus();
-  });
-```
-
 ### fnLoading *(options)*
 Shows a overlay screen with the "loading" indicator at the center.<br>
 The progress animation is done via CSS3, so you must add the following [css][jherax.css]:<br>
@@ -929,6 +915,23 @@ The progress animation is done via CSS3, so you must add the following [css][jhe
     setTimeout(function() {
       jsu.fnLoading({ hide:true });
     }, 8000);
+  });
+```
+
+### fnSetFocus ()
+Sets the focus on all elements [category:text][category.text], except on those having `.no-auto-focus` class.<br>
+This function is useful when you are using methods that alter the behaviour on input fields, *e.g.&nbsp;[$.fnCapitalize](#jqueryfncapitalize-type), [$.fnNumericFormat](#jqueryfnnumericformat-), [$.fnNumericInput](#jqueryfnnumericinput-), [$.fnCustomInput](#jqueryfncustominput-mask).*
+```javascript
+  $(document).on("ready", function() {
+	  $("#txtDate").datepicker().addClass("no-auto-focus");
+	  $("#txtName").fnCapitalize("word");
+	  $("#txtID").fnNumericInput();
+  });
+  $("#btnSendForm").on("click", function() {
+    //Ensure the fields are well formatted by triggering focus-blur events
+	  jsu.fnSetFocus();
+	  //Get back the focus to button
+	  $(this).focus();
   });
 ```
 
@@ -969,7 +972,7 @@ It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [c
 ### jQuery.fnCapitalize *(type)*
 This is the jQuery extension for [fnCapitalize](#fncapitalize-object-type) function.<br>
 Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
-**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to&nbsp; lowercasing some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
+**Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** The text is transformed when the `blur` event occurs.<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
@@ -1082,7 +1085,7 @@ Date validations are performed according to [regional setting](#jsuregional).<br
 This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options) function.<br>
 Evaluates whether the first element in the collection has the `value` with date format.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by&nbsp;jQuery.ui.position, otherwise an extension method for built-in jQuery.position is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by&nbsp;*jQuery.ui.position*, otherwise an extension method for built-in *jQuery.position* is used.<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
 **Returns** `Boolean`
