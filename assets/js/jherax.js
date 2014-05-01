@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.8.2
+//  Version: 2.8.3
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.8.2",
+    version: "2.8.3",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -1018,7 +1018,6 @@ jsu.wrapper = "body"; //#main-section
             var allFilters = $.map(filters, function(value, key) { return "." + key; }).join(",");
             // Shows a tooltip for validation message
             var fnTooltip = function (dom, event, messageType, pos) {
-                event.preventDefault(); //cancel the click event of button
                 var button = $(event.target);
                 //executes a function before display the tooltip
                 var beforeTooltip = button.data("nsEvent");
@@ -1110,14 +1109,19 @@ jsu.wrapper = "body"; //#main-section
 
                         // Calls the custom function to validate, if it was provided
                         if (_submit && isFunction(d.fnValidator) && !d.fnValidator(btn)) {
-                            event.preventDefault();
                             _submit = false;
                         }
                         $.fn.fnEasyValidate.canSubmit = _submit;
+                        if (!_submit) event.stopImmediatePropagation();
                         return _submit;
                         
                     }); //end btn.click
-                }); //end $.each btn
+                    
+                    var handlers = ($._data(btn, 'events') || {})["click"];
+                    // Move it at the beginning the handler click.fnEasyValidate
+                    handlers.unshift(handlers.pop());
+
+                }); //end $.each
             }; //end fnEasyValidate
         })();
         
@@ -1141,6 +1145,17 @@ jsu.wrapper = "body"; //#main-section
                         fnShowDialog(o);
                     }
                 });
+                var handlers = ($._data(target, 'events') || {})[type];
+                // Move it at the beginning the handler type.fnConfirm
+                var h = 0, handler = handlers.pop();
+                $.each(handlers, function(index, item) {
+                    if (item.namespace === "fnEasyValidate") {
+                        h = index + 1;
+                        return false;
+                    }
+                });
+                handlers.splice(h, 0, handler);
+                // Creates the buttons for fnShowDialog()
                 o.buttons = [
                     {
                         text: _language.dialogOK,
@@ -1162,7 +1177,7 @@ jsu.wrapper = "body"; //#main-section
                         }
                     }
                 ];
-            });
+            }); //end $.each
         };
         // We expose a property to check whether the form can be submitted or not
         $.fn.fnConfirm.canSubmit = false;
@@ -1284,7 +1299,7 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
         jherax.fnSetFocus = fnSetFocus;
-        jherax.fnScrollBarWidth = fnScrollBarWidth; //undocumented
+        jherax.fnScrollBarWidth = fnScrollBarWidth;
 
     })(jsu, jQuery);
     // Set default namespace
