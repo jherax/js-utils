@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.8.1
+//  Version: 2.8.2
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.8.1",
+    version: "2.8.2",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -238,7 +238,7 @@ jsu.wrapper = "body"; //#main-section
         var nsEvents = function (eventName, namespace) {
             namespace = "." + namespace;
             eventName = $.trim(eventName) + namespace;
-            return eventName.replace(" ", namespace + " ");
+            return eventName.replace(/\s+|\t+/g, namespace + " ");
         };
         //-----------------------------------
         // Determines if the entry parameter is a DOM element
@@ -288,7 +288,7 @@ jsu.wrapper = "body"; //#main-section
             }, $.isPlainObject(path) ? path : { src: path });
             if (o.execute) {
                 $.ajaxSetup({ async: false });
-                return $.getScript(o.src, function () {
+                return $.getScript(o.src, function() {
                     $.ajaxSetup({ async: true });
                 });
             }
@@ -397,7 +397,7 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Gets the string representation of the specified date according to regional setting.
         // Output formats ISO 8601: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
-        var fnGetDate = (function () {
+        var fnGetDate = (function() {
             var fillZero = function(n) { return ("0" + n.toString()).slice(-2); };
             var fnDate = function(o) {
                 return (o.ISO8601 ? "yyyy-MM-dd" : _language.dateFormat).replace(/[dMy]+/g, function(m) {
@@ -629,7 +629,7 @@ jsu.wrapper = "body"; //#main-section
         }());
         //-----------------------------------
         // Delegates the blur event for removing tooltip
-        $(document).on(nsEvents("blur", "tooltip"), "[data-role=tooltip]", function() {
+        $(document).off("blur.tooltip").on(nsEvents("blur", "tooltip"), "[data-role=tooltip]", function() {
             $(".vld-tooltip").remove();
         });
         //-----------------------------------
@@ -1200,10 +1200,10 @@ jsu.wrapper = "body"; //#main-section
                    .wrapAll('<div class="ui-dialog-custom">');
                 var _dialog = $('#jsu-dialog');
                 if (!+o.width) d.width = $('.ui-dialog-custom')[0].clientWidth;
-                $('.close-dialog').one("click", function () { $('#jsu-dialog').dialog("close"); });
+                $('.close-dialog').one("click", function() { $('#jsu-dialog').dialog("close"); });
                 // Determines whether the dialog should be closed when the page is unloaded
                 if (d.closeOnPageUnload === true && !handlerExist(window, "beforeunload", "fnShowDialog"))
-                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function () { $('#jsu-dialog').dialog("close"); });
+                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function() { $('#jsu-dialog').dialog("close"); });
                 // Check the version of jquery.ui for "appendTo" feature
                 var v110 = (/^1\.1[0-9]/).test(jQuery.ui.version);
                 body.css("overflow", "hidden");
@@ -1213,7 +1213,7 @@ jsu.wrapper = "body"; //#main-section
                     modal: true,
                     hide: 'drop',
                     show: 'fade',
-                    maxHeight: +d.maxHeight || 500,
+                    maxHeight: +d.maxHeight || Math.floor($(window).height() * 0.86),
                     minHeight: +d.minHeight || 130,
                     height: d.height || 'auto',
                     maxWidth: +d.maxWidth || 1024,
@@ -1259,7 +1259,7 @@ jsu.wrapper = "body"; //#main-section
         jherax.browser = browser;
         jherax.inputType = input;
         jherax.handlerExist = handlerExist;
-        jherax.nsEvents = nsEvents; //undocumented
+        jherax.nsEvents = nsEvents;
         jherax.isDOM = isDOM;
         jherax.isFunction = isFunction;
         jherax.fnStringify = fnStringify;
