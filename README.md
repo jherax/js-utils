@@ -193,6 +193,7 @@ This namespace is used to define a default behaviour for some functions.
 * [fnShowDialog](#fnshowdialog-options)
 * [fnLoading](#fnloading-options)
 * [fnSetFocus](#fnsetfocus-)
+* [fnScrollBarWidth](#fnscrollbarwidth-)
 
 [jQuery extensions](#jquery-extensions)
 -----------------
@@ -963,6 +964,19 @@ This function is useful when you are using methods that alter the behaviour on i
 	  //Get back the focus to button
 	  $(this).focus();
   });
+```
+
+## fnScrollBarWidth ()
+This utility detects the width of the scrollbar in the browser, in pixels.<br>
+It is useful when you create layouts and the content exceeds the container size, then comes the scrollbar, taking space in the layout (used in [fnShowdialog](#fnshowdialog-options) when `maxHeight` property was added and its default value was set to 86% of the screen height)<br>
+**Returns** `Number`
+```javascript
+	var dialog = $("#popup");
+	if (dialog.hasVScroll()) {
+		var width = dialog.width();
+		var scrollWidth = jsu.fnScrollBarWidth();
+		dialog.width(width + scrollWidth);
+	}
 ```
 
 jQuery plugins
