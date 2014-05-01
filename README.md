@@ -169,6 +169,7 @@ This namespace is used to define a default behaviour for some functions.
 * [browser](#browser)
 * [inputType](#inputtype)
 * [handlerExist](#handlerexist-dom-eventname-namespace)
+* [nsEvents](#nsevents-eventname-namespace)
 * [isDOM](#isdom-object)
 * [isFunction](#isfunction-object)
 * [fnStringify](#fnstringify-json)
@@ -251,7 +252,7 @@ This object has two methods to determine the type of the `<input>` element.
 
 ### handlerExist *(dom, eventname, namespace)*
 This utility allow us to determine if an event handler was created previously by specifying a namespace.<br>
-**Note:** [Namespacing events](https://api.jquery.com/on/#event-names) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them. Check this article: [Namespaced Events in jQuery](http://css-tricks.com/namespaced-events-jquery/)<br>
+**Note:** [Event namespacing](http://css-tricks.com/namespaced-events-jquery/) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them.<br>
 **Returns** `Boolean`
 * **dom:** `DOM` element
 * **eventname:** `String` event type
@@ -266,6 +267,26 @@ This utility allow us to determine if an event handler was created previously by
     console.log("Event type:", e.type);
     console.log("Namespace:", e.namespace || e.handleObj.namespace);
     // Add your code here...
+  });
+```
+
+### nsEvents *(eventName, namespace)*
+This utility creates namespaced events by appending a period and a namespace to the event name.
+Binding&nbsp;and&nbsp;unbinding events is a common pattern in jQuery plugin development, so you can manage the actions performed by that event, but what if I have more than one listener bound to the event and I want to remove just one of them? [Event namespacing](http://css-tricks.com/namespaced-events-jquery/) provides a way to manage specific event handlers.<br>
+Check these articles: [Namespace your events](http://www.learningjquery.com/2007/09/namespace-your-events/) and [jQuery event names and namespaces](https://api.jquery.com/on/#event-names).<br>
+**Returns** `String`
+* **eventname:** `String` event type
+* **namespace:** `String` event namespace
+
+```javascript
+  // Delegates the click event to highlight an element
+  $(document).off("click.highlight").on(jsu.nsEvents("click", "highlight"), "[data-role=highlight]", function(e) {
+      $(this).addClass("jsu-highlight");
+  });
+  
+  // Attaches an anonymous function to several events
+  $(".jsu-maxlength").off(".maxLength").on(nsEvents("keypress input paste", "maxLength"), function(e) {
+    // add implementation
   });
 ```
 
@@ -929,7 +950,7 @@ The progress animation is done via CSS3, so you must add the following [css][jhe
 
 ### fnSetFocus ()
 Sets the focus on all elements [category:text][category.text], except on those having `.no-auto-focus` class.<br>
-This function is useful when you are using methods that alter the behaviour on input fields, *e.g. [$.fnCapitalize](#jqueryfncapitalize-type),&bnsp;[$.fnNumericFormat](#jqueryfnnumericformat-), [$.fnNumericInput](#jqueryfnnumericinput-), [$.fnCustomInput](#jqueryfncustominput-mask).*
+This function is useful when you are using methods that alter the behaviour on input fields, *e.g. [$.fnCapitalize](#jqueryfncapitalize-type),&nbsp;[$.fnNumericFormat](#jqueryfnnumericformat-), [$.fnNumericInput](#jqueryfnnumericinput-), [$.fnCustomInput](#jqueryfncustominput-mask).*
 ```javascript
   $(document).on("ready", function() {
 	  $("#txtDate").datepicker().addClass("no-auto-focus");
