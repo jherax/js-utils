@@ -5,7 +5,7 @@ This is a suite of utilities for JavaScript and jQuery, which includes tools for
 
 Getting Started
 ---------------
-The utility has a dependency on [jQuery 1.10+][jQuery.js] which must be loaded before [js-utils][jherax.js].<br>
+The utility has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before [js-utils][jherax.js].<br>
 It also requires some [CSS][jherax.css] rules for functions showing tooltips, and other methods.
 
 If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using *jQuery.ui,* otherwise an internal function for&nbsp;positioning will be used.
@@ -971,12 +971,12 @@ This utility detects the width of the scrollbar in the browser, in pixels.<br>
 It is useful when you create layouts and the content exceeds the container size, then comes the scrollbar, taking space in the layout (used in [fnShowdialog](#fnshowdialog-options) when `maxHeight` property was added and its default value was set to 86% of the screen height)<br>
 **Returns** `Number`
 ```javascript
-	var dialog = $("#popup");
-	if (dialog.hasVScroll()) {
-		var width = dialog.width();
-		var scrollWidth = jsu.fnScrollBarWidth();
-		dialog.width(width + scrollWidth);
-	}
+  var dialog = $("#popup");
+  if (dialog.hasVScroll()) {
+  	var width = dialog.width();
+  	var scrollWidth = jsu.fnScrollBarWidth();
+  	dialog.width(width + scrollWidth);
+  }
 ```
 
 jQuery plugins
@@ -1314,7 +1314,7 @@ Licensed under the MIT License
 
 <!-- links -->
 [js-utils]: http://jherax.github.io/
-[jQuery.js]: http://code.jquery.com/jquery-1.10.2.min.js
+[jQuery.js]: http://code.jquery.com/
 [jQuery.ui]: http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js
 [category.text]: #categorytext
 [jherax.css]: https://github.com/jherax/js-utils/tree/master/assets/css/jherax.css
