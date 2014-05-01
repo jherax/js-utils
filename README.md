@@ -270,7 +270,7 @@ This utility allow us to determine if an event handler was created previously by
   });
 ```
 
-### nsEvents *(eventName, namespace)*
+### nsEvents *(eventname, namespace)*
 This utility creates namespaced events by appending a period and a namespace to the event name.
 Binding&nbsp;and&nbsp;unbinding events is a common pattern in jQuery plugin development, so you can manage the actions performed by that event, but what if I have more than one listener bound to the event and I want to remove just one of them? [Event namespacing](http://css-tricks.com/namespaced-events-jquery/) provides a way to manage specific event handlers.<br>
 Check these articles: [Namespace your events](http://www.learningjquery.com/2007/09/namespace-your-events/) and [jQuery event names and namespaces](https://api.jquery.com/on/#event-names).<br>
@@ -286,7 +286,7 @@ Check these articles: [Namespace your events](http://www.learningjquery.com/2007
   
   // Attaches an anonymous function to several events
   $(".jsu-maxlength").off(".maxLength").on(nsEvents("keypress input paste", "maxLength"), function(e) {
-    // add implementation
+    // Implementation
   });
 ```
 
