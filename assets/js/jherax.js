@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.8.3
+//  Version: 2.8.4
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.8.3",
+    version: "2.8.4",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -689,7 +689,7 @@ jsu.wrapper = "body"; //#main-section
         }
         //-----------------------------------
         // Detects the width of scrollbar
-        function fnScrollBarWidth() {
+        function fnScrollbarWidth() {
             var outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body'),
                 barWidth = $('<div>').css('width', '100%').appendTo(outer).outerWidth();
             outer.remove();
@@ -1249,7 +1249,7 @@ jsu.wrapper = "body"; //#main-section
                     open: function( event, ui ) {
                         if (_dialog.hasVScroll()) {
                             var width = _dialog.dialog("option", "width");
-                            _dialog.dialog("option", "width", width + fnScrollBarWidth());
+                            _dialog.dialog("option", "width", width + fnScrollbarWidth());
                         }
                     },
                     close: function (ev, ui) {
@@ -1299,7 +1299,7 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
         jherax.fnSetFocus = fnSetFocus;
-        jherax.fnScrollBarWidth = fnScrollBarWidth;
+        jherax.fnScrollbarWidth = fnScrollbarWidth;
 
     })(jsu, jQuery);
     // Set default namespace
