@@ -193,11 +193,13 @@ This namespace is used to define a default behaviour for some functions.
 * [fnShowDialog](#fnshowdialog-options)
 * [fnLoading](#fnloading-options)
 * [fnSetFocus](#fnsetfocus-)
-* [fnScrollBarWidth](#fnscrollbarwidth-)
+* [fnScrollbarWidth](#fnscrollbarwidth-)
 
 [jQuery extensions](#jquery-extensions)
 -----------------
 <!---* [$.position](#jqueryposition-options)-->
+* [$.hasVScroll](#jqueryhasvscroll-)
+* [$.hasHScroll](#jqueryhashscroll-)
 * [$.fnCenter](#jqueryfncenter-options)
 * [$.fnMaxLength](#jqueryfnmaxlength-length-options)
 * [$.fnCapitalize](#jqueryfncapitalize-type)
@@ -966,7 +968,7 @@ This function is useful when you are using methods that alter the behaviour on i
   });
 ```
 
-## fnScrollBarWidth ()
+## fnScrollbarWidth ()
 This utility detects the width of the scrollbar in the browser, in pixels.<br>
 It is useful when you create layouts and the content exceeds the container size, then comes the scrollbar, taking space in the layout (used in [fnShowdialog](#fnshowdialog-options) when `maxHeight` property was added and its default value was set to 86% of the screen height)<br>
 **Returns** `Number`
@@ -974,7 +976,7 @@ It is useful when you create layouts and the content exceeds the container size,
   var dialog = $("#popup");
   if (dialog.hasVScroll()) {
   	var width = dialog.width();
-  	var scrollWidth = jsu.fnScrollBarWidth();
+  	var scrollWidth = jsu.fnScrollbarWidth();
   	dialog.width(width + scrollWidth);
   }
 ```
@@ -984,6 +986,30 @@ jQuery plugins
 This is a set of utilities for [jQuery](http://jquery.com/).<br>
 jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy API that works cross-browser.<br>
 If you want to learn more about jQuery, here is a full guide: [How jQuery Works](http://learn.jquery.com/about-jquery/how-jquery-works/).
+
+### hasVScroll ()
+This plugin detects if the first element in the collection has a vertical scrollbar.<br>
+**Returns** `Boolean`
+```javascript
+  var dialog = $("#popup");
+  if (dialog.hasVScroll()) {
+  	var width = dialog.width();
+  	var scrollWidth = jsu.fnScrollbarWidth();
+  	dialog.width(width + scrollWidth);
+  }
+```
+
+### hasHScroll ()
+This plugin detects if the first element in the collection has a horizontal scrollbar.<br>
+**Returns** `Boolean`
+```javascript
+  var dialog = $("#popup");
+  if (dialog.hasHScroll()) {
+  	var height = dialog.height();
+  	var scrollWidth = jsu.fnScrollbarWidth();
+  	dialog.height(height + scrollWidth);
+  }
+```
 
 ### jQuery.fnCenter (options)
 Sets the collection of jquery objects in the center of screen.<br>
