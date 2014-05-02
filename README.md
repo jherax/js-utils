@@ -987,7 +987,7 @@ This is a set of utilities for [jQuery](http://jquery.com/).<br>
 jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy API that works cross-browser.<br>
 If you want to learn more about jQuery, here is a full guide: [How jQuery Works](http://learn.jquery.com/about-jquery/how-jquery-works/).
 
-### hasVScroll ()
+### jQuery.hasVScroll ()
 This plugin detects if the first element in the collection has a vertical scrollbar.<br>
 **Returns** `Boolean`
 ```javascript
@@ -999,7 +999,7 @@ This plugin detects if the first element in the collection has a vertical scroll
   }
 ```
 
-### hasHScroll ()
+### jQuery.hasHScroll ()
 This plugin detects if the first element in the collection has a horizontal scrollbar.<br>
 **Returns** `Boolean`
 ```javascript
