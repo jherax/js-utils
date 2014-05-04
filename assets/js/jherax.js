@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.8.4
+//  Version: 2.8.5
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.8.4",
+    version: "2.8.5",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -1155,13 +1155,14 @@ jsu.wrapper = "body"; //#main-section
                     }
                 });
                 handlers.splice(h, 0, handler);
+                o.id = 'jsu-dialog-confirm';
                 // Creates the buttons for fnShowDialog()
                 o.buttons = [
                     {
                         text: _language.dialogOK,
                         click: function() {
                             if (hasValidUrl(current.href)) document.location = current.href;
-                            $("#jsu-dialog").on("dialogclose", function (ev, ui) {
+                            $("#" + o.id).on("dialogclose", function (ev, ui) {
                                 $.fn.fnConfirm.canSubmit = true;
                                 $(current).off(".fnConfirm").trigger(type);
                                 if ((/[_]{2}doPostBack/).test(current.href))
@@ -1173,7 +1174,7 @@ jsu.wrapper = "body"; //#main-section
                         text: _language.dialogCancel,
                         click: function() {
                             $.fn.fnConfirm.canSubmit = false;
-                            $("#jsu-dialog").dialog("close");
+                            $("#" + o.id).dialog("close");
                         }
                     }
                 ];
@@ -1191,8 +1192,6 @@ jsu.wrapper = "body"; //#main-section
             arguments.callee.source = arguments.callee.source || function(o) {
                 if (!jQuery.ui || !jQuery.ui.dialog)
                     throw new CustomException("jQuery.ui.dialog is required");
-                $('#jsu-dialog,.ui-widget-overlay').remove();
-                if (!o.content) return false;
                 var cnt = null, body = $('body');
                 var d = $.extend({
                     appendTo: jsu.wrapper,
@@ -1202,6 +1201,14 @@ jsu.wrapper = "body"; //#main-section
                     buttons: {},
                     closeOnPageUnload: false
                 }, o);
+                // Set the Id for dialog element
+                Object.defineProperty(d, "id", {
+                    enumerable: false,
+                    writable: false,
+                    value: '#' + (o.id || 'jsu-dialog')
+                });
+                $(d.id + ',.ui-widget-overlay').remove();
+                if (!o.content) return false;
                 if (!$.isPlainObject(d.buttons) && !$.isArray(d.buttons)) d.buttons = {};
                 if (d.content instanceof jQuery) cnt = d.content;
                 else if (isDOM(d.content)) cnt = $(d.content);
@@ -1211,18 +1218,19 @@ jsu.wrapper = "body"; //#main-section
                     cnt = $(icon + '<div class="wnd-text">' + d.content + '</div>').appendTo(jsu.wrapper).data("del", true);
                 }
                 // Wraps the content into the dialog window
-                cnt.wrapAll('<div id="jsu-dialog" title="' + d.title + '">')
+                cnt.wrapAll('<div id="' + d.id.replace("#", "") + '">')
                    .wrapAll('<div class="ui-dialog-custom">');
-                var _dialog = $('#jsu-dialog');
-                if (!+o.width) d.width = $('.ui-dialog-custom')[0].clientWidth;
-                $('.close-dialog').one("click", function() { $('#jsu-dialog').dialog("close"); });
+                var _dialog = $(d.id);
+                if (!+o.width) d.width = _dialog.find('.ui-dialog-custom')[0].clientWidth;
                 // Determines whether the dialog should be closed when the page is unloaded
                 if (d.closeOnPageUnload === true && !handlerExist(window, "beforeunload", "fnShowDialog"))
-                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function() { $('#jsu-dialog').dialog("close"); });
+                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function() { $(d.id).dialog("close"); });
+                $('.close-dialog').one("click", function() { $(d.id).dialog("close"); });
                 // Check the version of jquery.ui for "appendTo" feature
                 var v110 = (/^1\.1[0-9]/).test(jQuery.ui.version);
                 body.css("overflow", "hidden");
                 _dialog.dialog({
+                    title: d.title,
                     draggable: true,
                     resizable: false,
                     modal: true,
@@ -1236,23 +1244,31 @@ jsu.wrapper = "body"; //#main-section
                     width: +d.width,
                     buttons: d.buttons,
                     appendTo: d.appendTo,
-                    create: function (ev, ui) {
-                        // Fixes the width of the dialog
+                    create: function (event, ui) {
                         if (!+o.width) {
+                            // Fixes the width of the dialog
                             var width = $(this).dialog("option", "width");
+                            var maxwidth = $(this).dialog("option", "maxWidth");
                             var padding = +_dialog.css("padding-left").replace(/\D/g, "") * 2;
-                            $(this).dialog("option", "width", width + padding);
+                            $(this).dialog("option", "width", Math.min(width, maxwidth) + padding);
                         }
-                        // Add "appendTo" feature if it is not supported
-                        if (!v110) $(".ui-widget-overlay,.ui-dialog").appendTo(d.appendTo);
+                        if (!v110) {
+                            // Add "appendTo" feature if it is not supported
+                            _dialog.css("max-height", $(this).dialog("option", "maxHeight"))
+                            .closest(".ui-dialog").add(".ui-widget-overlay").appendTo(d.appendTo);
+                        }
                     },
-                    open: function( event, ui ) {
+                    open: function (event, ui) {
                         if (_dialog.hasVScroll()) {
                             var width = _dialog.dialog("option", "width");
                             _dialog.dialog("option", "width", width + fnScrollbarWidth());
                         }
+                        if (d.id === '#jsu-dialog-confirm') {
+                            var zindex = +$(".ui-dialog").css("z-index") + 1;
+                            _dialog.closest(".ui-dialog").css("z-index", zindex);
+                        }
                     },
-                    close: function (ev, ui) {
+                    close: function (event, ui) {
                         body.css("overflow", "");
                         if (_dialog.hasClass("ui-dialog-content")) {
                             _dialog.dialog("destroy");
