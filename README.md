@@ -149,7 +149,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 This namespace is used to define a default behaviour for some functions.
 - **`position:`** This object sets the default setting for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the **at** option for full details on possible values)
+  - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -197,9 +197,9 @@ This namespace is used to define a default behaviour for some functions.
 
 [jQuery extensions](#jquery-extensions)
 -----------------
-<!---* [$.position](#jqueryposition-options)-->
 * [$.hasVScroll](#jqueryhasvscroll-)
 * [$.hasHScroll](#jqueryhashscroll-)
+* [$.position](#jqueryposition-options)
 * [$.fnCenter](#jqueryfncenter-options)
 * [$.fnMaxLength](#jqueryfnmaxlength-length-options)
 * [$.fnCapitalize](#jqueryfncapitalize-type)
@@ -1009,6 +1009,34 @@ This plugin detects if the first element in the collection has a horizontal scro
   	var scrollWidth = jsu.fnScrollbarWidth();
   	dialog.height(height + scrollWidth);
   }
+```
+
+### jQuery.position (options)
+Position an element relative to another. This plugin extends jQuery's built-in [.position()](http://api.jquery.com/position/) method. If *jQuery.ui* is not loaded, calling the `.position()` method will cause the internal implementation of the method to be used instead.<br>
+**Returns** `jQuery`
+- **`options:`** This object sets the properties to configure the plugin:
+  - **of:** `String` or `jQuery` or `DOM`. Determines the first matching element to position against.
+  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+
+```javascript
+  setTimeout(function() {
+    var target = $("#target");
+    $("#floating").position = {
+      of: target,
+      at: "left bottom",
+      my: "left+2 top+5"
+    };
+  }, 600);
+  
+  setTimeout(function() {
+    $("#floating").position = {
+      of: "form > p:first",
+      at: "left bottom",
+      my: "left+2 top+5"
+    };
+  }, 2000);
 ```
 
 ### jQuery.fnCenter (options)
