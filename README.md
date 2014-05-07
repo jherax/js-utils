@@ -1012,7 +1012,7 @@ This plugin detects if the first element in the collection has a horizontal scro
 ```
 
 ### jQuery.position (options)
-Position an element relative to another. This plugin extends jQuery's built-in [.position()](http://api.jquery.com/position/) method. If *jQuery.ui* is not loaded, calling the `.position()` method will cause the internal implementation of the method to be used instead.<br>
+Position an element relative to another. This plugin extends jQuery's built-in [.position()](http://api.jquery.com/position/) method. If *jQuery.ui* is not loaded, calling the `.position()` method will cause the internal implementation of the method to be used instead. If&nbsp;no arguments or the <code>of</code> property is not set, the default [.position()](http://api.jquery.com/position/) method is called.<br>
 **Returns** `jQuery`
 - **`options:`** This object sets the properties to configure the plugin:
   - **of:** `String` or `jQuery` or `DOM`. Determines the first matching element to position against.
@@ -1025,8 +1025,8 @@ Position an element relative to another. This plugin extends jQuery's built-in [
     var target = $("#target");
     $("#floating").position = {
       of: target,
-      at: "left bottom",
-      my: "left+2 top+5"
+      at: "right center",
+      my: "left+2 center"
     };
   }, 600);
   
@@ -1040,19 +1040,20 @@ Position an element relative to another. This plugin extends jQuery's built-in [
 ```
 
 ### jQuery.fnCenter (options)
-Sets the collection of jquery objects in the center of screen.<br>
-Elements are centered using fixed position.<br>
+Centers an element relative to another. If no arguments or the <code>of</code> property is not set, matching elements are placed in the center of screen *(with position:fixed)*<br>
 **Returns** `jQuery`
 ```javascript
-  // with existing element
-  $(".warning").fnCenter();
-  // or create a new one
-  var div = $('<div id="divHello" />').css({
+  // positioning at the center of screen
+  $(".notify").fnCenter();
+  
+  // positioning at the center of #target
+  var div = $('<div id="divHello">').css({
     'padding': '20px',
     'background': '#ccc',
-    'borderRadius': '5px'
+    'border-radius': '5px',
+    'display': 'inline-block'
   }).appendTo("body").html("<h4>Hello jQuery</h4>");
-  div.fnCenter();
+  div.fnCenter({ of: "#target" });
 ```
 
 ### jQuery.fnMaxLength *(length, options)*
