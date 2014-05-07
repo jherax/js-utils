@@ -35,7 +35,7 @@ Initialization
     // We set the language setting
     jsu.regional.set(jsu.regional.english);
     
-    // Sets the default setting for tooltips
+    // Sets the default position for all tooltips
     jsu.settings.position = {
       at: "left bottom",
       my: "left+2 top+5"
@@ -109,7 +109,7 @@ You can define your own language settings:
     dialogCancel: "Cancel", //default $.fnConfirm cancel text
     dialogOK: "Agree" //default $.fnConfirm approve text
   };
-  // We set the created language setting
+  // Set the newly created language
   jsu.regional.set(jsu.regional.italian);
 })();
 ```
@@ -138,7 +138,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
     showMonthAfterYear: false,
     yearSuffix: ''
   };
-  // We set the created language setting
+  // Set the newly created language
   jsu.regional.set(jsu.regional.italian, function() {
     $.datepicker.setDefaults($.datepicker.regional['it']);
   });
@@ -147,14 +147,14 @@ If you want to provide additional languages to other plugins, you can pass a fun
 
 ### jsu.settings
 This namespace is used to define a default behaviour for some functions.
-- **`position:`** This object sets the default setting for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
+- **`position:`** This object sets the default position for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   (function() {
-    // Sets default setting for tooltips
+    // Sets default position for tooltips
     jsu.settings.position = {
       at: "left bottom",
       my: "left+2 top+5",
@@ -257,6 +257,8 @@ This object has two methods to determine the type of the `<input>` element.
 This utility allow us to determine if an event handler was created previously by specifying a namespace.<br>
 **Note:** [Event namespacing](http://css-tricks.com/namespaced-events-jquery/) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them.<br>
 **Returns** `Boolean`
+
+<div>Parameters</div>
 * **dom:** `DOM` element
 * **eventname:** `String` event type
 * **namespace:** `String` event namespace
@@ -278,6 +280,8 @@ This utility creates namespaced events by appending a period and a namespace to 
 Binding&nbsp;and&nbsp;unbinding events is a common pattern in jQuery plugin development, so you can manage the actions performed by that event, but what if I have more than one listener bound to the event and I want to remove just one of them? [Event namespacing](http://css-tricks.com/namespaced-events-jquery/) provides a way to manage specific event handlers.<br>
 Check these articles: [Namespace your events](http://www.learningjquery.com/2007/09/namespace-your-events/) and [jQuery event names and namespaces](https://api.jquery.com/on/#event-names).<br>
 **Returns** `String`
+
+<div>Parameters</div>
 * **eventname:** `String` event type
 * **namespace:** `String` event namespace
 
@@ -296,6 +300,8 @@ Check these articles: [Namespace your events](http://www.learningjquery.com/2007
 ### isDOM *(object)*
 Determines if the entry parameter is a [DOM Element](http://api.jquery.com/Types/#Element).<br>
 **Returns** `Boolean`
+
+<div>Parameters</div>
 * **object:** `Object` to validate
 
 ```javascript
@@ -312,6 +318,8 @@ Determines if the entry parameter is a [DOM Element](http://api.jquery.com/Types
 ### isFunction *(object)*
 Determines if the entry parameter is a function.<br>
 **Returns** `Boolean`
+
+<div>Parameters</div>
 * **object:** `Object` to validate
 
 ```javascript
@@ -329,6 +337,8 @@ Determines if the entry parameter is a function.<br>
 This is a reference to [`JSON.stringify`](http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) and provides a polyfill for old browsers.<br>
 fnStringify serialize an object, array or primitive value and returns it as a *JSON string*.<br>
 **Returns** `String`
+
+<div>Parameters</div>
 * **json:** `Object` to be serialized
 
 ```javascript
@@ -348,12 +358,17 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 
 ### fnAddScript *(path, before)*
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the&nbsp;*kendo.ui.window* component to build a window, you can check for dependencies before trying to access that&nbsp;component.<br>
-**Returns** `undefined` but if you set the property `{ execute: true }` then a [`jqXHR`](http://api.jquery.com/Types/#jqXHR) object is returned.
-* **path:** `String` source of the script to be added. It can also be an `Object` with a set of attributes for *[script&nbsp;tag](http://www.quackit.com/html_5/tags/html_script_tag.cfm):* `{ src: String, async: Boolean, defer: Boolean, charset: String }`<br>
-Other property you can set is `{ execute: Bolean }` wich loads a JavaScript file from the server using&nbsp;a&nbsp;GET&nbsp;HTTP request, and then execute it in the global context through [jQuery.getScript()](https://api.jquery.com/jQuery.getScript/).<br>
-The property `{ before: String }` indicates where to insert the script (see ***before*** parameter).
-* **before:** `String` part of `src` attribute of the element that identifies where the script will be added.<br>
-This parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
+**Returns** `undefined` or [`jqXHR`](http://api.jquery.com/Types/#jqXHR) if you set the property `execute: true`
+
+<div>Parameters</div>
+- **path:** `String` Source of the script to be added.<br>It can also be an `Object` with following properties:
+  - **src:** `String` Specifies a URI/URL of an external script.
+  - **async:** `Boolean` Specifies whether script will executed asynchronously, as soon as it is available.
+  - **defer:** `Boolean` Specifies whether the script is executed after the page has finished parsing.
+  - **charset:** `String` Defines the character encoding that the script uses.
+  - **execute:** `Boolean` Loads a script file from the server via [jQuery.getScript()](https://api.jquery.com/jQuery.getScript/)
+  - **before:** `String` Indicates where to insert the script (same as the ***before*** parameter)
+- **before:** `String` part of `src` attribute of the element that identifies where the script will be added. This&nbsp;parameter is optional and if it is not specified, the new script will be inserted before `"jherax.js"`
 
 ```javascript
   function fnShowWindow(o) {
@@ -377,6 +392,8 @@ This parameter is optional and if it is not specified, the new script will be in
 ### fnAddCSS *(path, before)*
 Dynamically add an external stylesheet. This method is useful to inject a cascading style sheet resource from an&nbsp;external file, in case that you use some plugins requiring specific css and you don't want to include them inside&nbsp;your main stylesheet.<br>
 **Returns** `undefined` this method returns nothing.
+
+<div>Parameters</div>
 * **path:** `String` source of the stylesheet to be added
 * **before:** `String` part of `href` attribute of the element that identifies where the resource will be added. This&nbsp;parameter is optional and if it is not specified, the new stylesheet will be appended to `<head>`
 
@@ -395,6 +412,8 @@ Escapes user input to be treated as a literal string in a regular expression.<br
 This mean that special characters will be treated as literals.<br>
 e.g. the expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
 **Returns** `String`, or `null` if ***text*** parameter is not *string*
+
+<div>Parameters</div>
 * **text:** `String` to literalize
 
 ```javascript
@@ -407,6 +426,8 @@ e.g. the expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
 ### fnGetQueryToString *(query)*
 Gets the value of a specific parameter in the querystring (search in the address bar).<br>
 **Returns** `String`. If the parameter is not found, an empty string is returned.
+
+<div>Parameters</div>
 * **query:** `String` with name of the parameter to search for.
 
 ```javascript
@@ -423,6 +444,8 @@ Gets the value of a specific parameter in the querystring (search in the address
 Gets the querystring from address bar and is returned as a JSON object.<br>
 **Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will&nbsp;be&nbsp;retrieved in a `JSON` object.<br>
 **Returns** `Object` in JSON notation.
+
+<div>Parameters</div>
 * **query:** `String` with name of the parameter to search for.
 
 ```javascript
@@ -443,6 +466,8 @@ Clones an object and set all its properties to read-only.<br>
 In some cases, you may need to lock an object to prevent being modified.<br>
 This could be useful, for example, if you need preserve a model object.<br>
 **Returns** `Object`
+
+<div>Parameters</div>
 * **object:** `Object` to be cloned
 
 ```javascript
@@ -464,25 +489,18 @@ This could be useful, for example, if you need preserve a model object.<br>
 ```
 
 ### fnGetDate *(options)*
-Gets string representation of the specified date according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
+Gets string representation of the specified date according to [`jsu.regional`](#jsuregional) `dateFormat` `timeFormat`<br>
 **Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the *value* attribute must be a valid date-time as defined in [RFC&nbsp;3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
-**Returns** `Object`
-* **options:** `Object` Optional. If not provided, the current date and time is returned. If you pass an argument, you can specify some of the following options:
+**Returns** `Object` with the following properties:
+- **date:** `String` Gets the date according to `dateFormat`
+- **time:** `String` Gets the time according to `timeFormat`
+- **dateTime:** `String` Gets the date according to `dateFormat` + `timeFormat`
 
-```javascript
-{
-  date: Date|String|Number //date to parse according to regional setting (Default: new Date)
-  ISO8601: Boolean //the date will be formatted according to ISO 8601 (Default: false)
-}
-```
-**Note:** The object returned has the following properties:
-```javascript
-{
-  date: String //gets the date according to [dateFormat]
-  time: String //gets the time according to [timeFormat]
-  dateTime: String //gets the date with [dateFormat] + [timeFormat]
-}
-```
+<div>Parameters</div>
+- **options:** `Object` Optional. If not provided, the current date and time is returned.
+  - **date:** `Date` `String` `Number` *default: new Date.* The date to parse as string.
+  - **ISO8601:** `Boolean` *default: false.* Specifies whether the date is formatted according to ISO 8601.
+
 ```javascript
   (function() {
     // We set the language setting
@@ -519,6 +537,8 @@ Gets the date object from a string in [ISO 8601](http://www.ecma-international.o
 It is mandatory that input parameter be a string in ISO 8601, otherwise `null` is returned.<br>
 **Note:** Time offset and UTC are omitted for the entry parameter.<br>
 **Returns** `Date` or `Null`
+
+<div>Parameters</div>
 * **date:** `String` date as string in ISO 8601 [format](http://www.w3.org/TR/NOTE-datetime)
 
 ```javascript
@@ -530,11 +550,13 @@ It is mandatory that input parameter be a string in ISO 8601, otherwise `null` i
 ```
 
 ### fnGetHtmlText *(value)*
-Converts a pure HTML string to encoded html, so if you have the string `<p>hello</p>`,<br>
-this function will encode the hmtl text to `&lt;p&gt;hello&lt;/p&gt;`<br>
+Escapes special characters inside a HTML string, e.g. the string `<p>hello</p>`<br>
+is encoded by inserting HTML entities in their place `&lt;p&gt;hello&lt;/p&gt;`<br>
 This method can be used just as a function: *fnGetHtmlText (value)*<br>
 or as delegate for jQuery [.val()](http://api.jquery.com/val/#val2) or [.text()](http://api.jquery.com/text/#text2) *fnGetHtmlText (index, value)*<br>
 **Returns** `String` with encoded html
+
+<div>Parameters</div>
 * **value:** `String` html to be encoded
 
 ```html
@@ -572,15 +594,11 @@ or as delegate for jQuery [.val()](http://api.jquery.com/val/#val2) or [.text()]
 Gets the selected text in the document.<br>
 **Note:** There are some `<input>` elements that not support text selection.<br>
 **Returns** `Object` with the following properties:
-```javascript
-{
-  text: String //selected text (whitespace removed from the beginning and end of text)
-  slice: String //complement of selected text (if active element is category:text)
-  start: Number //initial cursor position (if active element is category:text)
-  end: Number //final cursor position (if active element is category:text)
-}
-```
-<div align="left">Take a look at <a href="#categorytext">category:text</a>&nbsp;</div>
+- **text:** `String` Selected text. Whitespace is removed from the beginning and end of text.
+- **slice:** `String` Complement of selected text (if active element is [category:text][category.text])
+- **start:** `Number` Initial cursor position (if active element is [category:text][category.text])
+- **end:** `Number` Final cursor position (if active element is [category:text][category.text])
+
 ```javascript
   var sel = jsu.fnGetSelectedText();
   if (sel.text !== "") alert(sel.text);
@@ -1040,7 +1058,7 @@ Position an element relative to another. This plugin extends jQuery's built-in [
 ```
 
 ### jQuery.fnCenter (options)
-Centers an element relative to another. If no arguments or the <code>of</code> property is not set, matching elements are placed in the center of screen *(with position:fixed)*<br>
+Centers an element relative to another. If no arguments or the <code>of</code> property is not set, matching elements are&nbsp;placed in the center of screen *(with position: fixed)*<br>
 **Returns** `jQuery`
 ```javascript
   // positioning at the center of screen
@@ -1057,11 +1075,13 @@ Centers an element relative to another. If no arguments or the <code>of</code> p
 ```
 
 ### jQuery.fnMaxLength *(length, options)*
-Limits the maximum length of characters allowed in the elements [category:text][category.text]<br>
-A tooltip will be placed on the right side of input element showing the characters remaining.<br>
-It has a dependency on [jQuery.UI][jQuery.ui] for positioning, and also has a [css class][jherax.css] `.vld-tooltip`<br>
+Limits the maximum length of characters allowed for the matching elements [category:text][category.text]<br>
+A tooltip will be placed to the right of the element, showing the number of characters typed.<br>
+By default the tooltip is positioned by [.position()](#jqueryposition-options) `at: "right bottom"` but this position can be overridden for all tooltips by setting the [`jsu.settings.position`](#jsusettings) property; if you do not want to affect all tooltips, then you can specify the position by providing the ***options*** parameter to the function.<br>
+The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class.<br>
 **Returns** `jQuery`
 * **length:** `Number` specifying the max length of characters
+* **options:** `Object` that sets the position for the tooltip
 
 ```javascript
   $("#txtName").fnMaxLength(20);
