@@ -258,7 +258,7 @@ This utility allow us to determine if an event handler was created previously by
 **Note:** [Event namespacing](http://css-tricks.com/namespaced-events-jquery/) is a technique to handle tasks differently depending on the event namespace used, and it is very useful when you've attached several listeners to the same event, and need to do something with just one of them.<br>
 **Returns** `Boolean`
 
-<div>Parameters</div>
+Parameters
 * **dom:** `DOM` element
 * **eventname:** `String` event type
 * **namespace:** `String` event namespace
@@ -281,7 +281,7 @@ Binding&nbsp;and&nbsp;unbinding events is a common pattern in jQuery plugin deve
 Check these articles: [Namespace your events](http://www.learningjquery.com/2007/09/namespace-your-events/) and [jQuery event names and namespaces](https://api.jquery.com/on/#event-names).<br>
 **Returns** `String`
 
-<div>Parameters</div>
+Parameters
 * **eventname:** `String` event type
 * **namespace:** `String` event namespace
 
@@ -301,7 +301,7 @@ Check these articles: [Namespace your events](http://www.learningjquery.com/2007
 Determines if the entry parameter is a [DOM Element](http://api.jquery.com/Types/#Element).<br>
 **Returns** `Boolean`
 
-<div>Parameters</div>
+Parameters
 * **object:** `Object` to validate
 
 ```javascript
@@ -319,7 +319,7 @@ Determines if the entry parameter is a [DOM Element](http://api.jquery.com/Types
 Determines if the entry parameter is a function.<br>
 **Returns** `Boolean`
 
-<div>Parameters</div>
+Parameters
 * **object:** `Object` to validate
 
 ```javascript
@@ -338,7 +338,7 @@ This is a reference to [`JSON.stringify`](http://developer.mozilla.org/en-US/doc
 fnStringify serialize an object, array or primitive value and returns it as a *JSON string*.<br>
 **Returns** `String`
 
-<div>Parameters</div>
+Parameters
 * **json:** `Object` to be serialized
 
 ```javascript
@@ -360,7 +360,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 Dynamically add an external script. This method is useful to inject dependencies from an external file, in case your code might fail if it depends on a specific component. Thus for example, if you have a function that uses the&nbsp;*kendo.ui.window* component to build a window, you can check for dependencies before trying to access that&nbsp;component.<br>
 **Returns** `undefined` or [`jqXHR`](http://api.jquery.com/Types/#jqXHR) if you set the property `execute: true`
 
-<div>Parameters</div>
+Parameters
 - **path:** `String` Source of the script to be added.<br>It can also be an `Object` with following properties:
   - **src:** `String` Specifies a URI/URL of an external script.
   - **async:** `Boolean` Specifies whether script will executed asynchronously, as soon as it is available.
@@ -393,7 +393,7 @@ Dynamically add an external script. This method is useful to inject dependencies
 Dynamically add an external stylesheet. This method is useful to inject a cascading style sheet resource from an&nbsp;external file, in case that you use some plugins requiring specific css and you don't want to include them inside&nbsp;your main stylesheet.<br>
 **Returns** `undefined` this method returns nothing.
 
-<div>Parameters</div>
+Parameters
 * **path:** `String` source of the stylesheet to be added
 * **before:** `String` part of `href` attribute of the element that identifies where the resource will be added. This&nbsp;parameter is optional and if it is not specified, the new stylesheet will be appended to `<head>`
 
@@ -413,7 +413,7 @@ This mean that special characters will be treated as literals.<br>
 e.g. the expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
 **Returns** `String`, or `null` if ***text*** parameter is not *string*
 
-<div>Parameters</div>
+Parameters
 * **text:** `String` to literalize
 
 ```javascript
@@ -427,7 +427,7 @@ e.g. the expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
 Gets the value of a specific parameter in the querystring (search in the address bar).<br>
 **Returns** `String`. If the parameter is not found, an empty string is returned.
 
-<div>Parameters</div>
+Parameters
 * **query:** `String` with name of the parameter to search for.
 
 ```javascript
@@ -445,7 +445,7 @@ Gets the querystring from address bar and is returned as a JSON object.<br>
 **Note:** The entry parameter is not mandatory, and if not specified, all variables found in the querystring will&nbsp;be&nbsp;retrieved in a `JSON` object.<br>
 **Returns** `Object` in JSON notation.
 
-<div>Parameters</div>
+Parameters
 * **query:** `String` with name of the parameter to search for.
 
 ```javascript
@@ -467,7 +467,7 @@ In some cases, you may need to lock an object to prevent being modified.<br>
 This could be useful, for example, if you need preserve a model object.<br>
 **Returns** `Object`
 
-<div>Parameters</div>
+Parameters
 * **object:** `Object` to be cloned
 
 ```javascript
@@ -490,13 +490,13 @@ This could be useful, for example, if you need preserve a model object.<br>
 
 ### fnGetDate *(options)*
 Gets string representation of the specified date according to [`jsu.regional`](#jsuregional) `dateFormat` `timeFormat`<br>
-**Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the *value* attribute must be a valid date-time as defined in [RFC&nbsp;3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
+**Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the `value` attribute must be a valid date-time as defined in [RFC&nbsp;3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
 **Returns** `Object` with the following properties:
 - **date:** `String` Gets the date according to `dateFormat`
 - **time:** `String` Gets the time according to `timeFormat`
 - **dateTime:** `String` Gets the date according to `dateFormat` + `timeFormat`
 
-<div>Parameters</div>
+Parameters
 - **options:** `Object` Optional. If not provided, the current date and time is returned.
   - **date:** `Date` `String` `Number` *default: new Date.* The date to parse as string.
   - **ISO8601:** `Boolean` *default: false.* Specifies whether the date is formatted according to ISO 8601.
@@ -538,7 +538,7 @@ It is mandatory that input parameter be a string in ISO 8601, otherwise `null` i
 **Note:** Time offset and UTC are omitted for the entry parameter.<br>
 **Returns** `Date` or `Null`
 
-<div>Parameters</div>
+Parameters
 * **date:** `String` date as string in ISO 8601 [format](http://www.w3.org/TR/NOTE-datetime)
 
 ```javascript
@@ -552,11 +552,11 @@ It is mandatory that input parameter be a string in ISO 8601, otherwise `null` i
 ### fnGetHtmlText *(value)*
 Escapes special characters inside a HTML string, e.g. the string `<p>hello</p>`<br>
 is encoded by inserting HTML entities in their place `&lt;p&gt;hello&lt;/p&gt;`<br>
-This method can be used just as a function: *fnGetHtmlText (value)*<br>
+This method can be used as a simple function: *fnGetHtmlText (value)*<br>
 or as delegate for jQuery [.val()](http://api.jquery.com/val/#val2) or [.text()](http://api.jquery.com/text/#text2) *fnGetHtmlText (index, value)*<br>
 **Returns** `String` with encoded html
 
-<div>Parameters</div>
+Parameters
 * **value:** `String` html to be encoded
 
 ```html
@@ -609,6 +609,8 @@ Gets the selected text in the document.<br>
 Gets the cursor position of ***dom*** element.<br>
 **Note:** There are some `<input>` elements that not support text selection.<br>
 **Returns** `Number`
+
+Parameters
 * **dom:** `DOM` element [category:text][category.text]
 
 ```javascript
@@ -620,6 +622,9 @@ Gets the cursor position of ***dom*** element.<br>
 ### fnSetCaretPosition *(dom, position)*
 Sets the cursor ***position*** in the ***dom*** element.<br>
 **Note:** There are some `<input>` elements that not support text selection.<br>
+**Returns** `undefined`
+
+Parameters
 * **dom:** `DOM` element [category:text][category.text]
 * **position:** `Number` that indicates where the cursor is set
 
@@ -637,6 +642,8 @@ Applies a transformation to the text, removing all line-breaks, spaces, and tabs
 **Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnCapitalize](#jqueryfncapitalize-type).<br>
 **Returns** `String`
+
+Parameters
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
@@ -676,6 +683,8 @@ Sets numeric format according to **es-CO** culture by placing the decimal `.` an
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to format.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnNumericFormat](#jqueryfnnumericformat-).<br>
 **Returns** `String` with the formatted number
+
+Parameters
 * **object:** `String` or `DOM` element [category:text][category.text]
 
 ```javascript
@@ -691,11 +700,13 @@ Validates the format, depending on ***type*** supplied. Date validations are run
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to validate.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
 **Returns** `Boolean`
+
+Parameters
 * **object:** `String` or `DOM` element [category:text][category.text]
 * **type:** `String` specifying the type of validation:
-  * `"t"` validates the time format ([timeFormat](#jsuregional))
-  * `"d"` validates the date format ([dateFormat](#jsuregional))
-  * `"dt"` validates full date format ([dateFormat + timeFormat](#jsuregional))
+  * `"t"` validates the time format [`timeFormat`](#jsuregional)
+  * `"d"` validates the date format [`dateFormat`](#jsuregional)
+  * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
   * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address
   * `"lat"` validates the latitude
@@ -1092,7 +1103,7 @@ The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class
 This is the jQuery extension for [fnCapitalize](#fncapitalize-object-type) function.<br>
 Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
-**Note:** The text is transformed when the `blur` event occurs.<br>
+**Note:** The text is transformed when the `blur` event is triggered.<br>
 **Returns** `jQuery`
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
@@ -1178,13 +1189,13 @@ To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-
 
 ### jQuery.fnIsValidFormat *(type)*
 This is the jQuery extension for [fnIsValidFormat](#fnisvalidformat-object-type) function.<br>
-Validates the format of `value`, depending on ***type*** supplied.<br>
+Validates the format of `value` attribute for matching elements.<br>
 Date validations are performed according to [regional setting](#jsuregional).<br>
 **Returns** `Boolean`
 * **type:** `String` specifying the type of validation:
-  * `"t"` validates the time format ([timeFormat](#jsuregional))
-  * `"d"` validates the date format ([dateFormat](#jsuregional))
-  * `"dt"` validates full date format ([dateFormat + timeFormat](#jsuregional))
+  * `"t"` validates the time format [`timeFormat`](#jsuregional)
+  * `"d"` validates the date format [`dateFormat`](#jsuregional)
+  * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
   * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address
   * `"lat"` validates the latitude
