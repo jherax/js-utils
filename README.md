@@ -714,7 +714,7 @@ Parameters
 
 ```javascript
   (function() {
-    //We configure the global language setting
+    //Configures the language setting
     jsu.regional.set(jsu.regional.english);
     var _dateTime = "10/31/2013 16:10";
     var _email = "some-mail.gmail.com";
@@ -733,20 +733,18 @@ The validation message is displayed with a tooltip. If [jQuery.ui.position](http
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
 **Returns** `Boolean`
-* **dom:** `DOM` element [category:text][category.text]
-* **options:** `Object` that provides the following settings:
+
+Parameters
+- **dom:** `DOM` element [category:text][category.text]
+- **options:** `Object` that provides the following properties:
+  - **compareTo:** `Date` `String` *default: new Date.* The date to compare against.
+  - **isFuture:** `Boolean` *default: false.* The date must be greater than ***compareTo***.
+  - **warning:** `String` Message indicating that entry date did not meet the requirements.
+  - **position:** `Object` *default: { at: "right center", my: "left+6 center", collision: "flipfit" }*
 
 ```javascript
-{
-  compareTo: Date|String //date against which to compare the dom value (Default: new Date)
-  isFuture: Boolean //does entry date must be greater than [compareTo] (Default: false)
-  warning: String //message indicating that entry date did not meet the requirements
-  position: Object //tooltip position { at, my, collision } (Default: see fnShowTooltip)
-}
-```
-```javascript
   (function() {
-    //Configure the global language setting
+    //Configures the language setting
     jsu.regional.set(jsu.regional.english);
     var d = new Date();
     $("#txtLicence").val(
@@ -1203,7 +1201,7 @@ Date validations are performed according to [regional setting](#jsuregional).<br
 
 ```javascript
   (function() {
-    //We configure the global language setting
+    //Configures the language setting
     jsu.regional.set(jsu.regional.english);
     var dt = $("#date").val("12/31/2013 23:10");
     var isValid = dt.fnIsValidFormat("dt");
@@ -1215,22 +1213,21 @@ Date validations are performed according to [regional setting](#jsuregional).<br
 This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options) function.<br>
 Evaluates whether the first element in the collection has the `value` with date format.<br>
 Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by&nbsp;*jQuery.ui.position*, otherwise an extension method for built-in *jQuery.position* is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extension method for built-in *jQuery.position* is used.<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
 **Returns** `Boolean`
-* **options:** `Object` that provides the following settings:
+
+Parameters
+- **options:** `Object` that provides the following properties:
+  - **compareTo:** `Date` `String` *default: new Date.* The date to compare against.
+  - **isFuture:** `Boolean` *default: false.* The date must be greater than ***compareTo***.
+  - **warning:** `String` Message indicating that entry date did not meet the requirements.
+  - **position:** `Object` *default: { at: "right center", my: "left+6 center", collision: "flipfit" }*
 
 ```javascript
-{
-  compareTo: Date|String //date against which to compare the dom value (Default: new Date)
-  isFuture: Boolean //does entry date must be greater than [compareTo] (Default: false)
-  warning: String //message indicating that entry date did not meet the requirements
-}
-```
-```javascript
   (function() {
-    //We configure the global language setting
+    //Configures the language setting
     jsu.regional.set(jsu.regional.english);
     var d = new Date();
     $("#txtLicence").val(
