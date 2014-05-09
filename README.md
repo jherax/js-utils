@@ -1089,12 +1089,20 @@ A tooltip will be placed to the right of the element, showing the number of char
 By default the tooltip is positioned by [.position()](#jqueryposition-options) `at: "right bottom"` but this position can be overridden for all tooltips by setting the [`jsu.settings.position`](#jsusettings) property; if you do not want to affect all tooltips, then you can specify the position by providing the ***options*** parameter to the function.<br>
 The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class.<br>
 **Returns** `jQuery`
-* **length:** `Number` specifying the max length of characters
-* **options:** `Object` that sets the position for the tooltip
+
+Parameters
+- **length:** `Number` Maximum number of characters typed.
+- **options:** `Object` Sets the position for the tooltip:
+  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   $("#txtName").fnMaxLength(20);
-  $(".numbers").fnMaxLength(10);
+  $("#license").fnMaxLength(10, {
+    at: "right top-5",
+    my: "right bottom"
+  });
 ```
 
 ### jQuery.fnCapitalize *(type)*
