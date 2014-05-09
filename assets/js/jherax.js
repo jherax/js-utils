@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.8.5
+//  Version: 2.9.5
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.8.5",
+    version: "2.9.5",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -572,7 +572,10 @@ jsu.wrapper = "body"; //#main-section
                         _pattern = new RegExp(_formatter(_language.dateFormat + " " + _language.timeFormat));
                         break;
                     case "email": //Validates an email address
-                        _pattern = /^([0-9a-zA-Zñ](?:[\-.\w]*[0-9a-zA-Zñ])*@(?:[0-9a-zA-Zñ][\-\wñ]*[0-9a-zA-Zñ]\.)+[a-zA-Z]{2,9})$/i;
+                        _pattern = /^([0-9a-zñÑ](?:[\-.\w]*[0-9a-zñÑ])*@(?:[0-9a-zñÑ][\-\wñÑ]*[0-9a-zñÑ]\.)+[a-z]{2,9})$/i;
+                        break;
+                    case "ipv4": //Validates an IPv4 address
+                        _pattern = /^(?:(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})\.){3}(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})$/;
                         break;
                     case "pass": //Validates the password strength (must have 8-20 characters, 1+ number, 1+ uppercase)
                         _pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
@@ -818,7 +821,7 @@ jsu.wrapper = "body"; //#main-section
         })();
 
         //-----------------------------------
-        // Sets the jquery objects in the center of screen
+        // Centers an element relative to another
         // See css:calc [http://jsfiddle.net/apaul34208/e4y6F]
         $.fn.fnCenter = function(o) {
             o = $.extend({}, o);
@@ -851,10 +854,8 @@ jsu.wrapper = "body"; //#main-section
             }, jsu.settings.position, o);
             return this.each(function (i, dom) {
                 var count = "Max: " + length;
-                var vld = '#max' + dom.id;
                 if (!input.isText(dom)) return true; //continue
-                $(dom).off(".fnMaxLength")
-                .on(nsEvents("blur", "fnMaxLength"), function() { $(vld).remove(); })
+                $(dom).off(".fnMaxLength").attr("data-role", "tooltip")
                 .on(nsEvents("keypress input paste", "fnMaxLength"), function(e) {
                     var len = dom.value.length;
                     var max = len >= length ? 1 : 0;
@@ -865,7 +866,7 @@ jsu.wrapper = "body"; //#main-section
                         e.preventDefault();
                     }
                     count = "Max: " + len + "/" + length;
-                    if(!$(vld).text(count).length) {
+                    if(!$('#max' + dom.id).text(count).length) {
                         $('<span class="vld-tooltip" id="max' + dom.id + '">')
                         .text(count).appendTo(jsu.wrapper).position({
                             of: dom,
@@ -1011,6 +1012,7 @@ jsu.wrapper = "body"; //#main-section
                 "vld-time": "t",
                 "vld-datetime": "dt",
                 "vld-email": "email",
+                "vld-ipv4": "ipv4",
                 "vld-pass": "pass",
                 "vld-latitude": "lat",
                 "vld-longitude": "lon"
@@ -1249,7 +1251,7 @@ jsu.wrapper = "body"; //#main-section
                             // Fixes the width of the dialog
                             var width = $(this).dialog("option", "width");
                             var maxwidth = $(this).dialog("option", "maxWidth");
-                            var padding = +_dialog.css("padding-left").replace(/\D/g, "") * 2;
+                            var padding = Math.round(+_dialog.css("padding-left").replace("px", "")) * 2;
                             $(this).dialog("option", "width", Math.min(width, maxwidth) + padding);
                         }
                         if (!v110) {
