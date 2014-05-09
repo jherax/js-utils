@@ -150,7 +150,7 @@ This namespace is used to define a default behaviour for some functions.
 - **`position:`** This object sets the default position for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
-  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   (function() {
@@ -391,7 +391,7 @@ Parameters
 
 ### fnAddCSS *(path, before)*
 Dynamically add an external stylesheet. This method is useful to inject a cascading style sheet resource from an&nbsp;external file, in case that you use some plugins requiring specific css and you don't want to include them inside&nbsp;your main stylesheet.<br>
-**Returns** `undefined` this method returns nothing.
+**Returns** `undefined`
 
 Parameters
 * **path:** `String` source of the stylesheet to be added
@@ -411,7 +411,7 @@ Parameters
 Escapes user input to be treated as a literal string in a regular expression.<br>
 This mean that special characters will be treated as literals.<br>
 e.g. the expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
-**Returns** `String`, or `null` if ***text*** parameter is not *string*
+**Returns** `String` or `null` if ***text*** parameter is not *string*
 
 Parameters
 * **text:** `String` to literalize
@@ -492,8 +492,8 @@ Parameters
 Gets string representation of the specified date according to [`jsu.regional`](#jsuregional) `dateFormat` `timeFormat`<br>
 **Note:** This function has support for [ISO 8601](http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15) format which allow to set the value on `input` of type date, datetime, datetime-local. According to [w3.org](http://www.w3.org/TR/html-markup/input.datetime.html#input.datetime.attrs.value) the `value` attribute must be a valid date-time as defined in [RFC&nbsp;3339](http://tools.ietf.org/html/rfc3339#section-5.6).<br>
 **Returns** `Object` with the following properties:
-- **date:** `String` Gets the date according to `dateFormat`
-- **time:** `String` Gets the time according to `timeFormat`
+- **date:** `String` Gets the date according to [`dateFormat`](#jsuregional)
+- **time:** `String` Gets the time according to [`timeFormat`](#jsuregional)
 - **dateTime:** `String` Gets the date according to `dateFormat` + `timeFormat`
 
 Parameters
@@ -551,9 +551,9 @@ Parameters
 
 ### fnGetHtmlText *(value)*
 Escapes special characters inside a HTML string, e.g. the string `<p>hello</p>`<br>
-is encoded by inserting HTML entities in their place `&lt;p&gt;hello&lt;/p&gt;`<br>
-This method can be used as a simple function: *fnGetHtmlText (value)*<br>
-or as delegate for jQuery [.val()](http://api.jquery.com/val/#val2) or [.text()](http://api.jquery.com/text/#text2) *fnGetHtmlText (index, value)*<br>
+is encoded by inserting HTML entities in their place `&lt;``p``&gt;``hello``&lt;``/p``&gt;`<br>
+This method can be used as a simple function **:** *fnGetHtmlText (value)*<br>
+or as delegate for jQuery [.val()](http://api.jquery.com/val/#val2) or [.text()](http://api.jquery.com/text/#text2) **:** *fnGetHtmlText (index, value)*<br>
 **Returns** `String` with encoded html
 
 Parameters
@@ -595,9 +595,9 @@ Gets the selected text in the document.<br>
 **Note:** There are some `<input>` elements that not support text selection.<br>
 **Returns** `Object` with the following properties:
 - **text:** `String` Selected text. Whitespace is removed from the beginning and end of text.
-- **slice:** `String` Complement of selected text (if active element is [category:text][category.text])
-- **start:** `Number` Initial cursor position (if active element is [category:text][category.text])
-- **end:** `Number` Final cursor position (if active element is [category:text][category.text])
+- **slice:** `String` Complement of the selected text (if the active element is [category:text][category.text])
+- **start:** `Number` Initial position of the cursor (if the active element is [category:text][category.text])
+- **end:** `Number` Final position of the cursor (if the active element is [category:text][category.text])
 
 ```javascript
   var sel = jsu.fnGetSelectedText();
@@ -606,7 +606,7 @@ Gets the selected text in the document.<br>
 ```
 
 ### fnGetCaretPosition *(dom)*
-Gets the cursor position of ***dom*** element.<br>
+Gets the position of the cursor in the ***dom*** element.<br>
 **Note:** There are some `<input>` elements that not support text selection.<br>
 **Returns** `Number`
 
@@ -620,7 +620,7 @@ Parameters
 ```
 
 ### fnSetCaretPosition *(dom, position)*
-Sets the cursor ***position*** in the ***dom*** element.<br>
+Sets the ***position*** of the cursor in the ***dom*** element.<br>
 **Note:** There are some `<input>` elements that not support text selection.<br>
 **Returns** `undefined`
 
@@ -637,7 +637,7 @@ Parameters
 ```
 
 ### fnCapitalize *(object, type)*
-Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the&nbsp;supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
+Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end&nbsp;of&nbsp;the&nbsp;supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to transform.<br>
 **Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnCapitalize](#jqueryfncapitalize-type).<br>
@@ -696,7 +696,7 @@ Parameters
 ```
 
 ### fnIsValidFormat *(object, type)*
-Validates the format, depending on ***type*** supplied. Date validations are run according to [regional setting](#jsuregional).<br>
+Validates the format, depending on ***type*** supplied. Date validation is run according to [regional setting](#jsuregional).<br>
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to validate.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
 **Returns** `Boolean`
@@ -709,6 +709,7 @@ Parameters
   * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
   * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address
+  * `"ipv4"` validates an IPv4 address
   * `"lat"` validates the latitude
   * `"lon"` validates the longitude
 
@@ -1045,7 +1046,7 @@ Position an element relative to another. This plugin extends jQuery's built-in [
   - **of:** `String` or `jQuery` or `DOM`. Determines the first matching element to position against.
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
-  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   setTimeout(function() {
@@ -1095,7 +1096,7 @@ Parameters
 - **options:** `Object` Sets the position for the tooltip:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
-  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move it to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   $("#txtName").fnMaxLength(20);
@@ -1107,10 +1108,12 @@ Parameters
 
 ### jQuery.fnCapitalize *(type)*
 This is the jQuery extension for [fnCapitalize](#fncapitalize-object-type) function.<br>
-Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end of&nbsp;the supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
+Applies a transformation to the text, removing all line-breaks, spaces, and tabs from the beginning and end&nbsp;of&nbsp;the&nbsp;supplied string. If the whitespace characters occur in middle of the string, also they are removed.<br>
 **Note:** The object defined in [`jsu.regional.<language>.wordPattern`](#jsuregional) is a regular expression used to lowercasing&nbsp;some words after text capitalization. Only works when ***type*** parameter is `"word"`<br>
 **Note:** The text is transformed when the `blur` event is triggered.<br>
 **Returns** `jQuery`
+
+Parameters
 * **type:** `String` specifying the text transformation. Can be one of the following values:
   * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
   * `"title"` turns the first letter of each word into uppercase
@@ -1154,8 +1157,8 @@ If you want to lowercase specific words, you can do it this way:
 ### jQuery.fnNumericFormat ()
 This is the jQuery extension for [fnNumericFormat](#fnnumericformat-object).<br>
 Sets numeric format according to **es-CO** culture.<br>
-Places the decimal`.` and thousands`,` separator.<br>
-**Note:** Text is formatted when `keyup, blur` events occurs.<br>
+Places the decimal `.` and thousands `,` separator.<br>
+**Note:** The text is formatted when `keyup` or `blur` event occurs.<br>
 **Returns** `jQuery`
 ```javascript
   var num = "123456789,47.15";
@@ -1195,15 +1198,18 @@ To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-
 
 ### jQuery.fnIsValidFormat *(type)*
 This is the jQuery extension for [fnIsValidFormat](#fnisvalidformat-object-type) function.<br>
-Validates the format of `value` attribute for matching elements.<br>
-Date validations are performed according to [regional setting](#jsuregional).<br>
+Validates the `value` format, depending on ***type*** supplied.<br>
+The date validation is run according to [regional setting](#jsuregional).<br>
 **Returns** `Boolean`
+
+Parameters
 * **type:** `String` specifying the type of validation:
   * `"t"` validates the time format [`timeFormat`](#jsuregional)
   * `"d"` validates the date format [`dateFormat`](#jsuregional)
   * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
   * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address
+  * `"ipv4"` validates an IPv4 address
   * `"lat"` validates the latitude
   * `"lon"` validates the longitude
 
