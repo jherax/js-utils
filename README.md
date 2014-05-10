@@ -150,7 +150,7 @@ This namespace is used to define a default behaviour for some functions.
 - **position:** `Object`. Sets the default position for all functions that use [.position()](#jqueryposition-options) to display a tooltip *([fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;"horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
-  - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   (function() {
