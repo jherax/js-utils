@@ -147,7 +147,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 
 ### jsu.settings
 This namespace is used to define a default behaviour for some functions.
-- **`position:`** This object sets the default position for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
+- **position:** `Object`. Sets the default position for all functions that use [$.position](#jqueryposition-options) to display a tooltip *(e.g. [fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move it to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
@@ -728,7 +728,7 @@ Parameters
 
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the entry `DOM` element has the date format for the `value` property.<br>
-Date validations are performed according to [regional setting](#jsuregional) by `dateFormat` and `timeFormat`<br>
+Date validations are performed according to [`jsu.regional`](#jsuregional) by `dateFormat` and `timeFormat`<br>
 The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extended method for built-in *jQuery.position* is used.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidDate](#jqueryfnisvaliddate-options).<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
@@ -741,7 +741,11 @@ Parameters
   - **compareTo:** `Date` `String` *default: new Date.* The date to compare against.
   - **isFuture:** `Boolean` *default: false.* The date must be greater than ***compareTo***.
   - **warning:** `String` Message indicating that entry date did not meet the requirements.
-  - **position:** `Object` *default: { at: "right center", my: "left+6 center", collision: "flipfit" }*
+  - **position:** `Object` Sets the properties to position the tooltip:
+    - **at:** `String` Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+    - **my:** `String` Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+    - **collision:** `String` When the positioned element overflows the window in some direction, move it to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+
 
 ```javascript
   (function() {
@@ -1042,7 +1046,7 @@ This plugin detects if the first element in the collection has a horizontal scro
 ### jQuery.position (options)
 Position an element relative to another. This plugin extends jQuery's built-in [.position()](http://api.jquery.com/position/) method. If *jQuery.ui* is not loaded, calling the `.position()` method will cause the internal implementation of the method to be used instead. If&nbsp;no arguments or the <code>of</code> property is not set, the default [.position()](http://api.jquery.com/position/) method is called.<br>
 **Returns** `jQuery`
-- **`options:`** This object sets the properties to configure the plugin:
+- **options:** `Object`. Sets the properties to configure the plugin:
   - **of:** `String` or `jQuery` or `DOM`. Determines the first matching element to position against.
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
@@ -1093,7 +1097,7 @@ The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class
 
 Parameters
 - **length:** `Number` Maximum number of characters typed.
-- **options:** `Object` Sets the position for the tooltip:
+- **options:** `Object` Sets the properties to position the tooltip:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move it to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
