@@ -233,7 +233,7 @@ For detecting capabilities, is better to use [Modernizr](http://modernizr.com/do
 
 ### inputType
 This object has two methods to determine the type of the `<input>` element.
-* **`isText (dom)`**: This function returns `true` when the ***dom*** parameter is a writable  `<input>`<br>Elements classified in this category are: [Category:text](#categorytext)
+* **`isText (dom)`**: This function returns `true` when the ***dom*** parameter is a writable  `<input>`<br>Elements classified in this category are: [Category:text](#categorytext).
 * **`isCheck (dom)`**: This function returns `true` when the ***dom*** parameter is a checkable `<input>`<br>Elements classified in this category are: input type *checkbox* and *radio.*
 
 ```html
@@ -259,9 +259,9 @@ This utility allow us to determine if an event handler was created previously by
 **Returns** `Boolean`
 
 Parameters
-* **dom:** `DOM` element
-* **eventname:** `String` event type
-* **namespace:** `String` event namespace
+* **dom:** `DOM` element.
+* **eventname:** `String` event type.
+* **namespace:** `String` event namespace.
 
 ```javascript
   var txb = $("#txtName").get(0);
@@ -282,8 +282,8 @@ Check these articles: [Namespace your events](http://www.learningjquery.com/2007
 **Returns** `String`
 
 Parameters
-* **eventname:** `String` event type
-* **namespace:** `String` event namespace
+* **eventname:** `String` event type.
+* **namespace:** `String` event namespace.
 
 ```javascript
   // Delegates the click event to highlight an element
@@ -302,7 +302,7 @@ Determines if the entry parameter is a [DOM Element](http://api.jquery.com/Types
 **Returns** `Boolean`
 
 Parameters
-* **object:** `Object` to validate
+* **object:** `Object` to validate.
 
 ```javascript
   var obj = { name: "Mordecai" };
@@ -320,7 +320,7 @@ Determines if the entry parameter is a function.<br>
 **Returns** `Boolean`
 
 Parameters
-* **object:** `Object` to validate
+* **object:** `Object` to validate.
 
 ```javascript
   var fn = {};
@@ -339,7 +339,7 @@ fnStringify serialize an object, array or primitive value and returns it as a *J
 **Returns** `String`
 
 Parameters
-* **json:** `Object` to be serialized
+* **json:** `Object` to be serialized.
 
 ```javascript
   var jsonPerson = {
@@ -394,7 +394,7 @@ Dynamically add an external stylesheet. This method is useful to inject a cascad
 **Returns** `undefined`
 
 Parameters
-* **path:** `String` source of the stylesheet to be added
+* **path:** `String` source of the stylesheet to be added.
 * **before:** `String` part of `href` attribute of the element that identifies where the resource will be added. This&nbsp;parameter is optional and if it is not specified, the new stylesheet will be appended to `<head>`
 
 ```javascript
@@ -411,10 +411,10 @@ Parameters
 Escapes user input to be treated as a literal string in a regular expression.<br>
 This mean that special characters will be treated as literals.<br>
 e.g. the expression `"(\\w+)"` will turn into `"\(\\w\+\)"`<br>
-**Returns** `String` or `null` if ***text*** parameter is not *string*
+**Returns** `String` or `null` if ***text*** parameter is not *string*.
 
 Parameters
-* **text:** `String` to literalize
+* **text:** `String` to literalize.
 
 ```javascript
   var re1 = new RegExp("[abc]+\\d"); //treats the string as a regular expression pattern
@@ -468,7 +468,7 @@ This could be useful, for example, if you need preserve a model object.<br>
 **Returns** `Object`
 
 Parameters
-* **object:** `Object` to be cloned
+* **object:** `Object` to be cloned.
 
 ```javascript
   var ajaxResponse = {
@@ -539,7 +539,7 @@ It is mandatory that input parameter be a string in ISO 8601, otherwise `null` i
 **Returns** `Date` or `Null`
 
 Parameters
-* **date:** `String` date as string in ISO 8601 [format](http://www.w3.org/TR/NOTE-datetime)
+* **date:** `String` date as string in ISO 8601 [format](http://www.w3.org/TR/NOTE-datetime).
 
 ```javascript
   jsu.fnDateFromISO8601(0);
@@ -554,10 +554,10 @@ Escapes special characters inside a HTML string, e.g. the string `<p>hello</p>`<
 is encoded by inserting HTML entities in their place `&lt;``p``&gt;``hello``&lt;``/p``&gt;`<br>
 This method can be used as a simple function **:** *fnGetHtmlText (value)*<br>
 or as delegate for jQuery [.val()](http://api.jquery.com/val/#val2) or [.text()](http://api.jquery.com/text/#text2) **:** *fnGetHtmlText (index, value)*<br>
-**Returns** `String` with encoded html
+**Returns** `String` with encoded html.
 
 Parameters
-* **value:** `String` html to be encoded
+* **value:** `String` html to be encoded.
 
 ```html
   <textarea rows="4"></textarea>
@@ -625,8 +625,8 @@ Sets the ***position*** of the cursor in the ***dom*** element.<br>
 **Returns** `undefined`
 
 Parameters
-* **dom:** `DOM` element [category:text][category.text]
-* **position:** `Number` that indicates where the cursor is set
+* **dom:** `DOM` element [category:text][category.text].
+* **position:** `Number` that indicates where the cursor is set.
 
 ```javascript
   var text = $("#txtName").get(0);
@@ -644,13 +644,13 @@ Applies a transformation to the text, removing all line-breaks, spaces, and tabs
 **Returns** `String`
 
 Parameters
-* **object:** `String` or `DOM` element [category:text][category.text]
+* **object:** `String` or `DOM` element [category:text][category.text].
 * **type:** `String` specifying the text transformation. Can be one of the following values:
-  * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
-  * `"title"` turns the first letter of each word into uppercase
-  * `"first"` turns only the first letter to uppercase
-  * `"upper"` transform to uppercase
-  * `"lower"` transform to lowercase
+  * `"word"` transform to lowercase and then turns the first letter of each word into uppercase.
+  * `"title"` turns the first letter of each word into uppercase.
+  * `"first"` turns only the first letter to uppercase.
+  * `"upper"` transform to uppercase.
+  * `"lower"` transform to lowercase.
 
 ```javascript
   var text = "\n  make  your\t  code DRY  \n ";
@@ -682,7 +682,7 @@ If you want to lowercase specific words, you can do it this way:
 Sets numeric format according to **es-CO** culture by placing the decimal `.` and thousands `,` separator.<br>
 **Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to format.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnNumericFormat](#jqueryfnnumericformat-).<br>
-**Returns** `String` with the formatted number
+**Returns** `String` with the formatted number.
 
 Parameters
 * **object:** `String` or `DOM` element [category:text][category.text]
@@ -702,16 +702,16 @@ Validates the format, depending on ***type*** supplied. Date validation is run a
 **Returns** `Boolean`
 
 Parameters
-* **object:** `String` or `DOM` element [category:text][category.text]
+* **object:** `String` or `DOM` element [category:text][category.text].
 * **type:** `String` specifying the type of validation:
   * `"t"` validates the time format [`timeFormat`](#jsuregional)
   * `"d"` validates the date format [`dateFormat`](#jsuregional)
   * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
   * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
-  * `"email"` validates the email address
-  * `"ipv4"` validates an IPv4 address
-  * `"lat"` validates the latitude
-  * `"lon"` validates the longitude
+  * `"email"` validates the email address.
+  * `"ipv4"` validates an IPv4 address.
+  * `"lat"` validates the latitude.
+  * `"lon"` validates the longitude.
 
 ```javascript
   (function() {
@@ -736,7 +736,7 @@ The validation message is displayed with a tooltip. If [jQuery.ui.position](http
 **Returns** `Boolean`
 
 Parameters
-- **dom:** `DOM` element [category:text][category.text]
+- **dom:** `DOM` element [category:text][category.text].
 - **options:** `Object` that provides the following properties:
   - **compareTo:** `Date` `String` *default: new Date.* The date to compare against.
   - **isFuture:** `Boolean` *default: false.* Whether the date must be greater than ***compareTo***.
@@ -781,6 +781,8 @@ It has the following `DOM` structure: `<span class="vld-tooltip"> your message <
 **Note:** By specifying [`jsu.settings.position`](#jsusettings) you can override the position for all tooltips.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnShowTooltip](#jqueryfnshowtooltip-message-position).<br>
 **Returns** `Boolean`, always returns `false`
+
+Parameters
 - **dom:** `DOM` element to where the tooltip is positioned.
 - **message:** `String` with the message to display.
 - **position:** `Object` Sets the properties to position the tooltip:
@@ -844,7 +846,9 @@ Some [images](https://dl.dropboxusercontent.com/u/91579606/img.zip) are used to 
 Also you can display existing HTML elements by passing the [DOM](http://api.jquery.com/Types/#Element) or [jQuery](http://api.jquery.com/Types/#jQuery) object to the `content` property.
 
 **Note:** By default, it has a dependency on [jQuery.ui.dialog](http://api.jqueryui.com/dialog/) and has some [css overrides][jherax.css], but you can redefine the&nbsp;functionality by providing a function reference to the `jsu.fnShowDialog.source` property, this way the dependency to *jQuery.ui.dialog* is removed. For consistency, the supplied function should have the same signature as the original fnShowDialog function (but is not mandatory).<br>
-**Returns** `jQuery` dialog element
+**Returns** `jQuery` dialog element.
+
+Parameters
 * **options:** `Object` that provides the following settings:
   * **appendTo:** `String` or `DOM` or `jQuery`. Specifies the element to where the dialog window should&nbsp;be&nbsp;appended; default value is [`jsu.wrapper`](#getting-started)
   * **title:** `String`. Title of the dialog window; default value is [`jsu.regional.<language>.dialogTitle`](#jsuregional)
@@ -950,11 +954,13 @@ Shows an overlay screen with the "loading" animation at the center.<br>
 The progress animation is done via CSS3, so you must add the following [css][jherax.css]:<br>
 `#floatingBarsG` `.blockG` `@keyframes fadeG` `.bg-fixed` `.bg-opacity`<br>
 **Returns** `Boolean`, always returns `true`
+
+Parameters
 * **options:** `Object` that provides the following settings:
   * **show:** `Boolean` *default: true.* Shows the loading screen.
   * **hide:** `Boolean` *default: false.* Hides the loading screen.
   * **delay:** `Number` *default: 2600.* FadeIn animation, in milliseconds.
-  * **of:** `String` or `jQuery` or `DOM` *default: null.* Which element to position against. If you provide a selector or jQuery object, the first matching element will be used, otherwise, the viewport is set by `jsu.wrapper`
+  * **of:** `String` `jQuery` `DOM` *default: null.* Which element to position against. If you provide a selector or jQuery object, the first matching element will be used, otherwise, the container is set by `jsu.wrapper`
 
 ```html
 <div id="target" style="display: inline-block; width: 200px; height: 200px; border:1px solid #bbb; border-radius:10px; background: #eee;"></div>
@@ -994,7 +1000,7 @@ This function is useful when you are using methods that alter the behaviour on i
   });
 ```
 
-## fnScrollbarWidth ()
+### fnScrollbarWidth ()
 This utility detects the width of the scrollbar in the browser, in pixels.<br>
 It is useful when you create layouts and the content exceeds the container size, then comes the scrollbar, taking space in the layout (used in [fnShowdialog](#fnshowdialog-options) when `maxHeight` property was added and its default value was set to 86% of the screen height)<br>
 **Returns** `Number`
@@ -1006,7 +1012,7 @@ It is useful when you create layouts and the content exceeds the container size,
   	dialog.width(width + scrollWidth);
   }
 ```
-
+---
 jQuery plugins
 --------------
 This is a set of utilities for [jQuery](http://jquery.com/).<br>
@@ -1113,11 +1119,11 @@ Applies a transformation to the text, removing all line-breaks, spaces, and tabs
 
 Parameters
 * **type:** `String` specifying the text transformation. Can be one of the following values:
-  * `"word"` transform to lowercase and then turns the first letter of each word into uppercase
-  * `"title"` turns the first letter of each word into uppercase
-  * `"first"` turns only the first letter to uppercase
-  * `"upper"` transform to uppercase
-  * `"lower"` transform to lowercase
+  * `"word"` transform to lowercase and then turns the first letter of each word into uppercase.
+  * `"title"` turns the first letter of each word into uppercase.
+  * `"first"` turns only the first letter to uppercase.
+  * `"upper"` transform to uppercase.
+  * `"lower"` transform to lowercase.
 
 ```javascript
   setTimeout(function() {
@@ -1185,7 +1191,7 @@ This function applies a mask for the allowed characters.<br>
 Disables the specified keyboard keys.<br>
 To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-mask)<br>
 **Returns** `jQuery`
-* **keys:** `String` with character(s) that will be blocked
+* **keys:** `String` with character(s) to be blocked.
 
 ```javascript
   // prevents the spacebar be pressed in the document
@@ -1206,10 +1212,10 @@ Parameters
   * `"d"` validates the date format [`dateFormat`](#jsuregional)
   * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
   * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
-  * `"email"` validates the email address
-  * `"ipv4"` validates an IPv4 address
-  * `"lat"` validates the latitude
-  * `"lon"` validates the longitude
+  * `"email"` validates the email address.
+  * `"ipv4"` validates an IPv4 address.
+  * `"lat"` validates the latitude.
+  * `"lon"` validates the longitude.
 
 ```javascript
   (function() {
@@ -1276,6 +1282,8 @@ It has the following `DOM` structure: `<span class="vld-tooltip"> your message <
 **Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by *jQuery.ui.position*, otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in [jQuery.position](#jqueryposition-options) is used.<br>
 **Note:** By specifying [`jsu.settings.position`](#jsusettings) you can override the position for all tooltips.<br>
 **Returns** `jQuery`
+
+Parameters
 - **message:** `String` with the message to display.
 - **position:** `Object` Sets the properties to position the tooltip:
   - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
