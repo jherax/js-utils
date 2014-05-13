@@ -209,8 +209,8 @@ This namespace is used to define a default behaviour for some functions.
 * [$.fnDisableKey](#jqueryfndisablekey-keys)
 * [$.fnIsValidFormat](#jqueryfnisvalidformat-type)
 * [$.fnIsValidDate](#jqueryfnisvaliddate-options)
-* [$.fnEasyValidate](#jqueryfneasyvalidate-options)
 * [$.fnShowTooltip](#jqueryfnshowtooltip-message-position)
+* [$.fnEasyValidate](#jqueryfneasyvalidate-options)
 
 <!---* [$.fnConfirm](#jqueryfnconfirm-options)-->
 
@@ -729,7 +729,7 @@ Parameters
 ### fnIsValidDate *(dom, options)*
 Evaluates whether the entry `DOM` element has the date format for the `value` property.<br>
 Date validations are performed according to [`jsu.regional`](#jsuregional) by `dateFormat` and `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extended method for built-in *jQuery.position* is used.<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extended method for [jQuery.position](#jqueryposition-options) is used.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidDate](#jqueryfnisvaliddate-options).<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
@@ -739,13 +739,12 @@ Parameters
 - **dom:** `DOM` element [category:text][category.text]
 - **options:** `Object` that provides the following properties:
   - **compareTo:** `Date` `String` *default: new Date.* The date to compare against.
-  - **isFuture:** `Boolean` *default: false.* The date must be greater than ***compareTo***.
+  - **isFuture:** `Boolean` *default: false.* Whether the date must be greater than ***compareTo***.
   - **warning:** `String` Message indicating that entry date did not meet the requirements.
   - **position:** `Object` Sets the properties to position the tooltip:
     - **at:** `String` Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
     - **my:** `String` Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
     - **collision:** `String` When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
-
 
 ```javascript
   (function() {
@@ -778,21 +777,16 @@ This function is very useful when you need display a validation message.<br>
 It shows the ***message*** in a tooltip at the right side of ***dom*** and focuses that element.<br>
 The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class.<br>
 It has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
-**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by *jQuery.ui.position,* otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in *jQuery.position* is used.<br>
+**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by *jQuery.ui.position,* otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in [jQuery.position](#jqueryposition-options) is used.<br>
 **Note:** By specifying [`jsu.settings.position`](#jsusettings) you can override the position for all tooltips.<br>
 **Note:** You can use this function as a jQuery extension, see [jQuery.fnShowTooltip](#jqueryfnshowtooltip-message-position).<br>
 **Returns** `Boolean`, always returns `false`
-* **dom:** `DOM` element to where the tooltip is positioned
-* **message:** `String` with the message to display
-* **position:** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and&nbsp;have the following [properties](#jsusettings):
-
-```javascript
-{
-  at: String [Default: "right center"] //defines which position on the target element to align the positioned element against: "horizontal vertical" alignment.
-  my: String [Default: "left+6 center"] //defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment.
-  collision: String [Default: "flipfit"] //only works when jQuery.ui.position is available.
-}
-```
+- **dom:** `DOM` element to where the tooltip is positioned.
+- **message:** `String` with the message to display.
+- **position:** `Object` Sets the properties to position the tooltip:
+  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for details on possible values)
+  - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   $(function() {
@@ -1229,9 +1223,9 @@ Parameters
 
 ### jQuery.fnIsValidDate *(options)*
 This is the jQuery extension for [fnIsValidDate](#fnisvaliddate-dom-options) function.<br>
-Evaluates whether the first element in the collection has the `value` with date format.<br>
-Date validations are performed according to [regional setting](#jsuregional) `dateFormat` `timeFormat`<br>
-The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extension method for built-in *jQuery.position* is used.<br>
+Evaluates whether the first element in the collection has the date format for the `value` property.<br>
+Date validations are performed according to [`jsu.regional`](#jsuregional) by `dateFormat` and `timeFormat`<br>
+The validation message is displayed with a tooltip. If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered&nbsp;by&nbsp;*jQuery.ui.position*, otherwise an extended method for [jQuery.position](#jqueryposition-options) is used.<br>
 **Important:** You can customize the messages defined in [`jsu.regional`](#jsuregional) namespace:<br>
 `dateIsGreater` `dateIsLesser` `dateFormatError`<br>
 **Returns** `Boolean`
@@ -1239,9 +1233,12 @@ The validation message is displayed with a tooltip. If [jQuery.ui.position](http
 Parameters
 - **options:** `Object` that provides the following properties:
   - **compareTo:** `Date` `String` *default: new Date.* The date to compare against.
-  - **isFuture:** `Boolean` *default: false.* The date must be greater than ***compareTo***.
+  - **isFuture:** `Boolean` *default: false.* Whether the date must be greater than ***compareTo***.
   - **warning:** `String` Message indicating that entry date did not meet the requirements.
-  - **position:** `Object` *default: { at: "right center", my: "left+6 center", collision: "flipfit" }*
+  - **position:** `Object` Sets the properties to position the tooltip:
+    - **at:** `String` Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+    - **my:** `String` Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+    - **collision:** `String` When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   (function() {
@@ -1259,7 +1256,11 @@ Parameters
     if (!$("#txtLicence").fnIsValidDate()) return false;
     if (!$("#txtBirthday").fnIsValidDate({
         compareTo: $("#txtLicence").val(),
-        warning: "Your birthday can't be greater than driver's license expedition"
+        warning: "Your birthday can't be greater than driver's license expedition",
+        position: {
+          at: "left bottom",
+          my: "left+2 top+3"
+        }
     })) return false;
 
     alert("Submit form");
@@ -1313,19 +1314,14 @@ This function is very useful when you need display a validation message.<br>
 A tooltip is shown at the right side of current element, and set focus on that element.<br>
 The tooltip element is painted according to the rules defined by [`.vld-tooltip`][jherax.css] class.<br>
 It has the following `DOM` structure: `<span class="vld-tooltip"> your message </span>`<br>
-**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by jQuery.ui.position, otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in jQuery.position is used.<br>
+**Important:** If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, the tooltip is rendered by *jQuery.ui.position*, otherwise&nbsp;an&nbsp;extended&nbsp;method for built-in [jQuery.position](#jqueryposition-options) is used.<br>
 **Note:** By specifying [`jsu.settings.position`](#jsusettings) you can override the position for all tooltips.<br>
 **Returns** `jQuery`
-* **message:** `String` with the message to display
-* **position:** `Object` This parameter is not mandatory. It defines the position where the tooltip is displayed and&nbsp;have the following [properties](#jsusettings):
-
-```javascript
-{
-  at: String. Default "right center". //Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment.
-  my: String. Default "left+6 center". //Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment.
-  collision: String. Default "flipfit". //Only works when jQuery.ui.position is available.
-}
-```
+- **message:** `String` with the message to display.
+- **position:** `Object` Sets the properties to position the tooltip:
+  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for details on possible values)
+  - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   (function() {
