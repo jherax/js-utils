@@ -147,7 +147,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
 
 ### jsu.settings
 This namespace is used to define a default behaviour for some functions.
-- **position:** `Object`. Sets the default position for all functions that use [.position()](#jqueryposition-options) to display a tooltip *([fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-options), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
+- **position:** `Object`. Sets the default position for all functions that use [.position()](#jqueryposition-options) to display a tooltip *([fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-position), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;"horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
@@ -201,7 +201,7 @@ This namespace is used to define a default behaviour for some functions.
 * [$.hasHScroll](#jqueryhashscroll-)
 * [$.position](#jqueryposition-options)
 * [$.fnCenter](#jqueryfncenter-options)
-* [$.fnMaxLength](#jqueryfnmaxlength-length-options)
+* [$.fnMaxLength](#jqueryfnmaxlength-length-position)
 * [$.fnCapitalize](#jqueryfncapitalize-type)
 * [$.fnNumericFormat](#jqueryfnnumericformat-)
 * [$.fnNumericInput](#jqueryfnnumericinput-)
@@ -1045,6 +1045,8 @@ This plugin detects if the first element in the collection has a horizontal scro
 ### jQuery.position (options)
 Position an element relative to another. This plugin extends jQuery's built-in [.position()](http://api.jquery.com/position/) method. If *jQuery.ui* is not loaded, calling the `.position()` method will cause the internal implementation of the method to be used instead. If&nbsp;no arguments or the <code>of</code> property is not set, the default [.position()](http://api.jquery.com/position/) method is called.<br>
 **Returns** `jQuery`
+
+Parameters
 - **options:** `Object`. Sets the properties to configure the plugin:
   - **of:** `String` `jQuery` `DOM`. Determines the first matching element to position against.
   - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
@@ -1073,6 +1075,11 @@ Position an element relative to another. This plugin extends jQuery's built-in [
 ### jQuery.fnCenter (options)
 Centers an element relative to another. If no arguments or the <code>of</code> property is not set, matching elements are&nbsp;placed in the center of screen *(with position: fixed)*<br>
 **Returns** `jQuery`
+
+Parameters
+- **options:** `Object`. Sets the properties to center the element:
+  - **of:** `String` `jQuery` `DOM`. Determines the first matching element to position against.
+
 ```javascript
   // positioning at the center of screen
   $(".notify").fnCenter();
@@ -1087,19 +1094,19 @@ Centers an element relative to another. If no arguments or the <code>of</code> p
   div.fnCenter({ of: "#target" });
 ```
 
-### jQuery.fnMaxLength *(length, options)*
-Limits the maximum length of characters allowed for the matching elements [category:text][category.text]<br>
+### jQuery.fnMaxLength *(length, position)*
+Limits the maximum length of characters allowed for the matching elements [category:text][category.text].<br>
 A tooltip will be placed to the right of the element, showing the number of characters typed.<br>
-By default the tooltip is positioned by [.position()](#jqueryposition-options) `at: "right bottom"` but this position can be overridden for all tooltips by setting the [`jsu.settings.position`](#jsusettings) property; if you do not want to affect all tooltips, then you can specify the position by providing the ***options*** parameter to the function.<br>
+By default the tooltip is positioned by [.position()](#jqueryposition-options) `at: "right bottom"` but this position can be overridden for all tooltips by setting the [`jsu.settings.position`](#jsusettings) property; if you do not want to affect all tooltips, then you can specify the position by providing the ***position*** parameter to the function.<br>
 The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class.<br>
 **Returns** `jQuery`
 
 Parameters
 - **length:** `Number`. Maximum number of characters typed.
-- **options:** `Object`. Sets the properties to position the tooltip:
-  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;"horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
-  - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+- **position:** `Object` Sets the properties to position the tooltip:
+  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
+  - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   $("#txtName").fnMaxLength(20);
