@@ -951,13 +951,12 @@ Redefine the original function to use **kendo.ui** instead of **jquery.ui**
 
 ### fnLoading *(options)*
 Shows an overlay screen with the "loading" animation at the center.<br>
-The progress animation is done via CSS3, so you must add the following [css][jherax.css]:<br>
+The progress animation is done via CSS3, therefore you must add the following [css rules][jherax.css]:<br>
 `#floatingBarsG` `.blockG` `@keyframes fadeG` `.bg-fixed` `.bg-opacity`<br>
 **Returns** `Boolean`, always returns `true`
 
 Parameters
 * **options:** `Object` that provides the following settings:
-  * **show:** `Boolean` *default: true.* Shows the loading screen.
   * **hide:** `Boolean` *default: false.* Hides the loading screen.
   * **delay:** `Number` *default: 2600.* FadeIn animation, in milliseconds.
   * **of:** `String` `jQuery` `DOM` *default: null.* Which element to position against. If you provide a selector or jQuery object, the first matching element will be used, otherwise, the container is set by `jsu.wrapper`
