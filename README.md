@@ -707,7 +707,7 @@ Parameters
   * `"t"` validates the time format [`timeFormat`](#jsuregional)
   * `"d"` validates the date format [`dateFormat`](#jsuregional)
   * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
-  * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
+  * `"pass"` validates password strength (must have 8+ characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address.
   * `"ipv4"` validates an IPv4 address.
   * `"lat"` validates the latitude.
@@ -1073,7 +1073,7 @@ Parameters
 ```
 
 ### jQuery.fnCenter (options)
-Centers an element relative to another. If no arguments or the <code>of</code> property is not set, matching elements are&nbsp;placed in the center of screen *(with position: fixed)*<br>
+Centers an element relative to another. If no arguments or the <code>of</code> property is not set, matching elements are&nbsp;placed at the center of screen *(with position: fixed)*<br>
 **Returns** `jQuery`
 
 Parameters
@@ -1095,14 +1095,14 @@ Parameters
 ```
 
 ### jQuery.fnMaxLength *(length, position)*
-Limits the maximum length of characters allowed for the matching elements [category:text][category.text].<br>
-A tooltip will be placed to the right of the element, showing the number of characters typed.<br>
+Limits the maximum number of characters allowed for the matching elements [category:text][category.text].<br>
+A tooltip is placed to the right of the element, showing the actual number of characters typed.<br>
 By default the tooltip is positioned by [.position()](#jqueryposition-options) `at: "right bottom"` but this position can be overridden for all tooltips by setting the [`jsu.settings.position`](#jsusettings) property; if you do not want to affect all tooltips, then you can specify the position by providing the ***position*** parameter to the function.<br>
 The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class.<br>
 **Returns** `jQuery`
 
 Parameters
-- **length:** `Number`. Maximum number of characters typed.
+- **length:** `Number`. Maximum number of characters allowed.
 - **position:** `Object` Sets the properties to position the tooltip:
   - **at:** `String` *default: "right bottom".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
   - **my:** `String` *default: "right top+6".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
@@ -1166,13 +1166,13 @@ If you want to lowercase specific words, you can do it this way:
 
 ### jQuery.fnNumericFormat ()
 This is the jQuery extension for [fnNumericFormat](#fnnumericformat-object).<br>
-Sets numeric format according to **es-CO** culture.<br>
+Sets the numeric format according to **es-CO** culture.<br>
 Places the decimal `.` and thousands `,` separator.<br>
 **Note:** The text is formatted when `keyup` or `blur` event occurs.<br>
 **Returns** `jQuery`
 ```javascript
   var num = "123456789,47.15";
-  console.log(num); //number to be formatted
+  console.log(num); // string formatting
   $("#txtName").val(num).fnNumericFormat().focus();
 ```
 
@@ -1180,6 +1180,7 @@ Places the decimal `.` and thousands `,` separator.<br>
 This function creates a mask to accept only numeric characters in the input.<br>
 **Returns** `jQuery`
 ```javascript
+  // allowed characters: [0-9]
   $(".vld-numeric").fnNumericInput();
 ```
 
@@ -1191,7 +1192,10 @@ Parameters
 * **mask:** It can be one of these types:<br>`String`: a literal specifying allowed characters.<br>`RegExp`: a regular expression pattern with allowed characters.
 
 ```javascript
+  // allowed characters: a b c 1 - 6
   $("#txtGrade").fnCustomInput("abc1-6");
+  
+  // allowed characters: @ ñ ; . - [A-Za-z0-9_]
   $("#txtEmail").fnCustomInput(/[@ñ;.\-\w]/);
 ```
 
@@ -1204,9 +1208,10 @@ Parameters
 * **keys:** `String` with character(s) to be blocked.
 
 ```javascript
-  // prevents the spacebar be pressed in the document
+  // prevents pressing the spacebar in the document
   $(document).fnDisableKey(" ");
-  // avoids pressing the keys q,w,e,r,t on the input
+  
+  // prevents pressing the keys q,w,e,r,t at #txtName
   $("#txtName").fnDisableKey("qwert");
 ```
 
@@ -1221,7 +1226,7 @@ Parameters
   * `"t"` validates the time format [`timeFormat`](#jsuregional)
   * `"d"` validates the date format [`dateFormat`](#jsuregional)
   * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
-  * `"pass"` validates password strength (must have 8-20 characters, 1+ uppercase, 1+ number)
+  * `"pass"` validates password strength (must have 8+ characters, 1+ uppercase, 1+ number)
   * `"email"` validates the email address.
   * `"ipv4"` validates an IPv4 address.
   * `"lat"` validates the latitude.
@@ -1335,18 +1340,31 @@ Parameters
 ```
 
 ### jQuery.fnEasyValidate *(options)*
-Validates the form fields with [css class][jherax.css] `.vld-required` through a submit button.<br>
-It has a dependency on [jQuery.UI][jQuery.ui] for the validation notification.<br>
-If you wish to validate only a set of elements in the form, you can specify a **validation group** by adding the `data-validation` attribute to the elements to validate and also to the submit button.<br>
-**Returns** `jQuery`
-* **options:** `Object` that provides the following settings:
+Validates the fields in the document, depending on the css class specified. The default validations are performed by [fnIsValidFormat()](#fnisvalidformat-object-type) and you can set the following css classes:
+* `"vld-date"`: causes the validation with `"d"` as option.
+* `"vld-time"`: causes the validation with `"t"` as option.
+* `"vld-datetime"`: causes the validation with `"dt"` as option.
+* `"vld-email"`: causes the validation with `"email"` as option.
+* `"vld-ipv4"`: causes the validation with `"ipv4"` as option.
+* `"vld-pass"`: causes the validation with `"pass"` as option.
+* `"vld-latitude"`: causes the validation with `"lat"` as option.
+* `"vld-longitude"`: causes the validation with `"lon"` as option.
+* `"vld-required"`: causes the validation for empty fields.
 
-```javascript
-{
-  fnvalidator: Function //performs a custom validation and the function must return true or false
-  firstItemInvalid: Boolean //validates first item of <select> as an invalid option (Default: true)
-}
-```
+If you wish to validate a specific group of elements, you can create a **validation group** by adding the `data-validation` attribute to the elements to validate and also to the submit button.<br>
+**Returns** `jQuery`
+
+Parameters
+- **options:** `Object` Sets the properties to configure the validation
+  - **fnValidator:** `Function` Performs a custom validation. The function must return `true` to pass the validation, or `false` to prevent default actions. This property is not mandatory, and if it is not specified, normal validation is performed (determined by the css class of the elements to validate)
+  - **fnBeforeTooltip:** `Function` Executes a custom task just before to display the tooltip with the validation message. This function receives the current element validated as the parameter in order to change the focus to the element that will display the tooltip. It is very useful when yoe are using widgets that modifies the original `DOM` element, such as [`kendo.ui.Editor`](http://demos.telerik.com/kendo-ui/web/editor/index.html) (hides the original `textarea` and creates an `iframe` instead) or [`jQuery.chosen`](http://harvesthq.github.io/chosen/) (hides the original `select` and creates an `ul` instead). To set the new element to position the tooltip against, set the property `domTarget` to the entry parameter.
+  - **firstItemInvalid:** `Boolean` *default: false.* Validates the first item of a <select> element as invalid option (useful when you have the first item as the choice text)
+  - **requiredForm:** `Boolean` *default: false.* Determines whether the button vatidator and the elements to validate should be inside of a `form` element.
+  - **position:** `Object` Sets the properties to position the tooltip:
+    - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+    - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
+    - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+
 ```html
 <select id="ddlType" class="vld-required" data-validation="group.a">
   <option value="0">Select...</option>
