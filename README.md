@@ -1104,8 +1104,8 @@ The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class
 Parameters
 - **length:** `Number`. Maximum number of characters typed.
 - **position:** `Object` Sets the properties to position the tooltip:
-  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
+  - **at:** `String` *default: "right bottom".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String` *default: "right top+6".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
   - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -1177,16 +1177,18 @@ Places the decimal `.` and thousands `,` separator.<br>
 ```
 
 ### jQuery.fnNumericInput ()
-This function allows that only numeric keys can be pressed at the input.<br>
+This function creates a mask to accept only numeric characters in the input.<br>
 **Returns** `jQuery`
 ```javascript
   $(".vld-numeric").fnNumericInput();
 ```
 
 ### jQuery.fnCustomInput *(mask)*
-This function applies a mask for the allowed characters.<br>
+This function applies a custom mask to accept only those character that meet the pattern.<br>
 **Returns** `jQuery`
-* **mask:** It can be one of these types:<br>`String`: a literal with the allowed characters.<br>`RegExp`: a regular expression for the allowed characters.
+
+Parameters
+* **mask:** It can be one of these types:<br>`String`: a literal specifying allowed characters.<br>`RegExp`: a regular expression pattern with allowed characters.
 
 ```javascript
   $("#txtGrade").fnCustomInput("abc1-6");
@@ -1194,9 +1196,11 @@ This function applies a mask for the allowed characters.<br>
 ```
 
 ### jQuery.fnDisableKey *(keys)*
-Disables the specified keyboard keys.<br>
-To allow a set of characters, better use [$.fnCustomInput](#jqueryfncustominput-mask)<br>
+This function prevents the keyset to be pressed.<br>
+To allow a set of characters, better to use [$.fnCustomInput](#jqueryfncustominput-mask)<br>
 **Returns** `jQuery`
+
+Parameters
 * **keys:** `String` with character(s) to be blocked.
 
 ```javascript
