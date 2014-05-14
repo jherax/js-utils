@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.9.5
+//  Version: 2.9.6
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -19,7 +19,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.9.5",
+    version: "2.9.6",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -332,7 +332,7 @@ jsu.wrapper = "body"; //#main-section
         // Escapes user input to be treated as a literal string in a regular expression
         function fnEscapeRegExp(txt) {
             if (typeof txt !== "string") return null;
-            return txt.replace(/([.*+?=!:${}()|\^\[\]\/\\])/g, "\\$1");
+            return txt.replace(/([.*+?=!:${}()|\-\^\[\]\/\\])/g, "\\$1");
         }
         //-----------------------------------
         // Gets the value of a specific parameter in the querystring
@@ -577,8 +577,8 @@ jsu.wrapper = "body"; //#main-section
                     case "ipv4": //Validates an IPv4 address
                         _pattern = /^(?:(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})\.){3}(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})$/;
                         break;
-                    case "pass": //Validates the password strength (must have 8-20 characters, 1+ number, 1+ uppercase)
-                        _pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
+                    case "pass": //Validates the password strength (must have 8+ characters, 1+ number, 1+ uppercase)
+                        _pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
                         break;
                     case "lat": //Validates the latitude
                         _pattern = /^-?([1-8]?[1-9]|[1-9]0|0)\,{1}\d{1,6}$/;
@@ -659,14 +659,13 @@ jsu.wrapper = "body"; //#main-section
         // Shows the loading overlay screen
         function fnLoading(o) {
             var d = $.extend({
-                show: true,
                 hide: false,
                 delay: 2600,
                 of: null
             }, o);
             $("#floatingBarsG,#backBarsG").remove();
+            if (d.hide === true) return true;
             var target = $(d.of || jsu.wrapper);
-            if (d.hide) return true;
             var blockG = [];
             for (var i = 1; i < 9; i++) blockG.push('<div class="blockG"></div>');
             var loading = $('<div id="floatingBarsG">').append(blockG.join(""));
@@ -686,7 +685,7 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Sets the focus on input elements
         function fnSetFocus() {
-            $($('input, textarea').filter(':not(input:disabled)').get().reverse()).each(function() {
+            $($('input, textarea').filter(':not(:disabled)').get().reverse()).each(function() {
                 if (!$(this).hasClass("no-auto-focus") && input.isText(this)) $(this).focus();
             });
         }
@@ -822,7 +821,7 @@ jsu.wrapper = "body"; //#main-section
 
         //-----------------------------------
         // Centers an element relative to another
-        // See css:calc [http://jsfiddle.net/apaul34208/e4y6F]
+        // Css:calc [http://jsfiddle.net/apaul34208/e4y6F]
         $.fn.fnCenter = function(o) {
             o = $.extend({}, o);
             if (o.of) {
@@ -989,7 +988,6 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Disables the specified keyboard keys.
-        // To allow a set of keys, better use $.fnCustomInput
         $.fn.fnDisableKey = function (key) {
             if (!key) return this;
             var keys = key.toString().split("");
@@ -1047,7 +1045,7 @@ jsu.wrapper = "body"; //#main-section
                 }, jsu.settings.position);
                 var d = $.extend({
                     fnValidator: null,
-                    firstItemInvalid: true,
+                    firstItemInvalid: false,
                     requiredForm: false,
                     position: position
                 }, o);
@@ -1082,6 +1080,7 @@ jsu.wrapper = "body"; //#main-section
                             var _tag = _dom.nodeName.toLowerCase();
                             // Gets the html5 data- attribute; modern browsers admit: dom.dataset[attribute]
                             if (btn.getAttribute('data-validation') !== _dom.getAttribute('data-validation')) return true; //continue
+                            if (input.isText(_dom)) _dom.value = $.trim(_dom.value);
                             
                             // Validates empty <input> fields, <select> elements and those with property [value] equal to "0"
                             if ($(_dom).hasClass("vld-required") && ((_tag == "select" && (fnValidateFirstItem(_dom) || _dom.value === "0")) ||
