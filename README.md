@@ -1105,7 +1105,7 @@ Parameters
 - **length:** `Number`. Maximum number of characters allowed.
 - **position:** `Object` Sets the properties to position the tooltip:
   - **at:** `String` *default: "right bottom".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String` *default: "right top+6".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on values)
+  - **my:** `String` *default: "right top+6".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -1352,7 +1352,7 @@ Validates fields in the document, depending on the supplied css class. The defau
 * `"vld-latitude"`: causes the format validation with `"lat"` as the type.
 * `"vld-longitude"`: causes the format validation with `"lon"` as the type.
 
-If you wish to validate a specific group of elements, then you can create a **validation group** by adding the <code>data&#45;validation</code> attribute to the validating elements and also to the validator button.<br>
+If you wish to validate a specific group of elements, then you can create a **validation group** by adding the&nbsp;<code>data&#45;validation</code> attribute to the validating elements and also to the validator button.<br>
 You can customize the message defined in [`jsu.regional`](#jsuregional) `validateFormat`<br>
 **Returns** `jQuery`
 
@@ -1364,7 +1364,7 @@ Parameters
   - **requiredForm:** `Boolean` *default: false.* Determines whether the vatidator button and the validating elements should be inside a `form` element.
   - **position:** `Object` Sets the properties to position the tooltip:
     - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`,&nbsp;`"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-    - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on values)
+    - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details)
     - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```html
