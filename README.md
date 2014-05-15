@@ -148,8 +148,8 @@ If you want to provide additional languages to other plugins, you can pass a fun
 ### jsu.settings
 This namespace is used to define a default behaviour for some functions.
 - **position:** `Object`. Sets the default position for all functions that use [.position()](#jqueryposition-options) to display a tooltip *([fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-position), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
-  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;"horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+  - **at:** `String`. Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;*"horizontal vertical"* alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -742,8 +742,8 @@ Parameters
   - **isFuture:** `Boolean` *default: false.* Whether the date must be greater than ***compareTo***.
   - **warning:** `String` Message indicating that entry date did not meet the requirements.
   - **position:** `Object` Sets the properties to position the tooltip:
-    - **at:** `String` Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-    - **my:** `String` Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+    - **at:** `String` Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+    - **my:** `String` Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on possible values)
     - **collision:** `String` When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -786,8 +786,8 @@ Parameters
 - **dom:** `DOM` element to where the tooltip is positioned.
 - **message:** `String` with the message to display.
 - **position:** `Object` Sets the properties to position the tooltip:
-  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
+  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on values)
   - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -1049,8 +1049,8 @@ Position an element relative to another. This plugin extends jQuery's built-in [
 Parameters
 - **options:** `Object`. Sets the properties to configure the plugin:
   - **of:** `String` `jQuery` `DOM`. Determines the first matching element to position against.
-  - **at:** `String`. Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;"horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+  - **at:** `String`. Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;*"horizontal vertical"* alignment. (See the ***at*** option for full details on possible values)
   - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -1104,8 +1104,8 @@ The appearance of the tooltip is ruled by the [`.vld-tooltip`][jherax.css] class
 Parameters
 - **length:** `Number`. Maximum number of characters allowed.
 - **position:** `Object` Sets the properties to position the tooltip:
-  - **at:** `String` *default: "right bottom".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String` *default: "right top+6".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
+  - **at:** `String` *default: "right bottom".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String` *default: "right top+6".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on values)
   - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -1257,8 +1257,8 @@ Parameters
   - **isFuture:** `Boolean` *default: false.* Whether the date must be greater than ***compareTo***.
   - **warning:** `String` Message indicating that entry date did not meet the requirements.
   - **position:** `Object` Sets the properties to position the tooltip:
-    - **at:** `String` Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-    - **my:** `String` Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on possible values)
+    - **at:** `String` Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+    - **my:** `String` Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on possible values)
     - **collision:** `String` When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -1301,8 +1301,8 @@ It has the following `DOM` structure: `<span class="vld-tooltip"> your message <
 Parameters
 - **message:** `String` with the message to display.
 - **position:** `Object` Sets the properties to position the tooltip:
-  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
+  - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+  - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on values)
   - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
@@ -1361,8 +1361,8 @@ Parameters
   - **firstItemInvalid:** `Boolean` *default: false.* Validates the first item of a <select> element as invalid option (useful when you have the first item as the choice text)
   - **requiredForm:** `Boolean` *default: false.* Determines whether the button vatidator and the elements to validate should be inside of a `form` element.
   - **position:** `Object` Sets the properties to position the tooltip:
-    - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: "horizontal vertical" alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
-    - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: "horizontal vertical" alignment. (See the ***at*** option for full details on values)
+    - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+    - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on values)
     - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```html
