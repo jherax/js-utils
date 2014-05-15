@@ -1340,28 +1340,30 @@ Parameters
 ```
 
 ### jQuery.fnEasyValidate *(options)*
-Validates the fields in the document, depending on the css class specified. The default validations are performed by [fnIsValidFormat()](#fnisvalidformat-object-type) and you can set the following css classes:
-* `"vld-date"`: causes the validation with `"d"` as option.
-* `"vld-time"`: causes the validation with `"t"` as option.
-* `"vld-datetime"`: causes the validation with `"dt"` as option.
-* `"vld-email"`: causes the validation with `"email"` as option.
-* `"vld-ipv4"`: causes the validation with `"ipv4"` as option.
-* `"vld-pass"`: causes the validation with `"pass"` as option.
-* `"vld-latitude"`: causes the validation with `"lat"` as option.
-* `"vld-longitude"`: causes the validation with `"lon"` as option.
-* `"vld-required"`: causes the validation for empty fields.
 
-If you wish to validate a specific group of elements, you can create a **validation group** by adding the `data-validation` attribute to the elements to validate and also to the submit button.<br>
+Validates fields in the document, depending on the supplied css class. The default validations are performed by [fnIsValidFormat()](#fnisvalidformat-object-type), then you can provide the css classes that determine the type of validation to be performed:
+* `"vld-required"`: causes the validation of empty fields.
+* `"vld-date"`: causes the format validation with `"d"` as the type.
+* `"vld-time"`: causes the format validation with `"t"` as the type.
+* `"vld-datetime"`: causes the format validation with `"dt"` as the type.
+* `"vld-email"`: causes the format validation with `"email"` as the type.
+* `"vld-ipv4"`: causes the format validation with `"ipv4"` as the type.
+* `"vld-pass"`: causes the format validation with `"pass"` as the type.
+* `"vld-latitude"`: causes the format validation with `"lat"` as the type.
+* `"vld-longitude"`: causes the format validation with `"lon"` as the type.
+
+If you wish to validate a specific group of elements, then you can create a **validation group** by adding the <code>data&#45;validation</code> attribute to the validating elements and also to the validator button.<br>
+You can customize the message defined in [`jsu.regional`](#jsuregional) `validateFormat`<br>
 **Returns** `jQuery`
 
 Parameters
-- **options:** `Object` Sets the properties to configure the validation
-  - **fnValidator:** `Function` Performs a custom validation. The function must return `true` to pass the validation, or `false` to prevent default actions. This property is not mandatory, and if it is not specified, normal validation is performed (determined by the css class of the elements to validate)
-  - **fnBeforeTooltip:** `Function` Executes a custom task just before to display the tooltip with the validation message. This function receives the current element validated as the parameter in order to change the focus to the element that will display the tooltip. It is very useful when yoe are using widgets that modifies the original `DOM` element, such as [`kendo.ui.Editor`](http://demos.telerik.com/kendo-ui/web/editor/index.html) (hides the original `textarea` and creates an `iframe` instead) or [`jQuery.chosen`](http://harvesthq.github.io/chosen/) (hides the original `select` and creates an `ul` instead). To set the new element to position the tooltip against, set the property `domTarget` to the entry parameter.
-  - **firstItemInvalid:** `Boolean` *default: false.* Validates the first item of a <select> element as invalid option (useful when you have the first item as the choice text)
-  - **requiredForm:** `Boolean` *default: false.* Determines whether the button vatidator and the elements to validate should be inside of a `form` element.
+- **options:** `Object` Sets the properties to configure the validation:
+  - **fnValidator:** `Function` Performs a custom validation. The function must return `true` to pass the validation, or `false` to prevent default actions. This property is not mandatory, and if it is not specified, default validation is performed (determined by the css class of the validating elements)
+  - **fnBeforeTooltip:** `Function` Executes a custom task just before to show the tooltip with the validation message. This function receives the current validating element as the entry parameter in order to do something like change the  element that displays the tooltip. It is very useful when widgets that modify the original `DOM` element are used, such as [`kendo.ui.Editor`](http://demos.telerik.com/kendo-ui/web/editor/index.html) (hides the original `<textarea>` and creates an `<iframe>` instead) or [`jQuery.chosen`](http://harvesthq.github.io/chosen/) (hides the original `<select>` and creates an `<ul>` instead). To set the new element displaying the tooltip, set the `domTarget` property to entry parameter, with the replacement `DOM` element.
+  - **firstItemInvalid:** `Boolean` *default: false.* Validates the first item of a `<select>` element as invalid option, useful when you have the first item as the text for "select an option".
+  - **requiredForm:** `Boolean` *default: false.* Determines whether the vatidator button and the validating elements should be inside a `form` element.
   - **position:** `Object` Sets the properties to position the tooltip:
-    - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+    - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`,&nbsp;`"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
     - **my:** `String` *default: "left+6 center".* Defines which position on the element being positioned to align with the target element: *"horizontal vertical"* alignment. (See the ***at*** option for full details on values)
     - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
@@ -1371,30 +1373,39 @@ Parameters
   <option value="1">Magnetic</option>
   <option value="2">Electric</option>
 </select>
-<input type="number" id="txtValue" class="vld-numeric vld-required" data-validation="group.a" />
-<input type="date" id="txtDate" class="vld-required" /><!--This one is not in validation group-->
-<button type="submit" id="btnAdd" data-validation="group.a">Add new item</button>
+<p><input type="text" id="txtValue" class="vld-required" data-validation="group.a" /></p>
+<p><input type="text" id="txtDate" class="vld-date" /></p><!--This one is not in group.a-->
+<p><input type="text" id="txtEmail" class="vld-email" /></p><!--This one is not in group.a-->
+<p><textarea id="txtNotes" class="vld-required"></textarea></p><!--This one is not in group.a-->
+<button type="submit" id="btnAdd1" data-validation="group.a">Add new item</button>
+<button type="submit" id="btnAdd2">Add Notes</button>
 ```
 ```javascript
 $(document).on("ready", function () {
-  $(".vld-numeric").fnNumericInput();
+  $("#ddlType").chosen();
+  $("#txtNotes").fnMaxLength(100);
+  $("#txtValue").fnNumericInput();
   $("#txtDate").datepicker().addClass("no-auto-focus");
-  //$("#btnAdd").fnEasyValidate(); //only validates required fields
-  $("#btnAdd").fnEasyValidate({
+  $("#btnAdd2").fnEasyValidate();
+  $("#btnAdd1").fnEasyValidate({
     firstItemInvalid: true,
     fnValidator: function (btn) {
-      var num = $('#txtValue').get(0);
-      if (parseFloat(num.value) < 1000) {
-        return jsu.fnShowTooltip(num, "Price must be greater than $999"); //cancel submit
+      var num = $('#txtValue');
+      if (+num.val() < 1000) {
+        num.fnShowTooltip("Price must be greater than $999");
+        return false; //prevent default actions
       }
-      return true; //submit the form
+      return true; //run default actions
+  	},
+  	fnBeforeTooltip: function(dom) {
+  	  if ((/select/i).test(dom.nodeName)) {
+  	    //changes the item to display tooltip
+  	    dom.domTarget = $(dom).next().get(0);
+  	  }
   	}
   });
 });
 ```
-
-### jQuery.fnConfirm *(options)*
-TODO
 
 Appendix
 --------
