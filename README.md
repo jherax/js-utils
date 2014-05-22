@@ -187,7 +187,7 @@ This namespace is used to define a default behaviour for some functions.
 * [fnSetCaretPosition](#fnsetcaretposition-dom-position)
 * [fnCapitalize](#fncapitalize-object-type)
 * [fnNumericFormat](#fnnumericformat-object)
-* [fnIsValidFormat](#fnisvalidformat-object-type)
+* [fnIsValidFormat](#fnisvalidformat)
 * [fnIsValidDate](#fnisvaliddate-dom-options)
 * [fnShowTooltip](#fnshowtooltip-dom-message-position)
 * [fnShowDialog](#fnshowdialog-options)
@@ -361,7 +361,7 @@ Dynamically add an external script. This method is useful to inject dependencies
 **Returns** `undefined` or [`jqXHR`](http://api.jquery.com/Types/#jqXHR) if you set the property `execute: true`
 
 Parameters
-- **path:** `String` Source of the script to be added.<br>It can also be an `Object` with following properties:
+- **path:** `String` Source of the script to be added.<br>It can also be an `Object` with the following properties:
   - **src:** `String` Specifies a URI/URL of an external script.
   - **async:** `Boolean` Specifies whether script will executed asynchronously, as soon as it is available.
   - **defer:** `Boolean` Specifies whether the script is executed after the page has finished parsing.
@@ -695,23 +695,24 @@ Parameters
   console.log(dom.value);
 ```
 
-### fnIsValidFormat *(object, type)*
-Validates the format, depending on ***type*** supplied. Date validation is run according to [regional setting](#jsuregional).<br>
-**Note:** When ***object*** parameter is a `DOM` element, the `value` property is used as the string to validate.<br>
-**Note:** You can use this function as a jQuery extension, see [jQuery.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
+### fnIsValidFormat
+This `Object` provides a set of properties to validate specific formats.<br>
+Each property is a function that receives one parameter as the value to validate.<br>
+**Note:** When the entry parameter is a `DOM` element, the `value` property is used as the `String` to validate.<br>
+**Note:** See the jQuery version of [.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
 **Returns** `Boolean`
 
-Parameters
-* **object:** `String` or `DOM` element [category:text][category.text].
-* **type:** `String` specifying the type of validation:
-  * `"t"` validates the time format [`timeFormat`](#jsuregional)
-  * `"d"` validates the date format [`dateFormat`](#jsuregional)
-  * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
-  * `"pass"` validates password strength (must have 8+ characters, 1+ uppercase, 1+ number)
-  * `"email"` validates the email address.
-  * `"ipv4"` validates an IPv4 address.
-  * `"lat"` validates the latitude.
-  * `"lon"` validates the longitude.
+  * `time (value)` **value:** `String` or `DOM` [element][category.text]. Validates the time format according to [`timeFormat`](#jsuregional)
+  * `date (value)` **value:** `String` or `DOM` [element][category.text]. Validates the date format according to [`dateFormat`](#jsuregional)
+  * `datetime (value)` **value:** `String` or `DOM` [element][category.text]. Validates full date format according to [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
+  * `password (value)` **value:** `String` or `DOM` [element][category.text]. Validates the password strength (must have 8+ characters, 1+ uppercase and 1+ number)
+  * `email (value)` **value:** `String` or `DOM` [element][category.text]. Validates an email address.
+  * `ipv4 (value)` **value:** `String` or `DOM` [element][category.text]. Validates an IP address v4.
+  * `latitude (value)` **value:** `String` or `DOM` [element][category.text]. Validates latitudes range from -90 to 90.
+  * `longitude (value)` **value:** `String` or `DOM` [element][category.text]. Validates longitudes range from -180 to 180.
+  * `set (property, fn)` This function is able to create or re-define a function under `fnIsValidFormat` namespace.
+    - **property:** `String` with the name of the function to create or redefine.
+    - **fn:** `Function` that performs the validation. It must return `true` or `false`
 
 ```javascript
   (function() {
@@ -720,9 +721,26 @@ Parameters
     var _dateTime = "10/31/2013 16:10";
     var _email = "some-mail.gmail.com";
     var _pass = "insufficient";
-    console.log(jsu.fnIsValidFormat(_dateTime, "dt"));
-    console.log(jsu.fnIsValidFormat(_email, "email"));
-    console.log(jsu.fnIsValidFormat(_pass, "pass"));
+    console.log(jsu.fnIsValidFormat.datetime(_dateTime));
+    console.log(jsu.fnIsValidFormat.email(_email));
+    console.log(jsu.fnIsValidFormat.password(_pass));
+    
+    //Create a new validator for numbers
+    jsu.fnIsValidFormat.set("number", function (text) {
+      text = jsu.inputType.isText(text) ? text.value : text.toString();
+      var pattern = /^(?:\d+\.)?\d+$/;
+      return pattern.test(text);
+    });
+    
+    //Redefine the validator for email
+    jsu.fnIsValidFormat.set("email", function (text) {
+      text = jsu.inputType.isText(text) ? text.value : text.toString();
+      var pattern = /(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})/i;
+      return pattern.test(text);
+    });
+    
+    console.log(jsu.fnIsValidFormat.number("109.35"));
+    console.log(jsu.fnIsValidFormat.email("mail@yahoo.com"));
   })();
 ```
 
