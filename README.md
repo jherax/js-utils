@@ -703,17 +703,17 @@ Each property is a function that receives one parameter as the value to validate
 **Important** The validator functions return `Boolean`
 
 The ***value*** parameter is a `String` or `DOM` element [category:text][category.text].
-  * `time (value)` Validates the time format according to [`timeFormat`](#jsuregional)
-  * `date (value)` Validates the date format according to [`dateFormat`](#jsuregional)
-  * `datetime (value)` Validates full date format according to [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
-  * `password (value)` Validates the password strength (must have 8+ characters, 1+ uppercase and 1+ number)
-  * `email (value)` Validates an email address.
-  * `ipv4 (value)` Validates an IP address v4.
-  * `latitude (value)` Validates the latitude range from -90 to 90.
-  * `longitude (value)` Validates the longitude range from -180 to 180.
-  * `set (property, fn)` This function is able to create or redefine a function under `fnIsValidFormat`
-    - **property:** `String` with the name of the function to create or redefine.
-    - **fn:** `Function` that performs the validation. It must return `true` or `false`
+  - **`time (value)`** Validates the time format according to [`timeFormat`](#jsuregional)
+  - **`date (value)`** Validates the date format according to [`dateFormat`](#jsuregional)
+  - **`datetime (value)`** Validates full date format according to [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
+  - **`password (value)`** Validates the password strength (8+ characters, 1+ uppercase and 1+ number)
+  - **`email (value)`** Validates an email address.
+  - **`ipv4 (value)`** Validates an IP address v4.
+  - **`latitude (value)`** Validates the latitude range from -90 to 90.
+  - **`longitude (value)`** Validates the longitude range from -180 to 180.
+  - **`set (property, fn)`** This function is able to create or redefine a function under `fnIsValidFormat`
+    - *property:* `String` with the name of the function to create or redefine.
+    - *fn:* `Function` that performs the validation. It must return `true` or `false`
 
 ```javascript
   (function() {
