@@ -700,17 +700,18 @@ This `Object` provides a set of properties to validate specific formats.<br>
 Each property is a function that receives one parameter as the value to validate.<br>
 **Note:** When the entry parameter is a `DOM` element, the `value` property is used as the `String` to validate.<br>
 **Note:** See the jQuery version of [.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
-**Returns** `Boolean`
+**Important** The validator functions return `Boolean`
 
-  * `time (value)` **value:** `String` or `DOM` [element][category.text]. Validates the time format according to [`timeFormat`](#jsuregional)
-  * `date (value)` **value:** `String` or `DOM` [element][category.text]. Validates the date format according to [`dateFormat`](#jsuregional)
-  * `datetime (value)` **value:** `String` or `DOM` [element][category.text]. Validates full date format according to [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
-  * `password (value)` **value:** `String` or `DOM` [element][category.text]. Validates the password strength (must have 8+ characters, 1+ uppercase and 1+ number)
-  * `email (value)` **value:** `String` or `DOM` [element][category.text]. Validates an email address.
-  * `ipv4 (value)` **value:** `String` or `DOM` [element][category.text]. Validates an IP address v4.
-  * `latitude (value)` **value:** `String` or `DOM` [element][category.text]. Validates latitudes range from -90 to 90.
-  * `longitude (value)` **value:** `String` or `DOM` [element][category.text]. Validates longitudes range from -180 to 180.
-  * `set (property, fn)` This function is able to create or re-define a function under `fnIsValidFormat` namespace.
+The ***value*** parameter is a `String` or `DOM` element [category:text][category.text].
+  * `time (value)` Validates the time format according to [`timeFormat`](#jsuregional)
+  * `date (value)` Validates the date format according to [`dateFormat`](#jsuregional)
+  * `datetime (value)` Validates full date format according to [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
+  * `password (value)` Validates the password strength (must have 8+ characters, 1+ uppercase and 1+ number)
+  * `email (value)` Validates an email address.
+  * `ipv4 (value)` Validates an IP address v4.
+  * `latitude (value)` Validates the latitude range from -90 to 90.
+  * `longitude (value)` Validates the longitude range from -180 to 180.
+  * `set (property, fn)` This function is able to create or redefine a function under `fnIsValidFormat`
     - **property:** `String` with the name of the function to create or redefine.
     - **fn:** `Function` that performs the validation. It must return `true` or `false`
 
