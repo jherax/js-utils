@@ -103,11 +103,11 @@ img { border: 0 none; }
 .ui-dialog-custom { display: table; margin: 0 auto; border-collapse: collapse; border: 0 none; outline: 0 none; }
 .ui-dialog-custom .wnd-text { display: table-cell; padding: 10px 5px; vertical-align: middle; cursor: default; }
 .ui-dialog-custom .wnd-icon { display: table-cell; width: 55px; height: 66px; padding: 0; }
-.ui-dialog-custom .wnd-icon.info { background: url("assets/img/ico_info.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.alert { background: url("assets/img/ico_alert.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.success { background: url("assets/img/ico_success.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.cancel { background: url("assets/img/ico_cancel.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.error { background: url("assets/img/ico_error.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.info { background: url("../img/ico_info.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.alert { background: url("../img/ico_alert.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.success { background: url("../img/ico_success.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.cancel { background: url("../img/ico_cancel.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.error { background: url("../img/ico_error.png") no-repeat; background-position: left center; }
 .ui-dialog-buttonpane button { min-width: 54px; margin: .5em .4em .1em .4em !important; }
 .ui-button-text-only .ui-button-text { padding: .3em .8em; line-height: 1.5em; }
 .ui-button:focus, .ui-button:active { outline: none; }
