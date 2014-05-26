@@ -739,6 +739,7 @@ The ***value*** parameter is a `String` or `DOM` element [category:text][categor
       return pattern.test(text);
     });
     
+    //Test the newly created validators
     console.log("number:", jsu.fnIsValidFormat.number("109.35"));
     console.log("email:", jsu.fnIsValidFormat.email("mail@yahoo.com"));
   })();
@@ -1234,8 +1235,9 @@ Parameters
 ```
 
 ### jQuery.fnIsValidFormat *(type)*
-This is the jQuery extension for the [fnIsValidFormat](#fnisvalidformat) validators and performs the validation by passing the validator name as the ***type*** argument. The `value` property of the first matching element is used as the text to validate.<br>
-**Note:** You can create or redefine validators through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method. Once defined the validator, it can be used inmediately by providing the validator name as the ***type*** argument.<br>
+This is the jQuery extension for the [fnIsValidFormat](#fnisvalidformat) validators and performs the validation by passing the validator name as the ***type*** argument. 
+The `value` property of the first matching element is used as the text to&nbsp;validate.<br>
+**Note:** You can create or redefine validators through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method. Once defined the&nbsp;validator, it can be used inmediately by providing the validator name as the ***type*** argument.<br>
 **Returns** `Boolean`
 
 Parameters
@@ -1264,6 +1266,7 @@ Parameters
       return pattern.test(text);
     });
     
+    //Test the newly created validator
     var age = $("#age").val("30");
     console.log("number:", age.fnIsValidFormat("number"));
   })();
@@ -1368,7 +1371,7 @@ Parameters
 
 ### jQuery.fnEasyValidate *(options)*
 
-Validates the specified elements in the document. Validations can be performed automatically (depending on the css class provided by the element to validate), or customized (by providing the ***fnValidator*** option). If you want automatic validations, then set the css class to the elements to validate by adding the prefix `vld-` and the name of the validator (e.g. `"vld-datetime"`). As the default validations are performed by [fnIsValidFormat()](#fnisvalidformat), you can create new validators or redefine the existing ones through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method, so you can customize the validators as you want. These are the default css class:
+Validates the specified elements in the document. Validations can be performed automatically (depending on the css class provided by the element to validate), or customized (by providing the ***fnValidator*** option). If you want automatic validations, then set the css class to the elements to validate, by adding the prefix `vld-` plus the name of the validator (e.g. `"vld-datetime"`). As the default validations are performed by [fnIsValidFormat()](#fnisvalidformat), you can create new validators or redefine the existing ones through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method, so you can customize the validators as you want. These are the default css classes:
 * `"vld-required"`: causes the validation by checking empty fields.
 * `"vld-date"`: causes the validation by `jsu.fnIsValidFormat.date`
 * `"vld-time"`: causes the validation by `jsu.fnIsValidFormat.time`
@@ -1379,7 +1382,7 @@ Validates the specified elements in the document. Validations can be performed a
 * `"vld-latitude"`: causes the validation by `jsu.fnIsValidFormat.latitude`
 * `"vld-longitude"`: causes the validation by `jsu.fnIsValidFormat.longitude`
 
-If you wish to validate a specific group of elements, then you can create a **validation group** by adding the&nbsp;<code>data&#45;validation</code> attribute to the validating elements and also to the validator button.<br>
+If you wish to validate a specific group of elements, then you can create a **validation group** by <nobr>adding the <code>data-validation</code></nobr> attribute to the validating elements and also to the validator button.<br>
 You can customize the message defined in [`jsu.regional`](#jsuregional) `validateFormat`<br>
 **Returns** `jQuery`
 
