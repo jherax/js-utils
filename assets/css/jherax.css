@@ -7,12 +7,16 @@ img { border: 0 none; }
     body { font-size: 10pt; }
 }
 
-/* PAGE VIEW */
+/* ==========================================================================
+   Document sections
+   ========================================================================== */
 #main-section { margin: 0; height: auto; min-height: 100%; overflow: auto; }
-#page-wrapper { margin: 0; padding: 60px 30px; /* must be grater than footer height */ }
+#page-wrapper { margin: 0; padding: 30px 30px 62px 30px; /* padding-bottom must be grater than footer height */ }
 .footer { position: relative; bottom: 0; clear: both; height: 32px; margin-top: -35px; /* footer height + border */ border-top: 3px solid #E42639; line-height: 32px; text-align: center; background-color: #F2F2F2; }
 
-/* COMMON USE */
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
 .clear { clear: both; }
 .hide { display: none; }
 .right { text-align: right; }
@@ -23,12 +27,14 @@ img { border: 0 none; }
 .gv-link:hover, .gv-link > a:hover { color: #FF7200; cursor: pointer; }
 .text-ellipsis { width: 210px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* TOOLTIP */
-/* .vld-tooltip { display: inline-block; z-index: 2999; white-space: nowrap; padding: 4px 7px; text-align: left; color: #555; font-size: 11px; box-shadow: 0 0 6px rgba(0,0,0,0.7); border: 1px solid #fff; border-radius: 4px; background: #f5f6f6; background: -moz-linear-gradient(top, #f5f6f6 0%, #e3e4ea 50%, #f5f6f6 100%); background: -webkit-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -o-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -ms-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: linear-gradient(to bottom, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); } */
+/* ==========================================================================
+   Tooltip
+   ========================================================================== */
 .vld-tooltip.arrow-left:before { content: ""; position: absolute; width: 0; height: 0; right: 100%; top: 5px; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-right: 9px solid rgba(0,88,109,0.9); }
 .vld-tooltip.arrow-right:before { content: ""; position: absolute; width: 0; height: 0; left: 100%; top: 5px; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 9px solid rgba(0,88,109,0.9); }
 .vld-tooltip.arrow-top:before { content: ""; position: absolute; width: 0; height: 0; bottom: 100%; left: 10px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid rgba(0,59,77,0.9); }
 .vld-tooltip.arrow-bottom:before { content: ""; position: absolute; width: 0; height: 0; top: 100%; left: 10px; border-left: 0 none; border-right: 11px solid transparent; border-top: 8px solid rgba(0,90,112,0.67); }
+/*.vld-tooltip { position: relative; display: inline-block; z-index: 2999; white-space: nowrap; padding: 4px 7px; text-align: left; color: #555; font-size: 11px; box-shadow: 0 0 6px rgba(0,0,0,0.7); border: 1px solid #fff; border-radius: 4px; background: #f5f6f6; background: -moz-linear-gradient(top, #f5f6f6 0%, #e3e4ea 50%, #f5f6f6 100%); background: -webkit-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -o-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: -ms-linear-gradient(top, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); background: linear-gradient(to bottom, #f5f6f6 0%,#e3e4ea 50%,#f5f6f6 100%); }*/
 .vld-tooltip { position: relative; display: inline-block; z-index: 2999; white-space: nowrap; padding: 4px 7px; text-align: left; color: #eee; font-family: sans-serif; font-size: 11px; font-style: italic; box-shadow: 0 0 6px rgba(0,0,0,0.7); border: 1px solid #fff; border-radius: 4px; background: #005A70;
     background: -moz-linear-gradient(top, rgba(0,59,77,0.9) 0%, rgba(0,90,112,0.67) 100%); /* FF3.6+ */
     background: -webkit-linear-gradient(top, rgba(0,59,77,0.9) 0%,rgba(0,90,112,0.67) 100%); /* Chrome10+,Safari5.1+ */
@@ -37,7 +43,9 @@ img { border: 0 none; }
     background: linear-gradient(to bottom, rgba(0,59,77,0.9) 0%,rgba(0,90,112,0.67) 100%); /* W3C */
 }
 
-/* LOADING & BACKGROUND */
+/* ==========================================================================
+   Loading animation
+   ========================================================================== */
 .bg-fixed { z-index: 2999; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: #000; }
 .bg-opacity { opacity: 0.36; -moz-opacity: 0.36; -khtml-opacity: 0.36; filter: alpha(opacity=36); }
 #floatingBarsG { position: relative; display: inline-block; z-index: 3000; width: 32px; height: 40px; }
@@ -55,28 +63,36 @@ img { border: 0 none; }
     0% { background-color: #000000; }
     100% { background-color: #FFFFFF; }
 }
-
 @-webkit-keyframes fadeG {
     0% { background-color: #000000; }
     100% { background-color: #FFFFFF; }
 }
-
 @-ms-keyframes fadeG {
     0% { background-color: #000000; }
     100% { background-color: #FFFFFF; }
 }
-
 @-o-keyframes fadeG {
     0% { background-color: #000000; }
     100% { background-color: #FFFFFF; }
 }
-
 @keyframes fadeG {
     0% { background-color: #000000; }
     100% { background-color: #FFFFFF; }
 }
 
-/* PRETTY TABLE */
+/* ==========================================================================
+   Browse Happy prompt
+   ========================================================================== */
+.browsehappy {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+/* ==========================================================================
+   Prettified Table
+   ========================================================================== */
 .pretty-table { margin: 12px 6px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #666; text-align: left; text-shadow: 1px 1px 0px #fff; box-shadow: 0 1px 2px #d1d1d1; background: #eaebec; border-collapse: separate !important; border: 1px solid #ccc; border-radius: 3px; }
 .pretty-table td, .inner-table th { border: none; }
 .pretty-table tr:first-child th { padding: 12px 6px; text-align: center; border-top: 1px solid #fafafa; border-bottom: 1px solid #e0e0e0; background: #ededed; background: -moz-linear-gradient(top, #ededed 0%, #ebebeb 100%); background: -webkit-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: -o-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: -ms-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: linear-gradient(to bottom, #ededed 0%,#ebebeb 100%); }
@@ -92,11 +108,13 @@ img { border: 0 none; }
 .pretty-table tr:last-child td { border-bottom: 0; }
 .pretty-table tfoot td { border-top: 1px solid #e0e0e0; }
 
-/*-----------------*/
-/* BEGIN OVERRIDES */
-/*-----------------*/
+/*-----------------
+ * BEGIN OVERRIDES
+ *-----------------*/
 
-/* JQUERY UI DIALOG */
+/* ==========================================================================
+   jQuery ui dialog
+   ========================================================================== */
 .ui-dialog { padding: 2px; }
 .ui-widget { font-size: 1em; }
 .ui-widget-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
@@ -112,7 +130,9 @@ img { border: 0 none; }
 .ui-button-text-only .ui-button-text { padding: .3em .8em; line-height: 1.5em; }
 .ui-button:focus, .ui-button:active { outline: none; }
 
-/* JQUERY UI DATE-PICKER */
+/* ==========================================================================
+   jQuery ui date-picker
+   ========================================================================== */
 .ui-datepicker { font-family: Lucida Grande,Lucida Sans,Arial,sans-serif !important; font-size: 11px !important; }
 .ui-datepicker .ui-datepicker-buttonpane button { padding: 0.2em 0.6em; }
 .ui-datepicker td span, .ui-datepicker td a { padding: 0.1em .2em; }
@@ -130,14 +150,18 @@ img { border: 0 none; }
 .ui-timepicker-rtl dl dt[style*="display:none"] + dd { margin: 0; }
 .ui_tpicker_time { margin-bottom: 10px !important; }
 
-/* HIGHCHARTS */
+/* ==========================================================================
+   Highcharts
+   ========================================================================== */
 .chart-viewer { min-width: 310px; width: 1024px; min-height: 400px; margin: 0 auto; padding-right: 5px; }
 .highchart-tooltip-custom { display: table; }
 .highchart-tooltip-custom > div { display: table-row; }
 .highchart-tooltip-custom > div > div { display: table-cell; padding: 0 2px; }
 .highchart-tooltip-custom > div > div > span { font-variant: small-caps; }
 
-/* JQUERY DATATABLES */
+/* ==========================================================================
+   jQuery DataTable
+   ========================================================================== */
 .tabletools-wrapper { margin: 0 auto; font-family: Lucida Grande,Lucida Sans,Arial,sans-serif !important; font-size: 12px !important; color: #333; }
 .tabletools-wrapper .dataTables_scroll { border-left: 1px solid #E0E0E0; border-right: 1px solid #E0E0E0; }
 .tabletools-wrapper .dataTables_scrollBody { display: inline-block; }
@@ -150,6 +174,6 @@ img { border: 0 none; }
 .tabletools-wrapper.tabla > div.dataTables_wrapper > table.dataTable tr td:first-child { border-left: 1px solid #E0E0E0; }
 .tabletools-wrapper.tabla div.dataTables_scroll table.dataTable tr > *:last-child { border-right: none; }
 
-/*---------------*/
-/* END OVERRIDES */
-/*---------------*/
+/*---------------
+ * END OVERRIDES
+ *---------------*/
