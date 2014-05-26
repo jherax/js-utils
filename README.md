@@ -710,9 +710,9 @@ The ***value*** parameter is a `String` or `DOM` element [category:text][categor
   - **`ipv4 (value)`** Validates an IP address v4.
   - **`latitude (value)`** Validates the latitude range from -90 to 90.
   - **`longitude (value)`** Validates the longitude range from -180 to 180.
-  - **`set (property, fn)`** This function is able to create or redefine a validator function.
-    - *property:* `String` with the name of the validator to create or redefine.
-    - *fn:* `Function` that performs the validation. It must return `true` or `false`
+  - **`set (validator, fn)`** This function is able to create or redefine a validator function.
+    - *validator:* `String` with the name of the validator to create or redefine.
+    - *fn:* `Function` that performs the validation. Should return `true` or `false`
 
 ```javascript
   (function() {
@@ -721,9 +721,9 @@ The ***value*** parameter is a `String` or `DOM` element [category:text][categor
     var _email = "some.gmail.com";
     var _pass = "insuff1ci3nt";
     var _dt = "10/31/2013 16:10";
-    console.log("email", jsu.fnIsValidFormat.email(_email));
-    console.log("password", jsu.fnIsValidFormat.password(_pass));
-    console.log("datetime", jsu.fnIsValidFormat.datetime(_dt));
+    console.log("email:", jsu.fnIsValidFormat.email(_email));
+    console.log("password:", jsu.fnIsValidFormat.password(_pass));
+    console.log("datetime:", jsu.fnIsValidFormat.datetime(_dt));
     
     //Create a new validator for numbers
     jsu.fnIsValidFormat.set("number", function (text) {
@@ -739,8 +739,8 @@ The ***value*** parameter is a `String` or `DOM` element [category:text][categor
       return pattern.test(text);
     });
     
-    console.log("number", jsu.fnIsValidFormat.number("109.35"));
-    console.log("email", jsu.fnIsValidFormat.email("mail@yahoo.com"));
+    console.log("number:", jsu.fnIsValidFormat.number("109.35"));
+    console.log("email:", jsu.fnIsValidFormat.email("mail@yahoo.com"));
   })();
 ```
 
@@ -813,17 +813,17 @@ Parameters
     // Configures the language setting
     jsu.regional.set(jsu.regional.english);
   
-    var email = $("#txtEmail").get(0);
-    var admission = $("#txtDate").get(0);
+    var _email = $("#txtEmail").get(0);
+    var _admission = $("#txtDate").get(0);
     
-    if (!jsu.fnIsValidFormat(email, "email")) {
+    if (!jsu.fnIsValidFormat.email(_email)) {
       // Displays the tooltip at the default position
-      return jsu.fnShowTooltip(email, "The email address is not valid");
+      return jsu.fnShowTooltip(_email, "The email address is not valid");
     }
-    if (!jsu.fnIsValidFormat(admission, "d")) {
+    if (!jsu.fnIsValidFormat.date(_admission)) {
       // Displays the tooltip at the specified position
       return jsu.fnShowTooltip(
-        admission,
+        _admission,
         "The admission date is not valid", {
             at: "left bottom",
             my: "left+2 top+5"
@@ -849,7 +849,7 @@ Sets the default position for all [tooltips](#jsusettings)
     })) return false;
     
     var pass = $("#txtPassword");
-    if (!pass.fnIsValidFormat("pass")) {
+    if (!pass.fnIsValidFormat("password")) {
       return !pass.fnShowTooltip("The password did not meet the requirements");
     }
   });
@@ -1234,29 +1234,38 @@ Parameters
 ```
 
 ### jQuery.fnIsValidFormat *(type)*
-This is the jQuery extension for [fnIsValidFormat](#fnisvalidformat-object-type) function.<br>
-Validates the `value` format, depending on ***type*** supplied.<br>
-The date validation is run according to [regional setting](#jsuregional).<br>
+This is the jQuery extension for the [fnIsValidFormat](#fnisvalidformat) validators and performs the validation by passing the validator name as the ***type*** argument. The `value` property of the first matching element is used as the text to validate.<br>
+**Note:** You can create or redefine validators through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method. Once defined the validator, it can be used inmediately by providing the validator name as the ***type*** argument.<br>
 **Returns** `Boolean`
 
 Parameters
 * **type:** `String` specifying the type of validation:
-  * `"t"` validates the time format [`timeFormat`](#jsuregional)
-  * `"d"` validates the date format [`dateFormat`](#jsuregional)
-  * `"dt"` validates full date format [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
-  * `"pass"` validates password strength (must have 8+ characters, 1+ uppercase, 1+ number)
-  * `"email"` validates the email address.
-  * `"ipv4"` validates an IPv4 address.
-  * `"lat"` validates the latitude.
-  * `"lon"` validates the longitude.
+  - `"time"` Validates the time format according to [`timeFormat`](#jsuregional)
+  - `"date"` Validates the date format according to [`dateFormat`](#jsuregional)
+  - `"datetime"` Validates full date format according to [`dateFormat`](#jsuregional) + [`timeFormat`](#jsuregional)
+  - `"password"` Validates the password strength (8+ characters, 1+ uppercase and 1+ number)
+  - `"email"` Validates an email address.
+  - `"ipv4"` Validates an IP address v4.
+  - `"latitude"` Validates the latitude range from -90 to 90.
+  - `"longitude"` Validates the longitude range from -180 to 180.
 
 ```javascript
   (function() {
     //Configures the language setting
     jsu.regional.set(jsu.regional.english);
     var dt = $("#date").val("12/31/2013 23:10");
-    var isValid = dt.fnIsValidFormat("dt");
-    console.log("Is dateTime: ", isValid);
+    var isValid = dt.fnIsValidFormat("datetime");
+    console.log("datetime:", isValid);
+    
+    //Create a new validator for numbers
+    jsu.fnIsValidFormat.set("number", function (text) {
+      text = jsu.inputType.isText(text) ? text.value : text.toString();
+      var pattern = /^(?:\d+\.)?\d+$/;
+      return pattern.test(text);
+    });
+    
+    var age = $("#age").val("30");
+    console.log("number:", age.fnIsValidFormat("number"));
   })();
 ```
 
@@ -1335,16 +1344,16 @@ Parameters
   }());
 
   $(function() {
-    var email = $("#txtEmail");
-    var admission = $("#txtDate");
+    var _email = $("#txtEmail");
+    var _admission = $("#txtDate");
     
-    if (!email.fnIsValidFormat("email")) {
+    if (!_email.fnIsValidFormat("email")) {
       // Displays the tooltip at the default position
-      return !email.fnShowTooltip("The email address is not valid");
+      return !_email.fnShowTooltip("The email address is not valid");
     }
-    if (!admission.fnIsValidFormat("d")) {
+    if (!_admission.fnIsValidFormat("date")) {
       // Displays the tooltip at the specified position
-      return !admission.fnShowTooltip(
+      return !_admission.fnShowTooltip(
         "The admission date is not valid", {
             at: "left+2 top-5",
             my: "left bottom"
@@ -1359,16 +1368,16 @@ Parameters
 
 ### jQuery.fnEasyValidate *(options)*
 
-Validates fields in the document, depending on the supplied css class. The default validations are performed by [fnIsValidFormat()](#fnisvalidformat-object-type), then you can provide the css classes that determine the type of validation to be performed:
-* `"vld-required"`: causes the validation of empty fields.
-* `"vld-date"`: causes the format validation with `"d"` as the type.
-* `"vld-time"`: causes the format validation with `"t"` as the type.
-* `"vld-datetime"`: causes the format validation with `"dt"` as the type.
-* `"vld-email"`: causes the format validation with `"email"` as the type.
-* `"vld-ipv4"`: causes the format validation with `"ipv4"` as the type.
-* `"vld-pass"`: causes the format validation with `"pass"` as the type.
-* `"vld-latitude"`: causes the format validation with `"lat"` as the type.
-* `"vld-longitude"`: causes the format validation with `"lon"` as the type.
+Validates the specified elements in the document. Validations can be performed automatically (depending on the css class provided by the element to validate), or customized (by providing the ***fnValidator*** option). If you want automatic validations, then set the css class to the elements to validate by adding the prefix `vld-` and the name of the validator (e.g. `"vld-datetime"`). As the default validations are performed by [fnIsValidFormat()](#fnisvalidformat), you can create new validators or redefine the existing ones through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method, so you can customize the validators as you want. These are the default css class:
+* `"vld-required"`: causes the validation by checking empty fields.
+* `"vld-date"`: causes the validation by `jsu.fnIsValidFormat.date`
+* `"vld-time"`: causes the validation by `jsu.fnIsValidFormat.time`
+* `"vld-datetime"`: causes the validation by `jsu.fnIsValidFormat.datetime`
+* `"vld-email"`: causes the validation by `jsu.fnIsValidFormat.email`
+* `"vld-ipv4"`: causes the validation by `jsu.fnIsValidFormat.ipv4`
+* `"vld-password"`: causes the validation by `jsu.fnIsValidFormat.password`
+* `"vld-latitude"`: causes the validation by `jsu.fnIsValidFormat.latitude`
+* `"vld-longitude"`: causes the validation by `jsu.fnIsValidFormat.longitude`
 
 If you wish to validate a specific group of elements, then you can create a **validation group** by adding the&nbsp;<code>data&#45;validation</code> attribute to the validating elements and also to the validator button.<br>
 You can customize the message defined in [`jsu.regional`](#jsuregional) `validateFormat`<br>
