@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 2.9.6
+//  Version: 3.1.1
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -12,14 +12,38 @@
 //**********************************
 // Copyright 2013, 2014 Jherax
 // Released under the MIT license
-;
+// https://raw.githubusercontent.com/jherax/js-utils/master/LICENSE
+
 // Essential JavaScript Namespacing Patterns
 // http://addyosmani.com/blog/essential-js-namespacing
+;
+// Avoid console errors in browsers that lack a console.
+(function() {
+    var method;
+    var noop = function () {};
+    var methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeStamp', 'trace', 'warn'
+    ];
+    var length = methods.length;
+    var console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
+    }
+}());
 
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "2.9.6",
+    version: "3.1.1",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -31,8 +55,8 @@ jsu.wrapper = "body"; //#main-section
     var CustomException = function (message) {
         for (var i = 1; i < arguments.length; i++)
             message = message.replace(new RegExp("\\{" + (i - 1) + "}"), arguments[i]);
-        this.name = "js-utils exception";
         this.message = message || "An error has occurred";
+        this.name = "js-utils exception";
         this.toString = function() {
             return this.name + ": " + this.message;
         };
@@ -241,15 +265,17 @@ jsu.wrapper = "body"; //#main-section
             return eventName.replace(/\s+|\t+/g, namespace + " ");
         };
         //-----------------------------------
-        // Determines if the entry parameter is a DOM element
-        var isDOM = function (obj) {
-            return (!!obj && typeof obj === "object" && !!obj.nodeType);
-        };
-        //-----------------------------------
-        // Determines if the entry parameter is a function
-        var isFunction = $.isFunction || function (obj) {
-            return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
-        };
+        // Seals the writable attribute to properties
+        function sealProperties(obj) {
+            for (var p in obj) {
+                Object.defineProperty(obj, p, {
+                    __proto__: null,
+                    configurable: true,
+                    enumerable: true,
+                    writable: false
+                });
+            }
+        }
         //-----------------------------------
         // Fix: failed to read the 'selectionStart' property from 'HTMLInputElement'
         // Second parameter provides a callback to execute additional instructions
@@ -262,6 +288,16 @@ jsu.wrapper = "body"; //#main-section
             };
             if (ok && isFunction(fn)) fn(dom);
             return selection;
+        };
+        //-----------------------------------
+        // Determines if the entry parameter is a DOM element
+        var isDOM = function (obj) {
+            return (!!obj && typeof obj === "object" && !!obj.nodeType);
+        };
+        //-----------------------------------
+        // Determines if the entry parameter is a function
+        var isFunction = $.isFunction || function (obj) {
+            return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
         };
         //-----------------------------------
         // This is a reference to JSON.stringify and provides a polyfill for old browsers
@@ -382,8 +418,9 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Clone an object and set all its properties to read-only
         function fnCloneObject(obj) {
-            var n = {};
-            for (var p in obj) {
+            //Object.freeze(obj)
+            var n = {}, p = null;
+            for (p in obj) {
                 Object.defineProperty(n, p, {
                     __proto__: null, //no inherited properties
                     configurable: false,
@@ -558,37 +595,62 @@ jsu.wrapper = "body"; //#main-section
                     }
                 }) + "$";
             };
-            return function (obj, _type) {
-                var _pattern = null,
-                    _text = input.isText(obj) ? obj.value : obj.toString();
-                switch (_type) {
-                    case "d": //Validates Date format according to regional setting
-                        _pattern = new RegExp(_formatter(_language.dateFormat));
-                        break;
-                    case "t": //Validates Time format: HH:mm:ss
-                        _pattern = /^([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/;
-                        break;
-                    case "dt": //Validates DateTime format according to regional setting
-                        _pattern = new RegExp(_formatter(_language.dateFormat + " " + _language.timeFormat));
-                        break;
-                    case "email": //Validates an email address
-                        _pattern = /^([0-9a-zñÑ](?:[\-.\w]*[0-9a-zñÑ])*@(?:[0-9a-zñÑ][\-\wñÑ]*[0-9a-zñÑ]\.)+[a-z]{2,9})$/i;
-                        break;
-                    case "ipv4": //Validates an IPv4 address
-                        _pattern = /^(?:(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})\.){3}(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})$/;
-                        break;
-                    case "pass": //Validates the password strength (must have 8+ characters, 1+ number, 1+ uppercase)
-                        _pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-                        break;
-                    case "lat": //Validates the latitude
-                        _pattern = /^-?([1-8]?[1-9]|[1-9]0|0)\,{1}\d{1,6}$/;
-                        break;
-                    case "lon": //Validates the longitude
-                        _pattern = /^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\,{1}\d{1,6}$/;
-                        break;
-                }
-                return !!_pattern && _pattern.test(_text);
+            var _validate = function (obj, pattern) {
+                obj = input.isText(obj) ? obj.value : obj.toString();
+                return pattern.test(obj);
             };
+            var validator = {
+                date: function (text) {
+                    //Validates the date format according to regional setting
+                    return _validate(text, new RegExp(_formatter(_language.dateFormat)));
+                },
+                time: function (text) {
+                    //Validates the time format: HH:mm:ss
+                    return _validate(text, /^([0-1][0-9]|[2][0-3]):([0-5][0-9])(?::([0-5][0-9])){0,1}$/);
+                },
+                datetime: function (text) {
+                    //Validates the date-time format according to regional setting
+                    return _validate(text, new RegExp(_formatter(_language.dateFormat + " " + _language.timeFormat)));
+                },
+                email: function (text) {
+                    //Validates an email address
+                    return _validate(text, /^([0-9a-zñÑ](?:[\-.\w]*[0-9a-zñÑ])*@(?:[0-9a-zñÑ][\-\wñÑ]*[0-9a-zñÑ]\.)+[a-z]{2,9})$/i);
+                },
+                ipv4: function (text) {
+                    //Validates an IP address v4
+                    return _validate(text, /^(?:(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})\.){3}(?:25[0-5]|2[0-4]\d|[01]\d\d|\d{1,2})$/);
+                },
+                password: function (text) {
+                    //Validates the password strength (must have 8+ characters, 1+ number, 1+ uppercase)
+                    return _validate(text, /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/);
+                },
+                latitude: function (text) {
+                    //Validates latitudes range from -90 to 90
+                    return _validate(text, /^-?([1-8]?[1-9]|[1-9]0|0)\,{1}\d{1,6}$/);
+                },
+                longitude: function (text) {
+                    //Validates longitudes range from -180 to 180
+                    return _validate(text, /^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\,{1}\d{1,6}$/);
+                }
+            };
+            //Set properties as not writable
+            sealProperties(validator);
+            Object.defineProperty(validator, "set", {
+                __proto__: null,
+                configurable: false,
+                enumerable: false,
+                writable: false,
+                value: function (property, value) {
+                    if (!isFunction(value)) return;
+                    Object.defineProperty(this, property, {
+                        configurable: true,
+                        enumerable: true,
+                        writable: false,
+                        value: value
+                    });
+                }
+            });
+            return validator;
         }());
         //-----------------------------------
         // Evaluates whether the input value is a date or not.
@@ -601,8 +663,8 @@ jsu.wrapper = "body"; //#main-section
                     if (+date) return new Date(+date);
                     return new Date();
                 }
-                var type = date.length > 10 ? "dt" : "d";
-                error = error || !fnIsValidFormat(date, type);
+                var type = date.length > 10 ? "datetime" : "date";
+                error = error || !fnIsValidFormat[type](date);
                 if (error) return new Date();
                 var d = date.split(/\D/); date = "y/M/d";
                 var p = _language.dateFormat.split(/[^yMd]/);
@@ -898,7 +960,9 @@ jsu.wrapper = "body"; //#main-section
         // Date validations are run according to regional setting
         $.fn.fnIsValidFormat = function (type) {
             if (!this.length) return false;
-            return fnIsValidFormat(this.get(0), type);
+            if (!fnIsValidFormat[type])
+                throw new CustomException("Property fnIsValidFormat.{0} does not exist", type);
+            return fnIsValidFormat[type](this.get(0));
         };
         //-----------------------------------
         // Evaluates whether the input value is a date or not.
@@ -1003,19 +1067,8 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Validates the required form fields
         (function() {
-            // Creates the filters based on those
-            // defined in fnIsValidFormat
-            var filters = {
-                "vld-date": "d",
-                "vld-time": "t",
-                "vld-datetime": "dt",
-                "vld-email": "email",
-                "vld-ipv4": "ipv4",
-                "vld-pass": "pass",
-                "vld-latitude": "lat",
-                "vld-longitude": "lon"
-            };
-            var allFilters = $.map(filters, function(value, key) { return "." + key; }).join(",");
+            // Creates the filters based on those defined in fnIsValidFormat
+            var allFilters = $.map(fnIsValidFormat, function(value, key) { return ".vld-" + key; }).join(",");
             // Shows a tooltip for validation message
             var fnTooltip = function (dom, event, messageType, pos) {
                 var button = $(event.target);
@@ -1100,8 +1153,8 @@ jsu.wrapper = "body"; //#main-section
 
                             if (!input.isText(_dom) || !_dom.value.length) return true; //continue
                             // Validates specific formats
-                            for (var type in filters) {
-                                if ($(_dom).hasClass(type) && !fnIsValidFormat(_dom, filters[type])) {
+                            for (var type in fnIsValidFormat) {
+                                if ($(_dom).hasClass("vld-" + type) && !fnIsValidFormat[type](_dom)) {
                                     fnTooltip(_dom, event, _language.validateFormat, d.position);
                                     return (_submit = false); //break
                                 }
