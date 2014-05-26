@@ -696,10 +696,9 @@ Parameters
 ```
 
 ### fnIsValidFormat
-This `Object` provides a set of properties to validate specific formats.<br>
-Each property is a function that receives one parameter as the value to validate.<br>
-**Note:** When the entry parameter is a `DOM` element, the `value` property is used as the `String` to validate.<br>
-**Note:** See the jQuery version of [.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
+This `Object` provides a namespace for the functions validating specific formats.<br>
+Each function defined in the namespace receives the ***value*** parameter as the text to validate.<br>
+**Note:** Validators are also implemented as a jQuery extension, see [jQuery.fnIsValidFormat](#jqueryfnisvalidformat-type).<br>
 **Important** The validator functions return `Boolean`
 
 The ***value*** parameter is a `String` or `DOM` element [category:text][category.text].
@@ -711,20 +710,20 @@ The ***value*** parameter is a `String` or `DOM` element [category:text][categor
   - **`ipv4 (value)`** Validates an IP address v4.
   - **`latitude (value)`** Validates the latitude range from -90 to 90.
   - **`longitude (value)`** Validates the longitude range from -180 to 180.
-  - **`set (property, fn)`** This function is able to create or redefine a function under `fnIsValidFormat`
-    - *property:* `String` with the name of the function to create or redefine.
+  - **`set (property, fn)`** This function is able to create or redefine a validator function.
+    - *property:* `String` with the name of the validator to create or redefine.
     - *fn:* `Function` that performs the validation. It must return `true` or `false`
 
 ```javascript
   (function() {
     //Configures the language setting
     jsu.regional.set(jsu.regional.english);
-    var _dateTime = "10/31/2013 16:10";
-    var _email = "some-mail.gmail.com";
-    var _pass = "insufficient";
-    console.log(jsu.fnIsValidFormat.datetime(_dateTime));
-    console.log(jsu.fnIsValidFormat.email(_email));
-    console.log(jsu.fnIsValidFormat.password(_pass));
+    var _email = "some.gmail.com";
+    var _pass = "insuff1ci3nt";
+    var _dt = "10/31/2013 16:10";
+    console.log("email", jsu.fnIsValidFormat.email(_email));
+    console.log("password", jsu.fnIsValidFormat.password(_pass));
+    console.log("datetime", jsu.fnIsValidFormat.datetime(_dt));
     
     //Create a new validator for numbers
     jsu.fnIsValidFormat.set("number", function (text) {
@@ -740,8 +739,8 @@ The ***value*** parameter is a `String` or `DOM` element [category:text][categor
       return pattern.test(text);
     });
     
-    console.log(jsu.fnIsValidFormat.number("109.35"));
-    console.log(jsu.fnIsValidFormat.email("mail@yahoo.com"));
+    console.log("number", jsu.fnIsValidFormat.number("109.35"));
+    console.log("email", jsu.fnIsValidFormat.email("mail@yahoo.com"));
   })();
 ```
 
