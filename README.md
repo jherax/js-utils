@@ -1382,7 +1382,7 @@ Validates the specified elements in the document. Validations can be performed a
 * `"vld-latitude"`: causes the validation by `jsu.fnIsValidFormat.latitude`
 * `"vld-longitude"`: causes the validation by `jsu.fnIsValidFormat.longitude`
 
-If you want to validate a specific group of elements, then you can create a **validation group** by adding\~the\~`data-validation` attribute to the validating elements and also to the validator button.<br>
+If you want to validate a specific group of elements, then you can create a **validation group** by <nobr>adding the `data-validation`</nobr> attribute to the validating elements and also to the validator button.<br>
 You can customize the message defined in [`jsu.regional`](#jsuregional) `validateFormat`<br>
 **Returns** `jQuery`
 
