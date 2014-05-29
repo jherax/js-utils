@@ -499,7 +499,7 @@ Gets string representation of the specified date according to [`jsu.regional`](#
 Parameters
 - **options:** `Object` Optional. If not provided, the current date and time is returned.
   - **date:** `Date` `String` `Number` *default: new Date.* The date to parse as string.
-  - **ISO8601:** `Boolean` *default: false.* Specifies whether the date is formatted according to ISO 8601.
+  - **ISO8601:** `Boolean` *default: false.* Specifies whether the date is returned in ISO 8601 format.
 
 ```javascript
   (function() {
