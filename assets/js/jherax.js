@@ -2,7 +2,7 @@
 //  JavaScript Utilities for Validation
 //  Author: David Rivera
 //  Created: 26/06/2013
-//  Version: 3.1.1
+//  Version: 3.3.1
 //**********************************
 // http://jherax.github.io
 // http://github.com/jherax/js-utils
@@ -43,7 +43,7 @@
 // We need to do a check before we create the namespace
 var jsu = window.jsu || {
     author: "jherax",
-    version: "3.1.1",
+    version: "3.3.1",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -57,6 +57,8 @@ jsu.wrapper = "body"; //#main-section
             message = message.replace(new RegExp("\\{" + (i - 1) + "}"), arguments[i]);
         this.message = message || "An error has occurred";
         this.name = "js-utils exception";
+        i = null;
+        // @Override
         this.toString = function() {
             return this.name + ": " + this.message;
         };
@@ -88,6 +90,7 @@ jsu.wrapper = "body"; //#main-section
             }
             cparent = cparent[subns];
         }
+        i = null;
         // the parent is now constructed with empty namespaces and can be used.
         // we return the outermost namespace
         return cparent;
@@ -255,19 +258,21 @@ jsu.wrapper = "body"; //#main-section
             for (var h = 0; h < handler.length; h++) {
                 if (handler[h].namespace === namespace || (handler[h].data || {}).handler === namespace) return true;
             }
+            h = null;
             return false;
         };
         //-----------------------------------
         // Utility to create namespaced events
         var nsEvents = function (eventName, namespace) {
             namespace = "." + namespace;
-            eventName = $.trim(eventName) + namespace;
+            eventName = $.trim(eventName).replace(".", "") + namespace;
             return eventName.replace(/\s+|\t+/g, namespace + " ");
         };
         //-----------------------------------
         // Seals the writable attribute to properties
         function sealProperties(obj) {
-            for (var p in obj) {
+            var p = null;
+            for (p in obj) {
                 Object.defineProperty(obj, p, {
                     __proto__: null,
                     configurable: true,
@@ -275,6 +280,7 @@ jsu.wrapper = "body"; //#main-section
                     writable: false
                 });
             }
+            p = null;
         }
         //-----------------------------------
         // Fix: failed to read the 'selectionStart' property from 'HTMLInputElement'
@@ -664,7 +670,7 @@ jsu.wrapper = "body"; //#main-section
                     return new Date();
                 }
                 var type = date.length > 10 ? "datetime" : "date";
-                error = error || !fnIsValidFormat[type](date);
+                error = (error || !fnIsValidFormat[type](date));
                 if (error) return new Date();
                 var d = date.split(/\D/); date = "y/M/d";
                 var p = _language.dateFormat.split(/[^yMd]/);
@@ -673,6 +679,7 @@ jsu.wrapper = "body"; //#main-section
                     if ((/M+/).test(p[x])) date = date.replace("M", d[x]);
                     if ((/d+/).test(p[x])) date = date.replace("d", d[x]);
                 }
+                x = null;
                 d.splice(0, 3);
                 return new Date(date +" "+ d.join(":"));
             };
@@ -727,7 +734,7 @@ jsu.wrapper = "body"; //#main-section
             }, o);
             $("#floatingBarsG,#backBarsG").remove();
             if (d.hide === true) return true;
-            var target = $(d.of || jsu.wrapper);
+            var target = $(d.of || "body");
             var blockG = [];
             for (var i = 1; i < 9; i++) blockG.push('<div class="blockG"></div>');
             var loading = $('<div id="floatingBarsG">').append(blockG.join(""));
@@ -745,19 +752,27 @@ jsu.wrapper = "body"; //#main-section
             return true;
         }
         //-----------------------------------
-        // Sets the focus on input elements
-        function fnSetFocus() {
-            $($('input, textarea').filter(':not(:disabled)').get().reverse()).each(function() {
-                if (!$(this).hasClass("no-auto-focus") && input.isText(this)) $(this).focus();
-            });
-        }
-        //-----------------------------------
         // Detects the width of scrollbar
         function fnScrollbarWidth() {
             var outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body'),
                 barWidth = $('<div>').css('width', '100%').appendTo(outer).outerWidth();
             outer.remove();
             return 100 - barWidth;
+        }
+        //-----------------------------------
+        // Updates the HTML5 browser cache
+        function fnUpdateCache() {
+            if (handlerExist(window, "load", "fnUpdateCache")) return;
+            $(window).on(nsEvents("load", "fnUpdateCache"), function (event) {
+                $(window.applicationCache).on("updateready", function (e) {
+                    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+                        //el browser descargó una nueva versión del manifiesto de cache,
+                        //debe recargar la página para acceder al contenido actualizado
+                        window.applicationCache.swapCache();
+                        window.location.reload(true);
+                    }
+                });
+            });
         }
 
         //-----------------------------------
@@ -880,10 +895,9 @@ jsu.wrapper = "body"; //#main-section
                 });
             };
         })();
-
         //-----------------------------------
         // Centers an element relative to another
-        // Css:calc [http://jsfiddle.net/apaul34208/e4y6F]
+        // css:calc [http://jsfiddle.net/apaul34208/e4y6F]
         $.fn.fnCenter = function(o) {
             o = $.extend({}, o);
             if (o.of) {
@@ -920,7 +934,7 @@ jsu.wrapper = "body"; //#main-section
                 .on(nsEvents("keypress input paste", "fnMaxLength"), function(e) {
                     var len = dom.value.length;
                     var max = len >= length ? 1 : 0;
-                    if (browser.mozilla) max = !e.keyCode && max;
+                    if (browser.mozilla) max = (!e.keyCode && max);
                     if (max) {
                         len = length;
                         dom.value = dom.value.substr(0, len);
@@ -1004,7 +1018,7 @@ jsu.wrapper = "body"; //#main-section
                     if (e.type != "blur") fnSetCaretPosition(e.target, _pos);
                 })
                 .on(nsEvents("keydown", "fnNumericInput"), function(e) {
-                    var _key = e.which || e.keyCode;
+                    var _key = (e.which || e.keyCode);
                     var _ctrl = !!(e.ctrlKey || e.metaKey);
                     // Allow: (numbers), (keypad numbers),
                     // Allow: (backspace, tab, delete), (home, end, arrows)
@@ -1044,7 +1058,7 @@ jsu.wrapper = "body"; //#main-section
                 })
                 .on(nsEvents("keypress", "fnCustomInput"), function(e) {
                     var _pattern = new RegExp(mask.source || mask, "i");
-                    var _key = e.which || e.keyCode;
+                    var _key = (e.which || e.keyCode);
                     var _vk = (_key == 8 || _key == 9 || _key == 46 || (_key >= 35 && _key <= 40));
                     return _pattern.test(String.fromCharCode(_key)) || _vk;
                 });
@@ -1058,9 +1072,9 @@ jsu.wrapper = "body"; //#main-section
             keys = keys.filter(function(n){ return (n && n.length); });
             return this.each(function() {
                 $(this).off(".fnDisableKey").on(nsEvents("keypress", "fnDisableKey"), function(e) {
-                    var _key = e.which || e.keyCode;
+                    var _key = (e.which || e.keyCode);
                     _key = String.fromCharCode(_key);
-                    return $.inArray(_key, keys) == -1;
+                    return ($.inArray(_key, keys) == -1);
                 });
             });
         };
@@ -1090,6 +1104,15 @@ jsu.wrapper = "body"; //#main-section
                     collision: pos.collision
                 }).hide().fadeIn(400);
             };
+            // Sets the focus on input elements
+            var fnSetFocus = function (container, group) {
+                var elements = $(container)
+                .find('input:not([type=button]):not([type=submit]), textarea')
+                .filter(':not(:disabled):not(.no-auto-focus)').get().reverse();
+                $(elements).each(function() { 
+                    if (input.isText(this) && this.getAttribute('data-group') == group) $(this).focus();
+                });
+            };
             $.fn.fnEasyValidate = function(o) {
                 var position = $.extend({
                     at: "right center",
@@ -1099,6 +1122,7 @@ jsu.wrapper = "body"; //#main-section
                 var d = $.extend({
                     fnValidator: null,
                     firstItemInvalid: false,
+                    container: jsu.wrapper,
                     requiredForm: false,
                     position: position
                 }, o);
@@ -1124,7 +1148,7 @@ jsu.wrapper = "body"; //#main-section
                     }
                     // Each button validates the fields according to the specified rules
                     $(btn).off(".fnEasyValidate").on(nsEvents("click", "fnEasyValidate"), { handler: "fnEasyValidate" }, function(event) {
-                        fnSetFocus(); $(btn).focus().blur();
+                        fnSetFocus(d.container, btn.getAttribute('data-group')); $(btn).focus().blur();
                         $(".vld-tooltip").remove();
                         var _submit = true; 
 
@@ -1132,7 +1156,7 @@ jsu.wrapper = "body"; //#main-section
                         $(".vld-required," + allFilters).each(function (i, _dom) {
                             var _tag = _dom.nodeName.toLowerCase();
                             // Gets the html5 data- attribute; modern browsers admit: dom.dataset[attribute]
-                            if (btn.getAttribute('data-validation') !== _dom.getAttribute('data-validation')) return true; //continue
+                            if (btn.getAttribute('data-group') !== _dom.getAttribute('data-group')) return true; //continue
                             if (input.isText(_dom)) _dom.value = $.trim(_dom.value);
                             
                             // Validates empty <input> fields, <select> elements and those with property [value] equal to "0"
@@ -1152,13 +1176,15 @@ jsu.wrapper = "body"; //#main-section
                             } //end required fields
 
                             if (!input.isText(_dom) || !_dom.value.length) return true; //continue
+                            var type;
                             // Validates specific formats
-                            for (var type in fnIsValidFormat) {
+                            for (type in fnIsValidFormat) {
                                 if ($(_dom).hasClass("vld-" + type) && !fnIsValidFormat[type](_dom)) {
                                     fnTooltip(_dom, event, _language.validateFormat, d.position);
                                     return (_submit = false); //break
                                 }
                             } //end format validation
+                            type = null;
                         }); //end $.each field
 
                         // Calls the custom function to validate, if it was provided
@@ -1368,8 +1394,8 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnShowTooltip = fnShowTooltip;
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
-        jherax.fnSetFocus = fnSetFocus;
         jherax.fnScrollbarWidth = fnScrollbarWidth;
+        jherax.fnUpdateCache = fnUpdateCache;
 
     })(jsu, jQuery);
     // Set default namespace
