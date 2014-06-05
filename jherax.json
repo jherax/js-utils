@@ -1,28 +1,31 @@
 {
-	"name": "jsu",
-	"title": "js-utils",
-	"description": "javascript utilities",
-	"version": "2.3.5",
+	"name": "js-utils",
+	"version": "3.3.1",
+	"title": "JavaScript Utilities",
+	"description": "A suite of utilities for JavaScript and jQuery, which includes tools for validating, text formatting, and other features.",
 	"dependencies": {
-		"jquery": ">=1.9.1"
+		"jquery": ">=1.8.0"
 	},
 	"keywords": [
+		"utilities",
 		"validation",
 		"formatting",
-		"utilities",
-		"jQuery"
+		"positioning",
+		"tooltip",
+		"date"
 	],
 	"author": {
 		"name": "David Rivera",
-		"url": "https://github.com/jherax/js-utils",
+		"url": "http://jherax.github.io/",
 		"email": "jherax@gmail.com"
 	},
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "http://www.opensource.org/licenses/mit-license.php"
-		}
-	],
-	"homepage": "http://jherax.github.io/",
-	"demo": ""
+	"licenses": [{
+		"type": "MIT",
+		"url": "http://www.opensource.org/licenses/mit-license.php"
+	}],
+	"homepage": "https://github.com/jherax/js-utils",
+	"docs": "https://github.com/jherax/js-utils",
+	"bugs": "https://github.com/jherax/js-utils/issues",
+	"download": "",
+	"demo": "http://jherax.github.io/"
 }
