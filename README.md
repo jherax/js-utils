@@ -192,7 +192,6 @@ This namespace is used to define a default behaviour for some functions.
 * [fnShowTooltip](#fnshowtooltip-dom-message-position)
 * [fnShowDialog](#fnshowdialog-options)
 * [fnLoading](#fnloading-options)
-* [fnSetFocus](#fnsetfocus-)
 * [fnScrollbarWidth](#fnscrollbarwidth-)
 
 [jQuery extensions](#jquery-extensions)
@@ -1001,23 +1000,6 @@ Parameters
   });
 ```
 
-### fnSetFocus ()
-Sets the focus on all elements [category:text][category.text], except on those having `.no-auto-focus` class.<br>
-This function is useful when you are using methods that alter the behaviour on input fields, *e.g. [$.fnCapitalize](#jqueryfncapitalize-type),&nbsp;[$.fnNumericFormat](#jqueryfnnumericformat-), [$.fnNumericInput](#jqueryfnnumericinput-), [$.fnCustomInput](#jqueryfncustominput-mask).*
-```javascript
-  $(document).on("ready", function() {
-	  $("#txtDate").datepicker().addClass("no-auto-focus");
-	  $("#txtName").fnCapitalize("word");
-	  $("#txtID").fnNumericInput();
-  });
-  $("#btnSendForm").on("click", function() {
-	  //Ensure the fields are well formatted by triggering focus-blur events
-	  jsu.fnSetFocus();
-	  //Get back the focus to button
-	  $(this).focus();
-  });
-```
-
 ### fnScrollbarWidth ()
 This utility detects the width of the scrollbar in the browser, in pixels.<br>
 It is useful when you create layouts and the content exceeds the container size, then comes the scrollbar, taking space in the layout (used in [fnShowdialog](#fnshowdialog-options) when `maxHeight` property was added and its default value was set to 86% of the screen height)<br>
@@ -1371,7 +1353,7 @@ Parameters
 
 ### jQuery.fnEasyValidate *(options)*
 
-Validates the specified elements in the document. Validations can be performed automatically (depending on the css class provided by the element to validate), or customized (by providing the ***fnValidator*** option). If you want automatic validations, then set the css class to the elements to validate, by adding the prefix `vld-` plus the name of the validator (e.g. `"vld-datetime"`). As the default validations are performed by [fnIsValidFormat()](#fnisvalidformat), you can create new validators or redefine the existing ones through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method, so you can customize the validators as you want. These are the default css classes:
+Validates the specified elements in the document. Validations can be performed automatically (depending on the css class provided by the element to validate), or customized (by providing the ***fnValidator*** option). If you want automatic validations, then set the css class to the elements to validate, by adding the prefix `vld-` plus the name of the validator (e.g. `"vld-datetime"`). As the default validations are performed by [fnIsValidFormat()](#fnisvalidformat), you can also create new validators or redefine the existing ones through [`jsu.fnIsValidFormat.set()`](#fnisvalidformat) method, so you can customize the validators as you want. These are the default css classes:
 * `"vld-required"`: causes the validation by checking empty fields.
 * `"vld-date"`: causes the validation by `jsu.fnIsValidFormat.date`
 * `"vld-time"`: causes the validation by `jsu.fnIsValidFormat.time`
@@ -1382,7 +1364,7 @@ Validates the specified elements in the document. Validations can be performed a
 * `"vld-latitude"`: causes the validation by `jsu.fnIsValidFormat.latitude`
 * `"vld-longitude"`: causes the validation by `jsu.fnIsValidFormat.longitude`
 
-If you want to validate a specific group of elements, then you can create a **validation group** by adding the&nbsp;attribute&nbsp;`data-validation` to the validating elements and also to the validator button.<br>
+If you want to validate a specific group of elements, then you can create a **validation group** by adding the&nbsp;attribute&nbsp;`data-group` to the validating elements and also to the validator button.<br>
 You can customize the message defined in [`jsu.regional`](#jsuregional) `validateFormat`<br>
 **Returns** `jQuery`
 
@@ -1391,6 +1373,7 @@ Parameters
   - **fnValidator:** `Function` Performs a custom validation. The function must return `true` to pass the validation, or `false` to prevent default actions. This property is not mandatory, and if it is not specified, default validation is performed (determined by the css class of the validating elements)
   - **fnBeforeTooltip:** `Function` Executes a custom task just before to show the tooltip with the validation message. This function receives the current validating element as the entry parameter in order to do something like change the  element that displays the tooltip. It is very useful when widgets that modify the original `DOM` element are used, such as [`kendo.ui.Editor`](http://demos.telerik.com/kendo-ui/web/editor/index.html) (hides the original `<textarea>` and creates an `<iframe>` instead) or [`jQuery.chosen`](http://harvesthq.github.io/chosen/) (hides the original `<select>` and creates an `<ul>` instead). To set the new element displaying the tooltip, set the `domTarget` property to entry parameter, with the replacement `DOM` element.
   - **firstItemInvalid:** `Boolean` *default: false.* Validates the first item of a `<select>` element as invalid option, useful when you have the first item as the text for "select an option".
+  - **container:** `String` `jQuery` `DOM` *default: jsu.wrapper.* The element containing the form fields to which *fnEasyValidate* will set the focus to validate the format according to, for example, *[$.fnCapitalize](#jqueryfncapitalize-type), [$.fnNumericInput](#jqueryfnnumericinput-), [$.fnCustomInput](#jqueryfncustominput-mask),* among others. If you don't want auto-focus on specific elements (e.g. prevent displaying calendar), set the `.no-auto-focus` class on those elements.
   - **requiredForm:** `Boolean` *default: false.* Determines whether the vatidator button and the validating elements should be inside a `form` element.
   - **position:** `Object` Sets the properties to position the tooltip:
     - **at:** `String` *default: "right center".* Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`,&nbsp;`"center"`, `"right"` Acceptable vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
@@ -1398,16 +1381,16 @@ Parameters
     - **collision:** `String` *default: "flipfit".* When the positioned element overflows the window in some direction, move it to an alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```html
-<select id="ddlType" class="vld-required" data-validation="group.a">
+<select id="ddlType" class="vld-required" data-group="group.a">
   <option value="0">Select...</option>
   <option value="1">Magnetic</option>
   <option value="2">Electric</option>
 </select>
-<p><input type="text" id="txtValue" class="vld-required" data-validation="group.a" /></p>
+<p><input type="text" id="txtValue" class="vld-required" data-group="group.a" /></p>
 <p><input type="text" id="txtDate" class="vld-date" /></p><!--This one is not in group.a-->
 <p><input type="text" id="txtEmail" class="vld-email" /></p><!--This one is not in group.a-->
 <p><textarea id="txtNotes" class="vld-required"></textarea></p><!--This one is not in group.a-->
-<button type="submit" id="btnAdd1" data-validation="group.a">Add new item</button>
+<button type="submit" id="btnAdd1" data-group="group.a">Add new item</button>
 <button type="submit" id="btnAdd2">Add Notes</button>
 ```
 ```javascript
