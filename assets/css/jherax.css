@@ -17,7 +17,8 @@ img { border: 0 none; }
 /* ==========================================================================
    Helper classes
    ========================================================================== */
-.clear { clear: both; }
+.clearfix:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
+.autoheight { overflow: auto; }
 .hide { display: none; }
 .right { text-align: right; }
 .spaced { letter-spacing: 2px; }
@@ -93,19 +94,22 @@ img { border: 0 none; }
 /* ==========================================================================
    Prettified Table
    ========================================================================== */
-.pretty-table { margin: 12px 6px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #666; text-align: left; text-shadow: 1px 1px 0px #fff; box-shadow: 0 1px 2px #d1d1d1; background: #eaebec; border-collapse: separate !important; border: 1px solid #ccc; border-radius: 3px; }
-.pretty-table td, .inner-table th { border: none; }
-.pretty-table tr:first-child th { padding: 12px 6px; text-align: center; border-top: 1px solid #fafafa; border-bottom: 1px solid #e0e0e0; background: #ededed; background: -moz-linear-gradient(top, #ededed 0%, #ebebeb 100%); background: -webkit-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: -o-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: -ms-linear-gradient(top, #ededed 0%,#ebebeb 100%); background: linear-gradient(to bottom, #ededed 0%,#ebebeb 100%); }
-.pretty-table tr:first-child th { border-right: 1px solid #e0e0e0; border-left: 1px solid #e0e0e0; }
-.pretty-table tr td { padding: 5px; border-top: 1px solid #ffffff; border-bottom: 1px solid #e0e0e0; border-left: 1px solid #e0e0e0; }
-.pretty-table tr:nth-child(2n+1) td { background: #fafafa; background: -moz-linear-gradient(top, #fbfbfb 0%, #fafafa 100%); background: -webkit-linear-gradient(top, #fbfbfb 0%,#fafafa 100%); background: -o-linear-gradient(top, #fbfbfb 0%,#fafafa 100%); background: -ms-linear-gradient(top, #fbfbfb 0%,#fafafa 100%); background: linear-gradient(to bottom, #fbfbfb 0%,#fafafa 100%); }
-.pretty-table tr:nth-child(2n+2) td { background: #f6f6f6; background: -moz-linear-gradient(top, #f8f8f8 0%, #f6f6f6 100%); background: -webkit-linear-gradient(top, #f8f8f8 0%,#f6f6f6 100%); background: -o-linear-gradient(top, #f8f8f8 0%,#f6f6f6 100%); background: -ms-linear-gradient(top, #f8f8f8 0%,#f6f6f6 100%); background: linear-gradient(to bottom, #f8f8f8 0%,#f6f6f6 100%); }
-.pretty-table tr:first-child th:first-child { border-top-left-radius: 3px; }
-.pretty-table tr:first-child th:last-child { border-top-right-radius: 3px; }
-.pretty-table tr:last-child td:first-child { border-bottom-left-radius: 3px; }
-.pretty-table tr:last-child td:last-child { border-bottom-right-radius: 3px; }
-.pretty-table tr td:first-child { border-left: 0; }
+table.pretty-table, .pretty-table caption, .pretty-table tbody, .pretty-table tfoot, .pretty-table thead, .pretty-table tr, .pretty-table th, .pretty-table td { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
+.pretty-table a:link { color: #666; font-weight: bold; text-decoration: none; }
+.pretty-table a:visited { color: #999; font-weight: bold; text-decoration: none; }
+.pretty-table a:active, .pretty-table a:hover { color: #bd5a35; text-decoration: underline; }
+.pretty-table { border-spacing: 0; font-family: Arial, Helvetica, sans-serif; color: #666; font-size: 12px; text-shadow: 1px 1px 0px #fff; background: #eaebec; border: #ccc 1px solid; border-radius: 3px; -moz-box-shadow: 0 1px 2px #d1d1d1; -webkit-box-shadow: 0 1px 2px #d1d1d1; box-shadow: 0 1px 2px #d1d1d1; border-collapse: separate; }
+.pretty-table th { padding: 15px; border-top: 1px solid #fafafa; border-bottom: 1px solid #e0e0e0; background: #ededed; background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#ebebeb)); background: -moz-linear-gradient(top, #ededed, #ebebeb); }
+.pretty-table th:first-child { text-align: left; padding-left: 18px; }
+.pretty-table tr:first-child th:first-child { -moz-border-radius-topleft: 3px; -webkit-border-top-left-radius: 3px; border-top-left-radius: 3px; }
+.pretty-table tr:first-child th:last-child { -moz-border-radius-topright: 3px; -webkit-border-top-right-radius: 3px; border-top-right-radius: 3px; }
+.pretty-table tr td:first-child { text-align: left; padding-left: 18px; border-left: 0; }
+.pretty-table tr td { padding: 12px; border-top: 1px solid #ffffff; border-bottom: 1px solid #e0e0e0; border-left: 1px solid #e0e0e0; background: #fafafa; background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa)); background: -moz-linear-gradient(top, #fbfbfb, #fafafa); }
+.pretty-table tr:nth-child(2n+1) td { background: #f6f6f6; background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6)); background: -moz-linear-gradient(top, #f8f8f8, #f6f6f6); }
 .pretty-table tr:last-child td { border-bottom: 0; }
+.pretty-table tr:last-child td:first-child { -moz-border-radius-bottomleft: 3px; -webkit-border-bottom-left-radius: 3px; border-bottom-left-radius: 3px; }
+.pretty-table tr:last-child td:last-child { -moz-border-radius-bottomright: 3px; -webkit-border-bottom-right-radius: 3px; border-bottom-right-radius: 3px; }
+.pretty-table tr:hover td { background: #f2f2f2; background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f0f0f0)); background: -moz-linear-gradient(top, #f2f2f2, #f0f0f0); }
 .pretty-table tfoot td { border-top: 1px solid #e0e0e0; }
 
 /*-----------------
