@@ -1,30 +1,31 @@
 [js-utils][js-utils]
 ========
 
-This is a suite of utilities for JavaScript and jQuery, which includes tools for validating, text formatting, and other features.
+This is a suite of utilities for JavaScript and jQuery, which includes tools for validating, text formatting, tooltips, and other features.
 
 Getting Started
 ---------------
 The utility has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before [js-utils][jherax.js].<br>
-It also requires some [CSS][jherax.css] rules for functions showing tooltips, and other methods.
+It also requires some [CSS][jherax.css] rules for functions showing **tooltips**, **loadings**, among others.
 
-If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be rendered using *jQuery.ui,* otherwise an internal function for&nbsp;positioning will be used.
+If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using *jQuery.ui,* otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
 
-[fnShowDialog](#fnshowdialog-options) is a facade for [ui dialog widget](https://jqueryui.com/dialog/) and has a dependency on [jQuery.UI 1.9+][jQuery.ui].<br>
-But if you don't want to use *jQuery.ui,* this method can be overridden by specifying the `source` property to the&nbsp;function that will replace it.
+[fnShowDialog](#fnshowdialog-options) is a facade for [jQuery.ui.dialog](https://jqueryui.com/dialog/) and has a dependency on [jQuery.ui 1.9+][jQuery.ui].<br>
+But if you don't want to use *jQuery.ui,* as the default implementation, you can override the method by specifying the `source` property with the new implementation, e.g.<br>
+`jsu.fnShowDialog.source = function (options) { ... }`
 
-The library has the following structure:
+The utility has the following structure:
 - `jsu:` main namespace
   - `author:` me :^)
   - `version:` release number
   - `dependencies:` array with name of dependencies
   - `createNS:` utility to create safe namespaces
   - `wrapper:` selector where dynamic HTML is placed
-  - `regional:` namespace to set the language setting
-  - `settings:` namespace to set global settings
+  - `regional:` namespace for language settings
+  - `settings:` namespace for global settings
 
-Initialization
---------------
+A Glance
+--------
 ```javascript
   (function() {
     // None of below settings are mandatory.
@@ -47,12 +48,24 @@ Initialization
   
 Namespacing
 -----------
-In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global context. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.
+In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global scope. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.
 
-Global variables should be reserved for objects that have system-wide relevance and they should be named to avoid ambiguity and minimize the risk of naming collisions. In practice this means you should avoid creating global objects unless they are absolutely necessary.
+Global variables should be reserved for objects that have system-wide relevance and they should be namespaced to avoid ambiguity and minimize the risk of naming collisions. In practice this means you should avoid creating global objects unless they are absolutely necessary.
 
-Is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are. To overcome some of these issues, we take advantage of the [Module Pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html) through namespace injection. The logic is shielded from the global scope by a function wrapper (usually self-invoking) which exposes an object representing the module’s public interface.
-
+Is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are. To overcome some of these issues, we take advantage of the [Module Pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html) through namespace injection. The logic is shielded from the global scope by a function wrapper (usually IIFE) which exposes an object representing the module’s public interface.
+```javascript
+  //This encapsulated function is called IIFE
+  //Immediately-Invoked Function Expressions
+  var MODULE = (function() {
+    var api = {};
+    var privateVar;
+    function privateMethod1() {}
+    function privateMethod2() {}
+    //expose the public interface
+    api.publicMethod = privateMethod2;
+    return api;
+  }());
+```
 I recommend this excellent book: [Learning JavaScript Design Patterns](http://www.addyosmani.com/resources/essentialjsdesignpatterns/book/).<br>
 Also worth reading these articles:
 * [Namespacing in JavaScript](http://msdn.microsoft.com/en-us/magazine/gg578608.aspx)
