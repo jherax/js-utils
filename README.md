@@ -11,7 +11,7 @@ It also requires some [CSS][jherax.css] rules for functions showing **tooltips**
 If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using *jQuery.ui,* otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
 
 [fnShowDialog](#fnshowdialog-options) is a facade for [jQuery.ui.dialog](https://jqueryui.com/dialog/) and has a dependency on [jQuery.ui 1.9+][jQuery.ui].<br>
-But if you don't want to use *jQuery.ui,* as the default implementation, you can override the method by specifying the `source` property with the new implementation, e.g.<br>
+But if you don't want to use *jQuery.ui,* as the default implementation, you can override the method by specifying&nbsp;the `source` property with the new implementation, e.g.<br>
 `jsu.fnShowDialog.source = function (options) { ... }`
 
 The utility has the following structure:
