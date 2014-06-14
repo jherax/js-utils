@@ -79,22 +79,37 @@ This utility makes life easier when you require create nested namespaces.<br>
 For example, you need to create the following object structure:
 - animation
   - g2D
-    - slide
+    - slide()
   - g3D
-    - cubic
+    - cubic()
   - tools
 
 ```javascript
-  // using closures, modules, IIFE, are good practices
+  // way 1: we can create the structure with an IIFE
   (function() {
-    jsu.createNS("animation.g2D.slide");
-    jsu.createNS("animation.g3D.cubic");
-    // you can get the reference of created namespace
-    var tools = jsu.createNS("animation.tools");
+    jsu.createNS("animation.tools");
+    
     // If you use local/cached references is recommended declare them
     // within a function or module at the top of your function scope
     // (this is a dependancy declaration pattern)
+    var _2d = jsu.createNS("animation.g2D");
+    var _3d = jsu.createNS("animation.g3D");
+    
+    // you can get the reference of created namespace
+    _2d.slide = function() {};
+    _3d.cubic = function() {};
   })();
+  
+  // way 2: passing the object reference as a proxy
+  (function(proxy, undefined) {
+    proxy.slide = function() {};
+  })(jsu.createNS("animation.g2D"));
+  
+  (function(proxy, undefined) {
+    proxy.cubic = function() {};
+  })(jsu.createNS("animation.g3D"));
+  
+  // way 3...n: you can use Module Pattern: loose augmentation, etc...
 ```
 
 ### jsu.regional
