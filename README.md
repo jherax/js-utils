@@ -85,7 +85,7 @@ For example, you need to create the following object structure:
   - tools
 
 ```javascript
-  // way 1: we can create the structure with an IIFE
+  // way 1: we can create the structure through an IIFE
   (function() {
     jsu.createNS("animation.tools");
     
