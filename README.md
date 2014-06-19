@@ -109,33 +109,32 @@ For example, you need to create the following object structure:
     proxy.cubic = function() {};
   })(jsu.createNS("animation.g3D"));
   
-  // way 3...n: you can use Module Pattern: loose augmentation, etc...
+  // way 3...n, you can use Module Pattern: loose augmentation, etc...
 ```
 
 ### jsu.regional
 This namespace exposes objects and methods to setup your language preferences.<br>
-If we are using [jQuery.UI][jQuery.ui], we can provide a [language](http://github.com/jquery/jquery-ui/tree/master/ui/i18n) to configure the [datepicker](http://api.jqueryui.com/datepicker/) widget.<br>
-Available predefined languages are `jsu.regional.english` and `jsu.regional.spanish`<br>
-By default spanish language is set, although you can specify language using method `set()`<br>
+If we are using [jQuery.ui][jQuery.ui], we can provide a [language](http://github.com/jquery/jquery-ui/tree/master/ui/i18n) to configure the [datepicker](http://api.jqueryui.com/datepicker/) widget.<br>
+The available predefined languages are `jsu.regional.english` and `jsu.regional.spanish`<br>
+The Spanish language is the default, but you can specify another one by calling `set()`<br>
 e.g. `jsu.regional.set(jsu.regional.english);`<br>
-You can define your own language settings:
+You can also define your own language settings:
 ```javascript
 (function() {
-  // Create the locale language object
-  // (the text should be in Italian)
+  // Creates the language object (italian)
   jsu.regional.italian = {
     culture: "it", //locale codes: http://www.science.co.il/Language/Locale-codes.asp
     wordPattern: null, //regular expression pattern for text capitalization in fnCapitalize
-    timeFormat: "HH:mm", //pattern for time. HH: 0-23 hour, hh: 1-12 hour, mm: minutes, ss: seconds
-    dateFormat: "MM/dd/yyyy", //pattern for date. dd: 2-digit day, MM: 2-digit month, yyyy: 4-digit year
-    dateFormatError: "The date format is incorrect", //text for fnIsValidDate when date format is wrong
-    dateIsGreater: "The date can't be greater than today", //text of date validation in fnIsValidDate
-    dateIsLesser: "The date can't be lesser than today", //text of date validation in fnIsValidDate
-    validateRequired: "This field is required", //text for $.fnEasyValidate required fields
-    validateFormat: "The format is incorrect", //text for $.fnEasyValidate wrong format
-    dialogTitle: "Information", //default jQuery.ui.dialog title
-    dialogCancel: "Cancel", //default $.fnConfirm cancel text
-    dialogOK: "Agree" //default $.fnConfirm approve text
+    timeFormat: "HH:mm", //time format. HH: 00-23 hours, hh: 01-12 hours, mm: minutes, ss: seconds
+    dateFormat: "MM/dd/yyyy", //date format. dd: 2-digit day, MM: 2-digit month, yyyy: 4-digit year
+    dateFormatError: "Il formato della data non è corretta", //text for fnIsValidDate when date format is wrong
+    dateIsGreater: "La data non può essere maggiore di oggi", //text for fnIsValidDate when date can't be greater than...
+    dateIsLesser: "La data non può essere minore di oggi", //text for fnIsValidDate when date can't be lesser than...
+    validateRequired: "Questo campo è obbligatorio", //text for $.fnEasyValidate when validating required fields
+    validateFormat: "Il formato non è corretto", //text for $.fnEasyValidate when validating a wrong format
+    dialogTitle: "Informazioni", //default title for fnShowDialog windows
+    dialogCancel: "Cancellare", //default text for $.fnConfirm "cancel" button
+    dialogOK: "Concordare" //default text for $.fnConfirm "agree" button
   };
   // Set the newly created language
   jsu.regional.set(jsu.regional.italian);
