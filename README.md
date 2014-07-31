@@ -1,11 +1,11 @@
 [js-utils][js-utils]
 ========
 
-This is a suite of utilities for JavaScript and jQuery, which includes tools for validating, text formatting, tooltips, and other features.
+This is a suite of JavaScript / jQuery utilities, which includes tools for data validation and text formatting, plugins for tooltip, modal-windows and positioning elements, resources injection, string and JSON manipulation, object cloning, sorting arrays, and other features.
 
 Getting Started
 ---------------
-The utility has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before [js-utils][jherax.js].<br>
+The library has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before [js-utils][jherax.js].<br>
 It also requires some [CSS][jherax.css] rules for functions showing **tooltips**, **loadings**, among others.
 
 If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using *jQuery.ui,* otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
@@ -14,7 +14,7 @@ If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all too
 But if you don't want to use *jQuery.ui,* as the default implementation, you can override the method by specifying&nbsp;the `source` property with the new implementation, e.g.<br>
 `jsu.fnShowDialog.source = function (options) { ... }`
 
-The utility has the following structure:
+The library has the following structure:
 - `jsu:` main namespace
   - `author:` me :^)
   - `version:` release number
@@ -30,7 +30,7 @@ A Glance
   (function() {
     // None of below settings are mandatory.
 
-    // We set the container of the views
+    // We set the container for dynamic HTML
     jsu.wrapper = "#main-section";
 
     // We set the language setting
@@ -48,11 +48,12 @@ A Glance
   
 Namespacing
 -----------
-In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global scope. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.
+In many programming languages, namespacing is a technique employed to avoid collisions with other objects or variables in the global context. They're also extremely useful for helping organize blocks of functionality in your application into easily manageable groups that can be uniquely identified.
 
-Global variables should be reserved for objects that have system-wide relevance and they should be namespaced to avoid ambiguity and minimize the risk of naming collisions. In practice this means you should avoid creating global objects unless they are absolutely necessary.
+Global variables should be reserved for objects that have system-wide relevance and they should be named to avoid ambiguity and minimize the risk of naming collisions. In practice this means you should avoid creating global objects unless they are absolutely necessary.
 
-Is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are. To overcome some of these issues, we take advantage of the [Module Pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html) through namespace injection. The logic is shielded from the global scope by a function wrapper (usually IIFE) which exposes an object representing the module’s public interface.
+Is critical as it's important to safeguard your code from breaking in the event of another script on the page using the same variable or method names as you are. To overcome some of these issues, we take advantage of the [Module Pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html) through namespace injection. 
+The logic is shielded from the global scope by a function wrapper (usually self-invoking) which exposes an object representing the module’s public interface.
 ```javascript
   //This encapsulated function is called IIFE
   //Immediately-Invoked Function Expressions
@@ -71,11 +72,12 @@ Also worth reading these articles:
 * [Namespacing in JavaScript](http://msdn.microsoft.com/en-us/magazine/gg578608.aspx)
 * [Essential JavaScript Namespacing Patterns](http://addyosmani.com/blog/essential-js-namespacing/)
 * [JavaScript Namespacing Common Practices](http://michaux.ca/articles/javascript-namespacing)
+* [JavaScript Module Pattern: In-Depth](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html)
 * [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
 * [JavaScript Coding Standards and Best Practices](http://github.com/stevekwan/best-practices/blob/master/javascript/best-practices.md)
 
 ### jsu.createNS
-This utility makes life easier when you require create nested namespaces.<br>
+This method makes life easier when you require create nested namespaces.<br>
 For example, you need to create the following object structure:
 - animation
   - g2D
@@ -136,11 +138,11 @@ You can also define your own language settings:
     dialogCancel: "Cancellare", //default text for $.fnConfirm "cancel" button
     dialogOK: "Concordare" //default text for $.fnConfirm "agree" button
   };
-  // Set the newly created language
+  // Sets the new language settings
   jsu.regional.set(jsu.regional.italian);
 })();
 ```
-If you want to provide additional languages to other plugins, you can pass a function as second parameter in method `set();` Keep in mind that some plugins can be configured only previous to its initialization.
+If you want to provide additional languages for other plugins, then you can pass a function as the second parameter in the method `set();` Keep in mind that some plugins can only be configured previous to its initialization.
 ```javascript
 (function() {
   // We will create italian language for datepicker plugin
@@ -165,7 +167,7 @@ If you want to provide additional languages to other plugins, you can pass a fun
     showMonthAfterYear: false,
     yearSuffix: ''
   };
-  // Set the newly created language
+  // Sets the new language settings
   jsu.regional.set(jsu.regional.italian, function() {
     $.datepicker.setDefaults($.datepicker.regional['it']);
   });
@@ -173,11 +175,11 @@ If you want to provide additional languages to other plugins, you can pass a fun
 ```
 
 ### jsu.settings
-This namespace is used to define a default behaviour for some functions.
-- **position:** `Object`. Sets the default position for all functions that use [.position()](#jqueryposition-options) to display a tooltip *([fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-position), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).* The object consists of three properties:
-  - **at:** `String`. Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain offsets, in pixels e.g., `"right+10 top-25"`
+This namespace defines global settings that are used by some functions.
+- **position:** `Object`. Sets the default position of tooltip on those functions that make use of [.position()](#jqueryposition-options), i.e.  *([fnIsValidDate](#fnisvaliddate-dom-options), [fnShowTooltip](#fnshowtooltip-dom-message-position), [$.fnMaxLength](#jqueryfnmaxlength-length-position), [$.fnEasyValidate](#jqueryfneasyvalidate-options)).*
+  - **at:** `String`. Defines which position on the target element to align the positioned element against: *"horizontal vertical"* alignment. Acceptable horizontal values: `"left"`, `"center"`, `"right"` Acceptable&nbsp;vertical values: `"top"`, `"center"`, `"bottom"`<br>Each dimension can also contain *offsets*, in pixels e.g., `"right+10 top-25"`
   - **my:** `String`. Defines which position on the element being positioned to align with the target element:&nbsp;*"horizontal vertical"* alignment. (See the ***at*** option for full details on possible values)
-  - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to&nbsp;an&nbsp;alternative position. (Only if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
+  - **collision:** `String`. When the positioned element overflows the window in some direction, move&nbsp;it&nbsp;to&nbsp;an&nbsp;alternative position. (Only works if [jQuery.ui.position](http://api.jqueryui.com/position/) is available)
 
 ```javascript
   (function() {
