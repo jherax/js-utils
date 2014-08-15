@@ -1,21 +1,27 @@
-//**********************************
-//  JavaScript Utilities for Validation
-//  Author: David Rivera
-//  Created: 26/06/2013
-//  Version: 3.3.1
-//**********************************
-// http://jherax.github.io
-// http://github.com/jherax/js-utils
-//**********************************
-// Has dependency on jQuery
-// http://jquery.com/
-//**********************************
-// Copyright 2013, 2014 Jherax
-// Released under the MIT license
-// https://raw.githubusercontent.com/jherax/js-utils/master/LICENSE
-
-// Essential JavaScript Namespacing Patterns
-// http://addyosmani.com/blog/essential-js-namespacing
+/*
+ *  JSU Library
+ *  Author: David Rivera
+ *  Created: 26/06/2013
+ *  Version: 3.4.1
+ -----------------------------------
+ *  Source:
+ *  http://github.com/jherax/js-utils
+ -----------------------------------
+ *  Documentation:
+ *  http://jherax.github.io
+ -----------------------------------
+ *  Has dependency on jQuery
+ *  http://jquery.com/
+ -----------------------------------
+ *  Abstract:
+ *  This is a library of JavaScript/jQuery utilities, which includes tools for data validation and text formatting,
+ *  plugins for tooltip, modal-windows and positioning elements, resources injection,
+ *  string and JSON manipulation, object cloning, sorting arrays, and other features.
+ -----------------------------------
+ *  Released under the MIT license
+ *  https://raw.githubusercontent.com/jherax/js-utils/master/LICENSE
+ *  Copyright (C) 2013-2014 jherax
+ */
 ;
 // Avoid console errors in browsers that lack a console.
 (function() {
@@ -40,10 +46,10 @@
     }
 }());
 
-// We need to do a check before we create the namespace
+// Info about the library
 var jsu = window.jsu || {
     author: "jherax",
-    version: "3.3.1",
+    version: "3.4.1",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -72,6 +78,30 @@ jsu.wrapper = "body"; //#main-section
         F.prototype = o;
         return new F();
     });
+    // Creates a sort method in the Array prototype
+    // @prop: property name (if it is a JSON Array)
+    // @desc: descending sort
+    // @parser: function to parse the items to expected type
+    Object.defineProperty(Array.prototype, "sortBy", {
+        configurable: false,
+        enumerable: false,
+        value: function (o) {
+            if (Object.prototype.toString.call(o) != "[object Object]")
+                o = {};
+            if (Object.prototype.toString.call(o.parser) != "[object Function]")
+                o.parser = function (x) { return x; };
+            o.desc = !!o.desc;
+            //gets the item to be compared
+            var getItem = function (x) { return o.parser(x[o.prop] || x); };
+            //if @desc is true: return -1, else 1
+            o.desc = [1, -1][+!!o.desc];
+            return this.sort(function (a, b) {
+                a = getItem(a); b = getItem(b);
+                return ((a < b) ? -1 : ((a > b) ? 1 : 0)) * o.desc;
+                //return a = getItem(a), b = getItem(b), o.desc * ((a > b) - (b > a));
+            });
+        }
+    });
     // Create a general purpose namespace method
     jsu.createNS || (jsu.createNS = function (namespace) {
         var nsparts = namespace.toString().split(".");
@@ -83,7 +113,7 @@ jsu.wrapper = "body"; //#main-section
             var subns = nsparts[i];
             // check if the namespace is a valid variable name
             if (!(/^[A-Za-z_]\w+/).test(subns)) throw new CustomException("Invalid namespace");
-            // check if the current parent already has the namespace declared
+            // check if the current parent already has the namespace declared,
             // if it isn't, then create it
             if (typeof cparent[subns] === "undefined") {
                 cparent[subns] = {};
@@ -101,13 +131,17 @@ jsu.wrapper = "body"; //#main-section
     // We pass the namespace as an argument to a self-invoking function.
     // jherax is the local namespace context, and $ is the jQuery object
     (function(jherax, $, undefined) {
-        //-----------------------------------
+
+        //===================================
         /* PUBLIC API */
-        //-----------------------------------
+        //===================================
+
         // Creates the messages for specific culture
         jherax.spanish = {
             culture: "es",
             wordPattern: /\s(?:Y|O|Del?|Por|Al?|L[ao]s?|[SC]on|En|Se|Que|Una?)\b/g,
+            decimalMark: ",",
+            thousandsMark: ".",
             timeFormat: "HH:mm",
             dateFormat: "dd/MM/yyyy",
             dateFormatError: "El formato de fecha es incorrecto",
@@ -123,6 +157,8 @@ jsu.wrapper = "body"; //#main-section
         jherax.english = {
             culture: "en",
             wordPattern: null,
+            decimalMark: ".",
+            thousandsMark: ",",
             timeFormat: "HH:mm",
             dateFormat: "MM/dd/yyyy",
             dateFormatError: "The date format is incorrect",
@@ -204,16 +240,18 @@ jsu.wrapper = "body"; //#main-section
     // We pass the namespace as an argument to a self-invoking function.
     // jherax is the local namespace context, and $ is the jQuery object
     (function(jherax, $, undefined) {
-        //-----------------------------------
+
+        //===================================
         /* PRIVATE MEMBERS */
-        //-----------------------------------
+        //===================================
+
         // Sets the default language configuration
-        jsu.regional.set(jsu.regional.spanish);
-        var _language = Object.create(jsu.regional.current);
+        jherax.regional.set(jherax.regional.spanish);
+        var _language = Object.create(jherax.regional.current);
         //-----------------------------------
-        // Returns the boolean value of the parameter
-        var bool = function (value) {
-            return (/true/i).test(value);
+        // Returns the boolean value of the @obj parameter
+        var bool = function (obj) {
+            return (/true/i).test(obj);
         };
         //-----------------------------------
         // Adds support for browser detect.
@@ -236,19 +274,41 @@ jsu.wrapper = "body"; //#main-section
             return b;
         })();
         //-----------------------------------
-        // Determines whether entry parameter is a writable or checkable <input>
+        // Determines if the @obj parameter is a DOM element
+        var isDOM = function (obj) {
+            return (!!obj && typeof obj === "object" && !!obj.nodeType);
+        };
+        //-----------------------------------
+        // Determines if the @obj parameter is a function
+        var isFunction = function (obj) {
+            return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
+        };
+        //-----------------------------------
+        // This is a reference to JSON.stringify and provides a polyfill for old browsers
+        var fnStringify = typeof JSON !== undefined ? JSON.stringify : function (json) {
+            var arr = [];
+            $.each(json, function (key, val) {
+                var prop = "\"" + key + "\":";
+                prop += ($.isPlainObject(val) ? fnStringify(val) : 
+                    (typeof val === "string" ? "\"" + val + "\"" : val));
+                arr.push(prop);
+            });
+            return "{" + arr.join(",") + "}";
+        };
+        //-----------------------------------
+        // Determines whether the @dom parameter is a writable or checkable <input>
         // http://www.quackit.com/html_5/tags/html_input_tag.cfm
         var input = {
-            isText: function (_dom) {
-                if(!isDOM(_dom)) return false;
-                if ((/textarea/i).test(_dom.nodeName)) return true;
+            isText: function (dom) {
+                if (!isDOM(dom)) return false;
+                if ((/textarea/i).test(dom.nodeName)) return true;
                 var regx = /text|password|file|number|search|tel|url|email|datetime|datetime-local|date|time|month|week/i;
-                return regx.test(_dom.type) && (/input/i).test(_dom.nodeName);
+                return regx.test(dom.type) && (/input/i).test(dom.nodeName);
             },
-            isCheck: function (_dom) {
-                if(!isDOM(_dom)) return false;
+            isCheck: function (dom) {
+                if (!isDOM(dom)) return false;
                 var regx = /checkbox|radio/i;
-                return regx.test(_dom.type) && (/input/i).test(_dom.nodeName);
+                return regx.test(dom.type) && (/input/i).test(dom.nodeName);
             }
         };
         //-----------------------------------
@@ -270,7 +330,8 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // Seals the writable attribute to properties
-        function sealProperties(obj) {
+        // @@Private
+        function sealWritable(obj) {
             var p = null;
             for (p in obj) {
                 Object.defineProperty(obj, p, {
@@ -284,8 +345,9 @@ jsu.wrapper = "body"; //#main-section
         }
         //-----------------------------------
         // Fix: failed to read the 'selectionStart' property from 'HTMLInputElement'
-        // Second parameter provides a callback to execute additional instructions
+        // The @fn parameter provides a callback to execute additional instructions
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
+        // @@Private
         var fixSelection = function (dom, fn) {
             var ok = (/text|search|password|url|tel/).test(dom.type);
             var selection = { 
@@ -296,51 +358,35 @@ jsu.wrapper = "body"; //#main-section
             return selection;
         };
         //-----------------------------------
-        // Determines if the entry parameter is a DOM element
-        var isDOM = function (obj) {
-            return (!!obj && typeof obj === "object" && !!obj.nodeType);
-        };
-        //-----------------------------------
-        // Determines if the entry parameter is a function
-        var isFunction = $.isFunction || function (obj) {
-            return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
-        };
-        //-----------------------------------
-        // This is a reference to JSON.stringify and provides a polyfill for old browsers
-        var fnStringify = typeof JSON !== undefined ? JSON.stringify : function (json) {
-            var arr = [];
-            $.each(json, function (key, val) {
-                var prop = "\"" + key + "\":";
-                prop += ($.isPlainObject(val) ? fnStringify(val) : 
-                    (typeof val === "string" ? "\"" + val + "\"" : val));
-                arr.push(prop);
-            });
-            return "{" + arr.join(",") + "}";
-        };
-        //-----------------------------------
-        // Dynamically add an external script
-        function fnAddScript(path, before) {
+        // Dynamically adds an external script
+        function fnAddScript(path) {
             var o = $.extend({
                 src: null,
-                async: false,
-                defer: false,
+                async: true,
                 charset: null,
-                execute: false,
-                before: before || "jherax.js"
+                onload: null,
+                before: "jherax.js"
             }, $.isPlainObject(path) ? path : { src: path });
-            if (o.execute) {
-                $.ajaxSetup({ async: false });
-                return $.getScript(o.src, function() {
-                    $.ajaxSetup({ async: true });
+            if (!o.src) throw new CustomException("The url of file is required");
+            if (!o.async || !o.before) {
+                return $.ajax({
+                    url: o.src,
+                    async: o.async,
+                    dataType: "script"
+                }).done(function (script) {
+                    if (isFunction(o.onload)) o.onload();
+                }).fail(function (jqXHR, result) {
+                    console.log("fnAddScript:", jqXHR);
+                    throw new CustomException(result);
                 });
             }
-            before = new RegExp(fnEscapeRegExp(o.before));
+            var before = new RegExp(fnEscapeRegExp(o.before));
             var js = document.createElement('script');
             js.type = 'text/javascript';
             js.src = o.src;
             if (o.async) js.async = true;
-            if (o.defer) js.defer = true;
             if (o.charset) js.charset = o.charset;
+            if (isFunction(o.onload)) js.onload = o.onload;
             var s = document.getElementsByTagName('script');
             for (var i = 0; i < s.length; i++) {
                 if (before.test(s[i].src)) {
@@ -350,8 +396,9 @@ jsu.wrapper = "body"; //#main-section
             }
         }
         //-----------------------------------
-        // Dynamically add an external stylesheet
+        // Dynamically adds an external stylesheet
         function fnAddCSS(path, before) {
+            if (!path) throw new CustomException("The url of file is required");
             before = fnEscapeRegExp(before);
             if (before) before = new RegExp(before);
             var lnk = document.createElement('link');
@@ -384,7 +431,7 @@ jsu.wrapper = "body"; //#main-section
             return m && m[2] || "";
         }
         //-----------------------------------
-        // Gets the querystring from address bar and is returned as a JSON object
+        // Gets the querystring values from address bar and it is returned as a JSON object
         function fnGetQueryToJSON(q) {
             var params = {};
             q = !q ? "" : q.toString();
@@ -400,13 +447,14 @@ jsu.wrapper = "body"; //#main-section
             return params;
         }
         //-----------------------------------
-        // Converts an inconsistent JSON string to its object representation
+        // Converts an inconsistent JSON string representation to the correct JSON object
         var fnGetDataToJSON = (function() {
             var parser = function (value) {
                 if (+value) return +value;
                 if ((/true/i).test(value)) return true;
                 if ((/false/i).test(value)) return false;
                 if ((/null/i).test(value)) return null;
+                if ((/undefined/i).test(value)) return undefined;
                 return value;
             };
             return function (data) {
@@ -422,8 +470,8 @@ jsu.wrapper = "body"; //#main-section
             };
         }());
         //-----------------------------------
-        // Clone an object and set all its properties to read-only
-        function fnCloneObject(obj) {
+        // Clones and freezes a JSON object (set all navigable properties to read-only)
+        function fnFreezeJSON(obj) {
             //Object.freeze(obj)
             var n = {}, p = null;
             for (p in obj) {
@@ -432,14 +480,30 @@ jsu.wrapper = "body"; //#main-section
                     configurable: false,
                     enumerable: true,
                     writable: false,
-                    value: $.isPlainObject(obj[p]) ? fnCloneObject(obj[p]) : obj[p]
+                    value: $.isPlainObject(obj[p]) ? fnFreezeJSON(obj[p]) : obj[p]
                 });
             }
             return n;
         }
         //-----------------------------------
+        // Extends the properties of @from object to the @to object.
+        // If @to is not provided, then a deep copy of @from is returned.
+        function fnExtend (from, to) {
+            if (from == null || typeof from != "object") return from;
+            if (from.constructor != Object && from.constructor != Array) return from;
+            if (from.constructor == Date || from.constructor == RegExp || from.constructor == Function ||
+                from.constructor == String || from.constructor == Number || from.constructor == Boolean) {
+                return new from.constructor(from);
+            }
+            to = to || new from.constructor();
+            for (var name in from) {
+                to[name] = typeof to[name] == "undefined" ? arguments.callee(from[name], null) : to[name];
+            }
+            return to;
+        }
+        //-----------------------------------
         // Gets the string representation of the specified date according to regional setting.
-        // Output formats ISO 8601: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
+        // The supported formats for ISO 8601 are: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
         var fnGetDate = (function() {
             var fillZero = function(n) { return ("0" + n.toString()).slice(-2); };
             var fnDate = function(o) {
@@ -492,15 +556,16 @@ jsu.wrapper = "body"; //#main-section
             return m ? new Date(m[1].replace("-", "/") + " " + (m[3] || "")) : msg();
         }
         //-----------------------------------
-        // Gets the text as encoded html
-        // This is a delegate for $.val()
+        // Encodes the current text to its HTML equivalent.
+        // Converts all applicable characters to their corresponding HTML entities.
+        // This is a delegate for $.val() and $.text()
         function fnGetHtmlText(i, value) {
             if (!value && typeof i === "string") value = i;
             var html = $("<div>").text(value).html();
             return $.trim(html);
         }
         //-----------------------------------
-        // Gets selected text in the document
+        // Gets the selected text in the document
         function fnGetSelectedText() {
             var _dom = document.activeElement;
             var _sel = { text: "", slice: "", start: -1, end: -1 };
@@ -515,7 +580,7 @@ jsu.wrapper = "body"; //#main-section
                         _sel.slice = _dom.value.slice(0, _sel.start) + _dom.value.slice(_sel.end);
                     }
                 }
-                // Get selected text from document
+                // Gets the selected text from document
                 else _sel.text = window.getSelection().toString();
             } else if (document.selection.createRange)
                 _sel.text = document.selection.createRange().text;
@@ -523,7 +588,7 @@ jsu.wrapper = "body"; //#main-section
             return _sel;
         }
         //-----------------------------------
-        // Gets the cursor position of DOM element
+        // Gets the cursor position of the @dom element
         function fnGetCaretPosition(dom) {
             if ('selectionStart' in dom) {
                 return fixSelection(dom).start;
@@ -534,7 +599,7 @@ jsu.wrapper = "body"; //#main-section
             }
         }
         //-----------------------------------
-        // Sets the position of the cursor in the DOM element
+        // Sets the @position of the cursor in the @dom element
         function fnSetCaretPosition(dom, pos) {
             if ('selectionStart' in dom) {
                 fixSelection(dom, function (_input) {
@@ -549,8 +614,8 @@ jsu.wrapper = "body"; //#main-section
             }
         }
         //-----------------------------------
-        // Applies a transformation to text,
-        // also removes all consecutive spaces
+        // Applies a transformation to the text,
+        // also it removes all consecutive spaces
         function fnCapitalize(obj, _type) {
             var _isDOM = input.isText(obj),
                 _text = _isDOM ? obj.value : obj.toString();
@@ -572,14 +637,21 @@ jsu.wrapper = "body"; //#main-section
             return _text;
         }
         //-----------------------------------
-        // Sets the numeric format according to es-CO culture.
-        // Places the decimal "." and thousand "," separator
-        function fnNumericFormat(obj) {
+        // Sets the numeric format according to current culture.
+        // Places the decimal and thousand separators specified in _language
+        function fnNumericFormat(obj, o) {
+            o = $.extend({
+                inDecimalMark: _language.decimalMark,
+                inThousandsMark: _language.thousandsMark,
+                outDecimalMark: _language.decimalMark,
+                outThousandsMark: _language.thousandsMark
+            }, o);
             var _isDOM = input.isText(obj),
-                _text = _isDOM ? obj.value : obj.toString();
-            var x = _text.replace(/\./g, "").split(",") || [""];
-            var num = x[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            var dec = x.length > 1 ? "," + x[1] : "";
+                _text = _isDOM ? obj.value : obj.toString(),
+                _thousands = new RegExp(fnEscapeRegExp(o.inThousandsMark), "g");
+            var x = _text.replace(_thousands, "").split(o.inDecimalMark) || [""];
+            var num = x[0].replace(/\B(?=(\d{3})+(?!\d))/g, o.outThousandsMark);
+            var dec = x.length > 1 ? o.outDecimalMark + x[1] : "";
             if (_isDOM) obj.value = num + dec;
             return (num + dec);
         }
@@ -640,7 +712,7 @@ jsu.wrapper = "body"; //#main-section
                 }
             };
             //Set properties as not writable
-            sealProperties(validator);
+            sealWritable(validator);
             Object.defineProperty(validator, "set", {
                 __proto__: null,
                 configurable: false,
@@ -659,8 +731,8 @@ jsu.wrapper = "body"; //#main-section
             return validator;
         }());
         //-----------------------------------
-        // Evaluates whether the input value is a date or not.
-        // The validation result will be shown in a tooltip
+        // Evaluates whether the @dom element contains a value with a date.
+        // The result of the validation will be shown in a tooltip
         var fnIsValidDate = (function() {
             var error = false;
             var parser = function (date) {
@@ -681,10 +753,10 @@ jsu.wrapper = "body"; //#main-section
                 }
                 x = null;
                 d.splice(0, 3);
-                return new Date(date +" "+ d.join(":"));
+                return new Date(date + " " + d.join(":"));
             };
-            return function (_dom, o) {
-                if (!input.isText(_dom)) return false;
+            return function (dom, o) {
+                if (!input.isText(dom)) return false;
                 o = $.extend({
                     isFuture: false,
                     compareTo: new Date(),
@@ -692,40 +764,40 @@ jsu.wrapper = "body"; //#main-section
                     position: null
                 }, o);
                 error = false;
-                var dif = (parser(_dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
-                if (error) return fnShowTooltip(_dom, _language.dateFormatError);
-                if ( o.isFuture && dif < 0) return fnShowTooltip(_dom, o.warning || _language.dateIsLesser, o.position);
-                if (!o.isFuture && dif > 0) return fnShowTooltip(_dom, o.warning || _language.dateIsGreater, o.position);
+                var dif = (parser(dom.value) - parser(o.compareTo)) / 1000 / 3600 / 24;
+                if (error) return fnShowTooltip(dom, _language.dateFormatError);
+                if ( o.isFuture && dif < 0) return fnShowTooltip(dom, o.warning || _language.dateIsLesser, o.position);
+                if (!o.isFuture && dif > 0) return fnShowTooltip(dom, o.warning || _language.dateIsGreater, o.position);
                 return true;
             };
         }());
         //-----------------------------------
-        // Delegates the blur event for removing tooltip
+        // Delegates the blur event to removing the tooltips
         $(document).off("blur.tooltip").on(nsEvents("blur", "tooltip"), "[data-role=tooltip]", function() {
             $(".vld-tooltip").remove();
         });
         //-----------------------------------
-        // Displays a tooltip next to DOM element
-        function fnShowTooltip(_dom, _msg, _pos) {
-            if (isDOM(_dom)) _dom = $(_dom);
-            _pos = $.extend({
+        // Displays a tooltip next to the @dom element
+        function fnShowTooltip(dom, msg, pos) {
+            dom = $(dom);
+            pos = $.extend({
                 at: "right center",
                 my: "left+6 center",
                 collision: "flipfit"
-            }, jsu.settings.position, _pos);
-            _dom.attr("data-role", "tooltip").trigger(nsEvents("blur", "tooltip"));
-            if (_dom.focus) _dom.focus(); //sets focus before showing the tooltip
-            var vld = $('<span class="vld-tooltip">').html(_msg);
-            vld.appendTo(jsu.wrapper).position({
-                of: _dom,
-                at: _pos.at,
-                my: _pos.my,
-                collision: _pos.collision
+            }, jherax.settings.position, pos);
+            dom.attr("data-role", "tooltip").trigger(nsEvents("blur", "tooltip"));
+            if (dom.focus) dom.focus(); //sets focus before showing the tooltip
+            var vld = $('<span class="vld-tooltip">').html(msg);
+            vld.appendTo(jherax.wrapper).position({
+                of: dom,
+                at: pos.at,
+                my: pos.my,
+                collision: pos.collision
             }).hide().fadeIn(400);
             return false;
         }
         //-----------------------------------
-        // Shows the loading overlay screen
+        // Shows the overlay screen with the loading animation
         function fnLoading(o) {
             var d = $.extend({
                 hide: false,
@@ -752,7 +824,7 @@ jsu.wrapper = "body"; //#main-section
             return true;
         }
         //-----------------------------------
-        // Detects the width of scrollbar
+        // Detects the width of the scrollbar
         function fnScrollbarWidth() {
             var outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body'),
                 barWidth = $('<div>').css('width', '100%').appendTo(outer).outerWidth();
@@ -766,8 +838,8 @@ jsu.wrapper = "body"; //#main-section
             $(window).on(nsEvents("load", "fnUpdateCache"), function (event) {
                 $(window.applicationCache).on("updateready", function (e) {
                     if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-                        //el browser descargó una nueva versión del manifiesto de cache,
-                        //debe recargar la página para acceder al contenido actualizado
+                        //the browser downloads a new version of the cache manifest,
+                        //and must reload the page in order to access to the new resources
                         window.applicationCache.swapCache();
                         window.location.reload(true);
                     }
@@ -775,8 +847,12 @@ jsu.wrapper = "body"; //#main-section
             });
         }
 
-        //-----------------------------------
-        /* jQUERY EXTENSIONS */
+        //===================================
+        /* JQUERY EXTENSIONS */
+        //===================================
+
+        // Reverses the array of matched elements
+        $.fn.reverse = [].reverse;
         //-----------------------------------
         // Detects if the element has vertical scrollbar
         $.fn.hasVScroll = function() {
@@ -855,8 +931,8 @@ jsu.wrapper = "body"; //#main-section
                     }
                     return { "left": left, "top": top };
                 })();
-                //sets the coordinates according to current element
-                var myPosition = function(element) {
+                //sets the coordinates according to current @element
+                var myPosition = function (element) {
                     var left = 0, top = 0,
                         elementWidth = element.outerWidth(),
                         elementHeight = element.outerHeight();
@@ -926,7 +1002,7 @@ jsu.wrapper = "body"; //#main-section
                 at: "right bottom",
                 my: "right top+6",
                 collision: "flipfit"
-            }, jsu.settings.position, o);
+            }, jherax.settings.position, o);
             return this.each(function (i, dom) {
                 var count = "Max: " + length;
                 if (!input.isText(dom)) return true; //continue
@@ -941,9 +1017,9 @@ jsu.wrapper = "body"; //#main-section
                         e.preventDefault();
                     }
                     count = "Max: " + len + "/" + length;
-                    if(!$('#max' + dom.id).text(count).length) {
+                    if (!$('#max' + dom.id).text(count).length) {
                         $('<span class="vld-tooltip" id="max' + dom.id + '">')
-                        .text(count).appendTo(jsu.wrapper).position({
+                        .text(count).appendTo(jherax.wrapper).position({
                             of: dom,
                             at: o.at,
                             my: o.my,
@@ -954,7 +1030,7 @@ jsu.wrapper = "body"; //#main-section
             });
         };
         //-----------------------------------
-        // Apply the capitalized format to text when blur event occurs
+        // Apply the capitalized format to text when the blur event is raised
         $.fn.fnCapitalize = function (type) {
             return this.each(function (i, dom) {
                 $(dom).off(".fnCapitalize").on(nsEvents("blur", "fnCapitalize"), function() {
@@ -963,14 +1039,14 @@ jsu.wrapper = "body"; //#main-section
             });
         };
         //-----------------------------------
-        // Displays a tooltip next to DOM element
+        // Displays a tooltip next to the current element
         $.fn.fnShowTooltip = function (msg, pos) {
             return this.each(function (i, dom) {
                 fnShowTooltip(dom, msg, pos);
             });
         };
         //-----------------------------------
-        // Validates the format of first element, depending on the type supplied.
+        // Validates the format of the first element, depending on the type supplied.
         // Date validations are run according to regional setting
         $.fn.fnIsValidFormat = function (type) {
             if (!this.length) return false;
@@ -979,23 +1055,25 @@ jsu.wrapper = "body"; //#main-section
             return fnIsValidFormat[type](this.get(0));
         };
         //-----------------------------------
-        // Evaluates whether the input value is a date or not.
-        // The validation result will be shown in a tooltip
+        // Evaluates whether the current element contains a value with a date.
+        // The result of the validation will be shown in a tooltip
         $.fn.fnIsValidDate = function(o) {
             if (!this.length) return false;
             return fnIsValidDate(this.get(0), o);
         };
         //-----------------------------------
-        // Sets numeric format with decimal/thousand separators
-        $.fn.fnNumericFormat = function() {
+        // Sets the numeric format according to current culture.
+        // Places the decimal and thousand separators specified in _language
+        // http://jsbin.com/ekeSeG/2/edit
+        $.fn.fnNumericFormat = function(o) {
             return this.each(function (i, dom) {
                 $(dom).off(".fnNumericFormat").on(nsEvents("keyup blur", "fnNumericFormat"), function() {
-                    fnNumericFormat(this);
+                    fnNumericFormat(this, o);
                 });
             });
         };
         //-----------------------------------
-        // Allows only numeric characters
+        // The matched elements accept only numeric characters
         $.fn.fnNumericInput = function() {
             return this.each(function (i, dom) {
                 var len = dom.maxLength;
@@ -1031,7 +1109,7 @@ jsu.wrapper = "body"; //#main-section
             });
         };
         //-----------------------------------
-        // Sets a mask for the allowed characters
+        // Sets a mask of allowed characters for the matched elements
         $.fn.fnCustomInput = function (mask) {
             mask = mask instanceof RegExp ? mask : fnEscapeRegExp(mask);
             if (!mask) throw new CustomException("Mask must be RegExp or string");
@@ -1065,7 +1143,7 @@ jsu.wrapper = "body"; //#main-section
             });
         };
         //-----------------------------------
-        // Disables the specified keyboard keys.
+        // Prevents press specific keys for the matched elements
         $.fn.fnDisableKey = function (key) {
             if (!key) return this;
             var keys = key.toString().split("");
@@ -1079,36 +1157,37 @@ jsu.wrapper = "body"; //#main-section
             });
         };
         //-----------------------------------
-        // Validates the required form fields
+        // Validates the elements marked or performs a custom validation
         (function() {
-            // Creates the filters based on those defined in fnIsValidFormat
-            var allFilters = $.map(fnIsValidFormat, function(value, key) { return ".vld-" + key; }).join(",");
-            // Shows a tooltip for validation message
+            // Creates the filters based on those properties defined in fnIsValidFormat
+            var allFilters = $.map(fnIsValidFormat, function (value, key) { return ".vld-" + key; }).join(",");
+            // Shows a tooltip for the validation message
             var fnTooltip = function (dom, event, messageType, pos) {
                 var button = $(event.target);
-                //executes a function before display the tooltip
+                //executes a function before displaying the tooltip,
+                //useful to change the element to show the tooltip against
                 var beforeTooltip = button.data("nsEvent");
                 if (beforeTooltip) button.trigger(beforeTooltip, [dom]);
-                //checks if DOM element was replaced by another one
+                //checks if the @dom element was replaced by another one
                 if (dom.domTarget) dom = dom.domTarget;
 
-                //removes the validation message when "blur" event is raised
+                //removes the validation message when the [blur] event is raised
                 $(dom).attr("data-role", "tooltip");
                 if (dom.focus) dom.focus();
 
                 var vld = $('<span class="vld-tooltip">');
-                vld.appendTo(jsu.wrapper).html(messageType).position({
+                vld.appendTo(jherax.wrapper).html(messageType).position({
                     of: dom,
                     at: pos.at,
                     my: pos.my,
                     collision: pos.collision
                 }).hide().fadeIn(400);
             };
-            // Sets the focus on input elements
+            // Sets the focus on the input elements inside the @container
             var fnSetFocus = function (container, group) {
                 var elements = $(container)
-                .find('input:not([type=button]):not([type=submit]), textarea')
-                .filter(':not(:disabled):not(.no-auto-focus)').get().reverse();
+                    .find('input:not([type=button]):not([type=submit]), textarea')
+                    .filter(':not(:disabled):not(.no-auto-focus)').get().reverse();
                 $(elements).each(function() { 
                     if (input.isText(this) && this.getAttribute('data-group') == group) $(this).focus();
                 });
@@ -1118,26 +1197,27 @@ jsu.wrapper = "body"; //#main-section
                     at: "right center",
                     my: "left+6 center",
                     collision: "flipfit"
-                }, jsu.settings.position);
+                }, jherax.settings.position);
                 var d = $.extend({
                     fnValidator: null,
                     firstItemInvalid: false,
-                    container: jsu.wrapper,
+                    container: jherax.wrapper,
                     requiredForm: false,
                     position: position
                 }, o);
                 var fnValidateFirstItem = function(dom) {
                     if (dom.length === 0) return true;
-                    // Look at first item of <select> as an invalid option
+                    // Treat the first item of the <select> element as an invalid option
                     return (d.firstItemInvalid && dom.selectedIndex === 0);
                 };
                 var selector = this.selector;
-                return this.each(function(index, btn) {
+                return this.each(function (index, btn) {
                     if (d.requiredForm && !$(btn).closest("form").length) {
                         fnShowTooltip(btn, _language.validateForm);
                         return true; //continue with next element
                     }
-                    // Delegate the handler to execute a function before display the tooltip
+                    //Delegates the handler to execute a callback before displaying the tooltip,
+                    //useful to change the element to which show the tooltip against
                     if (isFunction(d.fnBeforeTooltip)) {
                         var event = nsEvents("beforeTooltip", "fnEasyValidate-" + index);
                         $(btn).data("nsEvent", event);
@@ -1146,24 +1226,25 @@ jsu.wrapper = "body"; //#main-section
                             if (args) d.fnBeforeTooltip(args);
                         });
                     }
-                    // Each button validates the fields according to the specified rules
+                    // Each button validates the marked elements according to the specified rules
                     $(btn).off(".fnEasyValidate").on(nsEvents("click", "fnEasyValidate"), { handler: "fnEasyValidate" }, function(event) {
                         fnSetFocus(d.container, btn.getAttribute('data-group')); $(btn).focus().blur();
                         $(".vld-tooltip").remove();
                         var _submit = true; 
 
-                        // Validates each field according to specific rules
+                        // Validates each element according to specific rules
                         $(".vld-required," + allFilters).each(function (i, _dom) {
-                            var _tag = _dom.nodeName.toLowerCase();
+                            var type, _tag = _dom.nodeName.toLowerCase();
                             // Gets the html5 data- attribute; modern browsers admit: dom.dataset[attribute]
                             if (btn.getAttribute('data-group') !== _dom.getAttribute('data-group')) return true; //continue
                             if (input.isText(_dom)) _dom.value = $.trim(_dom.value);
                             
-                            // Validates empty <input> fields, <select> elements and those with property [value] equal to "0"
+                            // Validates the elements marked with the css class "vld-required"
+                            // Looks for empty <input> elements, <select> elements and those having the [value] attribute equal to "0"
                             if ($(_dom).hasClass("vld-required") && ((_tag == "select" && (fnValidateFirstItem(_dom) || _dom.value === "0")) ||
                                 (input.isText(_dom) && !_dom.value.length) || (input.isCheck(_dom) && !_dom.checked) || _tag == "span")) {
                                 var dom = _dom;
-                                // Asp.net radiobutton or checkbox
+                                // Awful asp.net radiobutton or checkbox
                                 if (_tag == "span" || input.isCheck(_dom)) {
                                     if (_tag == "input") dom = $(_dom);
                                     else dom = $(_dom).find("input:first-child");
@@ -1173,21 +1254,19 @@ jsu.wrapper = "body"; //#main-section
                                 }
                                 fnTooltip(dom, event, _language.validateRequired, d.position);
                                 return (_submit = false); //break
-                            } //end required fields
+                            } //end of "vld-required" elements
 
                             if (!input.isText(_dom) || !_dom.value.length) return true; //continue
-                            var type;
-                            // Validates specific formats
+                            // Validates the elements marked with specific formats like "vld-email"
                             for (type in fnIsValidFormat) {
                                 if ($(_dom).hasClass("vld-" + type) && !fnIsValidFormat[type](_dom)) {
                                     fnTooltip(_dom, event, _language.validateFormat, d.position);
                                     return (_submit = false); //break
                                 }
-                            } //end format validation
-                            type = null;
+                            } //end of specific format validation
                         }); //end $.each field
 
-                        // Calls the custom function to validate, if it was provided
+                        // Executes the callback function for the custom validation
                         if (_submit && isFunction(d.fnValidator) && !d.fnValidator(btn)) {
                             _submit = false;
                         }
@@ -1198,7 +1277,7 @@ jsu.wrapper = "body"; //#main-section
                     }); //end btn.click
                     
                     var handlers = ($._data(btn, 'events') || {})["click"];
-                    // Move it at the beginning the handler click.fnEasyValidate
+                    // Move at the beginning the click.fnEasyValidate handler
                     handlers.unshift(handlers.pop());
 
                 }); //end $.each
@@ -1206,7 +1285,7 @@ jsu.wrapper = "body"; //#main-section
         })();
         
         //-----------------------------------
-        // Displays a jquery confirm window
+        // Displays a confirm window on click event
         $.fn.fnConfirm = function(o) {
             var type = "click", current = {};
             $.fn.fnConfirm.canSubmit = false;
@@ -1222,11 +1301,15 @@ jsu.wrapper = "body"; //#main-section
                     if (!$.fn.fnConfirm.canSubmit) {
                         e.stopImmediatePropagation();
                         e.preventDefault();
+                        // Executes the callback before the window is displayed
+                        if (isFunction(o.beforeShow))
+                            o.beforeShow.call(current);
+                        // Shows the confirm window
                         fnShowDialog(o);
                     }
                 });
                 var handlers = ($._data(target, 'events') || {})[type];
-                // Move it at the beginning the handler type.fnConfirm
+                // Move at the beginning the type.fnConfirm handler
                 var h = 0, handler = handlers.pop();
                 $.each(handlers, function(index, item) {
                     if (item.namespace === "fnEasyValidate") {
@@ -1236,7 +1319,7 @@ jsu.wrapper = "body"; //#main-section
                 });
                 handlers.splice(h, 0, handler);
                 o.id = 'jsu-dialog-confirm';
-                // Creates the buttons for fnShowDialog()
+                // Creates the buttons for jquery.ui.dialog
                 o.buttons = [
                     {
                         text: _language.dialogOK,
@@ -1244,7 +1327,9 @@ jsu.wrapper = "body"; //#main-section
                             if (hasValidUrl(current.href)) document.location = current.href;
                             $("#" + o.id).on("dialogclose", function (ev, ui) {
                                 $.fn.fnConfirm.canSubmit = true;
+                                // Unbinds  the event handler and triggers the previous actions
                                 $(current).off(".fnConfirm").trigger(type);
+                                // Triggers the awful asp.net postback
                                 if ((/[_]{2}doPostBack/).test(current.href))
                                     setTimeout(current.href.replace(/javascript:/i, ""), 1);
                             }).dialog("close");
@@ -1266,101 +1351,138 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         /* FACADES */
         //-----------------------------------
-        // Shows a jquery.ui modal window
+        // Public implementation to display a dialog window
         // It also provides a mechanism for redefinition
         function fnShowDialog(options) {
-            arguments.callee.source = arguments.callee.source || function(o) {
-                if (!jQuery.ui || !jQuery.ui.dialog)
-                    throw new CustomException("jQuery.ui.dialog is required");
-                var cnt = null, body = $('body');
-                var d = $.extend({
-                    appendTo: jsu.wrapper,
-                    title: _language.dialogTitle,
-                    content: null,
-                    icon: null,
-                    buttons: {},
-                    closeOnPageUnload: false
-                }, o);
-                // Set the Id for dialog element
-                Object.defineProperty(d, "id", {
-                    enumerable: false,
-                    writable: false,
-                    value: '#' + (o.id || 'jsu-dialog')
+            return (arguments.callee.source || _fnShowDialog)(options);
+        }
+        // Private implementation to display a dialog window
+        // Displays a jquery.ui modal window
+        function _fnShowDialog(o) {
+            if (!jQuery.ui || !jQuery.ui.dialog)
+                throw new CustomException("jQuery.ui.dialog is required");
+            var d = $.extend(true, {
+                appendTo: jherax.wrapper,
+                title: _language.dialogTitle,
+                content: null,
+                icon: null,
+                buttons: {},
+                modal: true,
+                closeOnPageUnload: false
+            }, o);
+            var cnt = $(), body = $('body'),
+                id = d.id || 'jsu-dialog';
+            // Set the Id for dialog element
+            Object.defineProperty(d, "id", {
+                enumerable: false,
+                writable: false,
+                value: '#' + id
+            });
+            ($(d.id).dialog('option')['close'] || function() {})();
+            //$(d.id + ',.ui-widget-overlay').remove();
+            if (!d.content) return;
+            if (!$.isPlainObject(d.buttons) && !$.isArray(d.buttons)) d.buttons = {};
+            if (d.content instanceof jQuery || 'jquery' in Object(d.content)) cnt = d.content;
+            else if (isDOM(d.content)) cnt = $(d.content);
+            // Determines the original location for the DOM element to be displayed
+            cnt.parent().addClass(id + '-place-parent');
+            cnt.prev().addClass(id + '-place-prev');
+            cnt.next().addClass(id + '-place-next');
+            if (typeof d.content === "string") {
+                // Displays an icon to the left of text
+                var icon = d.icon ? '<div class="wnd-icon ' + d.icon.toLowerCase() + '"></div>' : "";
+                cnt = $(icon + '<div class="wnd-text">' + d.content + '</div>').appendTo("body").data("del", true);
+                cnt.css({ display: "table-cell", "vertical-align": "middle", cursor: "default" });
+            }
+            // Wraps the content into the dialog window
+            cnt.wrapAll('<div id="' + id + '">')
+               .wrapAll('<div class="ui-dialog-custom" style="display:table; margin:0 auto; border-collapse:collapse; border:0 none;">');
+            var wnd = $(d.id).appendTo("body"),
+                v110 = (/^1\.1[0-9]/).test(jQuery.ui.version);
+            if (!+o.width) d.width = wnd.find('.ui-dialog-custom')[0].clientWidth;
+            // Determines whether the dialog should be closed when the page is unloaded
+            if (d.closeOnPageUnload === true) wnd.attr("data-dialog-unload", true);
+            if (!handlerExist(window, "beforeunload", "fnShowDialog")) {
+                $(window).on(nsEvents("beforeunload", "fnShowDialog"), function () {
+                    $("[data-dialog-unload]").each(function() {
+                        $(this).dialog("close");
+                    });
                 });
-                $(d.id + ',.ui-widget-overlay').remove();
-                if (!o.content) return false;
-                if (!$.isPlainObject(d.buttons) && !$.isArray(d.buttons)) d.buttons = {};
-                if (d.content instanceof jQuery) cnt = d.content;
-                else if (isDOM(d.content)) cnt = $(d.content);
-                else if (typeof d.content === "string") {
-                    // Displays an icon to the left of text
-                    var icon = d.icon ? '<div class="wnd-icon ' + d.icon.toLowerCase() + '"></div>' : "";
-                    cnt = $(icon + '<div class="wnd-text">' + d.content + '</div>').appendTo(jsu.wrapper).data("del", true);
-                }
-                // Wraps the content into the dialog window
-                cnt.wrapAll('<div id="' + d.id.replace("#", "") + '">')
-                   .wrapAll('<div class="ui-dialog-custom">');
-                var _dialog = $(d.id);
-                if (!+o.width) d.width = _dialog.find('.ui-dialog-custom')[0].clientWidth;
-                // Determines whether the dialog should be closed when the page is unloaded
-                if (d.closeOnPageUnload === true && !handlerExist(window, "beforeunload", "fnShowDialog"))
-                    $(window).on(nsEvents("beforeunload", "fnShowDialog"), function() { $(d.id).dialog("close"); });
-                $('.close-dialog').one("click", function() { $(d.id).dialog("close"); });
-                // Check the version of jquery.ui for "appendTo" feature
-                var v110 = (/^1\.1[0-9]/).test(jQuery.ui.version);
-                body.css("overflow", "hidden");
-                _dialog.dialog({
-                    title: d.title,
-                    draggable: true,
-                    resizable: false,
-                    modal: true,
-                    hide: 'drop',
-                    show: 'fade',
-                    maxHeight: +d.maxHeight || Math.floor($(window).height() * 0.86),
-                    minHeight: +d.minHeight || 130,
-                    height: d.height || 'auto',
-                    maxWidth: +d.maxWidth || 1024,
-                    minWidth: +d.minWidth || 150,
-                    width: +d.width,
-                    buttons: d.buttons,
-                    appendTo: d.appendTo,
-                    create: function (event, ui) {
-                        if (!+o.width) {
-                            // Fixes the width of the dialog
-                            var width = $(this).dialog("option", "width");
-                            var maxwidth = $(this).dialog("option", "maxWidth");
-                            var padding = Math.round(+_dialog.css("padding-left").replace("px", "")) * 2;
-                            $(this).dialog("option", "width", Math.min(width, maxwidth) + padding);
-                        }
-                        if (!v110) {
-                            // Add "appendTo" feature if it is not supported
-                            _dialog.css("max-height", $(this).dialog("option", "maxHeight"))
-                            .closest(".ui-dialog").add(".ui-widget-overlay").appendTo(d.appendTo);
-                        }
-                    },
-                    open: function (event, ui) {
-                        if (_dialog.hasVScroll()) {
-                            var width = _dialog.dialog("option", "width");
-                            _dialog.dialog("option", "width", width + fnScrollbarWidth());
-                        }
-                        if (d.id === '#jsu-dialog-confirm') {
-                            var zindex = +$(".ui-dialog").css("z-index") + 1;
-                            _dialog.closest(".ui-dialog").css("z-index", zindex);
-                        }
-                    },
-                    close: function (event, ui) {
-                        body.css("overflow", "");
-                        if (_dialog.hasClass("ui-dialog-content")) {
-                            _dialog.dialog("destroy");
-                            if (cnt.data("del")) _dialog.remove();
-                            else cnt.unwrap().unwrap();
+            }
+            // Closes the window for those elements with the "close-dialog" class
+            wnd.one("click.dialog", '.close-dialog', function (e) {
+                e.preventDefault();
+                $(e.delegateTarget).dialog("close");
+            });
+            // Check the version of jquery.ui for "appendTo" feature
+            body.css("overflow", "hidden");
+            wnd.dialog({
+                title: d.title,
+                draggable: true,
+                resizable: false,
+                modal: !!d.modal,
+                hide: 'drop',
+                show: 'fade',
+                maxHeight: +d.maxHeight || Math.floor($(window).height() * 0.86),
+                minHeight: +d.minHeight || 50,
+                height: d.height || 'auto',
+                maxWidth: +d.maxWidth || 1024,
+                minWidth: +d.minWidth || 150,
+                width: +d.width,
+                buttons: d.buttons,
+                appendTo: d.appendTo,
+                create: function (event, ui) {
+                    var wnd = $(this);
+                    if (!+o.width) {
+                        // Fixes the width of the window
+                        var width = wnd.dialog("option", "width"),
+                            maxwidth = wnd.dialog("option", "maxWidth"),
+                            padding = Math.round(parseFloat(wnd.css("padding-left"))) * 2;
+                        wnd.dialog("option", "width", Math.min(width, maxwidth) + padding);
+                    }
+                    if (!v110) {
+                        // Add "appendTo" feature if it is not supported
+                        wnd.css("max-height", wnd.dialog("option", "maxHeight"))
+                        .closest(".ui-dialog").add(".ui-widget-overlay").appendTo(d.appendTo);
+                    }
+                },
+                open: function (event, ui) {
+                    var wnd = $(event.target), width, zindex;
+                    // Fixes the width of the window with scrollbar
+                    if (!+o.width && wnd.hasVScroll()) {
+                        width = wnd.dialog("option", "width");
+                        wnd.dialog("option", "width", width + fnScrollbarWidth());
+                    }
+                    // Honor z-index for $.fnConfirm
+                    if (this.id === 'jsu-dialog-confirm') {
+                        zindex = +$(".ui-dialog").css("z-index") + 1;
+                        wnd.closest(".ui-dialog").css("z-index", zindex);
+                    }
+                },
+                close: function (event, ui) {
+                    var wnd = $(event.target);
+                    body.css("overflow", "");
+                    if (wnd.hasClass("ui-dialog-content")) {
+                        wnd.dialog("destroy");
+                        if (cnt.data("del")) wnd.remove();
+                        else {
+                            cnt.unwrap().unwrap();
+                            // Restores the DOM element to its original location
+                            $("[class*=" + id + "]").reverse().each(function () {
+                                var dom = $(this),
+                                    css = new RegExp("^" + id + "-place-"),
+                                    place = this.className.split(/\s+/).filter(function (item) {
+                                        return css.test(item);
+                                    }).join(" ");
+                                if ((/next/).test(place)) return !dom.before(cnt);
+                                if ((/prev/).test(place)) return !dom.after(cnt);
+                                if ((/parent/).test(place)) return !dom.append(cnt);
+                            }).removeClass(["", "next", "prev", "parent"].join(" " + id + "-place-"));
                         }
                     }
-                });
-                return _dialog;
-            }; //end fnShowDialog.source
-            fnShowDialog = arguments.callee.source;
-            return fnShowDialog(options);
+                }
+            });
+            return wnd;
         }
 
         //-----------------------------------
@@ -1368,19 +1490,20 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         jherax.bool = bool; //undocumented
         jherax.browser = browser;
-        jherax.inputType = input;
-        jherax.handlerExist = handlerExist;
-        jherax.nsEvents = nsEvents;
         jherax.isDOM = isDOM;
         jherax.isFunction = isFunction;
         jherax.fnStringify = fnStringify;
+        jherax.inputType = input;
+        jherax.handlerExist = handlerExist;
+        jherax.nsEvents = nsEvents;
         jherax.fnAddScript = fnAddScript;
         jherax.fnAddCSS = fnAddCSS;
         jherax.fnEscapeRegExp = fnEscapeRegExp;
         jherax.fnGetQueryToString = fnGetQueryToString;
         jherax.fnGetQueryToJSON = fnGetQueryToJSON;
         jherax.fnGetDataToJSON = fnGetDataToJSON; //undocumented
-        jherax.fnCloneObject = fnCloneObject;
+        jherax.fnFreezeJSON = fnFreezeJSON;
+        jherax.fnExtend = fnExtend; //undocumented
         jherax.fnGetDate = fnGetDate;
         jherax.fnDateFromISO8601 = fnDateFromISO8601;
         jherax.fnGetHtmlText = fnGetHtmlText;
@@ -1395,7 +1518,7 @@ jsu.wrapper = "body"; //#main-section
         jherax.fnShowDialog = fnShowDialog;
         jherax.fnLoading = fnLoading;
         jherax.fnScrollbarWidth = fnScrollbarWidth;
-        jherax.fnUpdateCache = fnUpdateCache;
+        jherax.fnUpdateCache = fnUpdateCache; //undocumented
 
     })(jsu, jQuery);
     // Set default namespace
