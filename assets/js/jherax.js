@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 26/06/2013
- *  Version: 3.4.1
+ *  Version: 3.5.0
  -----------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -49,7 +49,7 @@
 // Info about the library
 var jsu = window.jsu || {
     author: "jherax",
-    version: "3.4.1",
+    version: "3.5.0",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -254,8 +254,8 @@ jsu.wrapper = "body"; //#main-section
             return (/true/i).test(obj);
         };
         //-----------------------------------
-        // Adds support for browser detect.
-        // jquery 1.9+ deprecates $.browser
+        // Adds support for browser detection, since
+        // jQuery 1.9+ deprecated the browser property
         var browser = (function() {
             var ua = navigator.userAgent.toLowerCase();
             var match =
@@ -329,7 +329,7 @@ jsu.wrapper = "body"; //#main-section
             return eventName.replace(/\s+|\t+/g, namespace + " ");
         };
         //-----------------------------------
-        // Seals the writable attribute to properties
+        // Seals the writable attribute of the object properties
         // @@Private
         function sealWritable(obj) {
             var p = null;
@@ -418,7 +418,7 @@ jsu.wrapper = "body"; //#main-section
             }
         }
         //-----------------------------------
-        // Escapes user input to be treated as a literal string in a regular expression
+        // Escapes the input text to a literal pattern in the constructor of a regular expression
         function fnEscapeRegExp(txt) {
             if (typeof txt !== "string") return null;
             return txt.replace(/([.*+?=!:${}()|\-\^\[\]\/\\])/g, "\\$1");
@@ -1163,24 +1163,26 @@ jsu.wrapper = "body"; //#main-section
             var allFilters = $.map(fnIsValidFormat, function (value, key) { return ".vld-" + key; }).join(",");
             // Shows a tooltip for the validation message
             var fnTooltip = function (dom, event, messageType, pos) {
-                var button = $(event.target);
+                var button = $(event.currentTarget),
+                    args = { "target": dom, "position": pos };
+
                 //executes a function before displaying the tooltip,
-                //useful to change the element to show the tooltip against
+                //useful to change the element to which the tooltip is attached
                 var beforeTooltip = button.data("nsEvent");
-                if (beforeTooltip) button.trigger(beforeTooltip, [dom]);
-                //checks if the @dom element was replaced by another one
-                if (dom.domTarget) dom = dom.domTarget;
+                if (beforeTooltip) button.trigger(beforeTooltip, [args]);
 
                 //removes the validation message when the [blur] event is raised
-                $(dom).attr("data-role", "tooltip");
-                if (dom.focus) dom.focus();
+                $(dom).attr("data-role", "tooltip").trigger("blur.tooltip");
+                if (args.target.focus) args.target.focus();
 
-                var vld = $('<span class="vld-tooltip">');
-                vld.appendTo(jherax.wrapper).html(messageType).position({
-                    of: dom,
-                    at: pos.at,
-                    my: pos.my,
-                    collision: pos.collision
+                $('<span class="vld-tooltip">')
+                .appendTo(jherax.wrapper)
+                .html(messageType)
+                .position({
+                    of: args.target,
+                    at: args.position.at,
+                    my: args.position.my,
+                    collision: args.position.collision
                 }).hide().fadeIn(400);
             };
             // Sets the focus on the input elements inside the @container
@@ -1222,8 +1224,9 @@ jsu.wrapper = "body"; //#main-section
                         var event = nsEvents("beforeTooltip", "fnEasyValidate-" + index);
                         $(btn).data("nsEvent", event);
                         $(document).off(event).on(event, selector, function(e, args) {
-                            //args is the DOM element to which "tooltip" is attached
-                            if (args) d.fnBeforeTooltip(args);
+                            //args.target is the DOM element to which the "tooltip" is attached
+                            //args.position is the position of "tooltip" { at, my, collision }
+                            d.fnBeforeTooltip(args);
                         });
                     }
                     // Each button validates the marked elements according to the specified rules
