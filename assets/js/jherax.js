@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 26/06/2013
- *  Version: 3.5.0
+ *  Version: 3.5.2
  -----------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -49,7 +49,7 @@
 // Info about the library
 var jsu = window.jsu || {
     author: "jherax",
-    version: "3.5.0",
+    version: "3.5.2",
     dependencies: ["jQuery","jQuery.ui","jherax.css"]
 };
 // Specifies where tooltip and dialog elements will be appended
@@ -72,12 +72,34 @@ jsu.wrapper = "body"; //#main-section
     if (jsu.author != 'jherax') {
         throw new CustomException("A variable with namespace [jsu] is already in use");
     }
-    // Fixes unsupported Object.create() method on IE
+    // Polyfill for Object.create() method on IE
     Object.create || (Object.create = function(o) {
         function F(){}
         F.prototype = o;
         return new F();
     });
+    // Polyfill for Array.prototype.some
+    if (!Array.prototype.some) {
+        Array.prototype.some = function (fn /*, thisArg */) {
+            'use strict';
+            if (this === void 0 || this === null)
+                throw new TypeError();
+
+            var t = Object(this);
+            //let @len be ToUint32(value)
+            var len = t.length >>> 0;
+
+            if (({}).toString.call(fn) != "[object Function]")
+                throw new TypeError();
+
+            var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+            for (var i = 0; i < len; i++) {
+                if (i in t && fn.call(thisArg, t[i], i, t))
+                    return true;
+            }
+            return false;
+        };
+    }
     // Creates a sort method in the Array prototype
     // @prop: property name (if it is a JSON Array)
     // @desc: descending sort
@@ -88,7 +110,7 @@ jsu.wrapper = "body"; //#main-section
         value: function (o) {
             if (Object.prototype.toString.call(o) != "[object Object]")
                 o = {};
-            if (Object.prototype.toString.call(o.parser) != "[object Function]")
+            if (({}).toString.call(o.parser) != "[object Function]")
                 o.parser = function (x) { return x; };
             o.desc = !!o.desc;
             //gets the item to be compared
@@ -230,7 +252,7 @@ jsu.wrapper = "body"; //#main-section
 
     //-----------------------------------
     // We provide an object to override default settings
-    (function(jherax, $, undefined) {
+    (function(jherax, $) {
         jherax.position = null;
         // { at: null, my: null, collision: null };
     })(jsu.createNS("jsu.settings"), jQuery);
@@ -285,7 +307,7 @@ jsu.wrapper = "body"; //#main-section
         };
         //-----------------------------------
         // This is a reference to JSON.stringify and provides a polyfill for old browsers
-        var fnStringify = typeof JSON !== undefined ? JSON.stringify : function (json) {
+        var fnStringify = typeof JSON !== "undefined" ? JSON.stringify : function (json) {
             var arr = [];
             $.each(json, function (key, val) {
                 var prop = "\"" + key + "\":";
@@ -470,7 +492,7 @@ jsu.wrapper = "body"; //#main-section
             };
         }());
         //-----------------------------------
-        // Clones and freezes a JSON object (set all navigable properties to read-only)
+        // Clones and freezes an object (set all navigable properties to read-only)
         function fnFreezeJSON(obj) {
             //Object.freeze(obj)
             var n = {}, p = null;
@@ -548,12 +570,20 @@ jsu.wrapper = "body"; //#main-section
         //-----------------------------------
         // Gets the date object from a string in ISO 8601 format
         function fnDateFromISO8601(date) {
-            var msg = function() {
-                return !!console.log("js-utils: Date format must be ISO 8601 » " + date) || null;
-            };
-            if (typeof date !== "string") return msg();
-            var m = date.match(/(\d{4}-\d{2}-\d{2})(T(\d{2}\:\d{2}(?:\:\d{2})?)?([+-]\d{2}\:\d{2})?)?/);
-            return m ? new Date(m[1].replace("-", "/") + " " + (m[3] || "")) : msg();
+            if (typeof date !== "string") { console.log("js-utils: Date format must be ISO 8601 » " + date); return null; }
+            var r = date.match(/(?:(\d{4})-(\d{2})-(\d{2}))(?:T(?:(\d{2})(?:\:(\d{2}))?(?:\:(\d{2}))?)?(?:([+-]\d{2})(?:\:?(\d{2}))?)?)?/);
+            if (!r) { console.log("js-utils: Date format must be ISO 8601 » " + date); return null; }
+            var gmt = new Date(),
+                th = +r[7] || (gmt.getTimezoneOffset() / -60), //normalize the hours offset
+                tm = +r[8] || (gmt.getTimezoneOffset() % -60), //normalize the minutes offset
+                M = r[2] - 1,
+                h = r[4] || 0,
+                m = r[5] || 0,
+                s = r[6] || 0;
+            if (th < 0 && tm > 0) tm = -tm; //fixes the minutes offset
+            var ms = -60000 * (th * 60 + tm); //corrects the time offset
+            gmt = new Date(Date.UTC(r[1], M, r[3], h, m, s) + ms);
+            return new Date(gmt);
         }
         //-----------------------------------
         // Encodes the current text to its HTML equivalent.
@@ -1526,3 +1556,17 @@ jsu.wrapper = "body"; //#main-section
     })(jsu, jQuery);
     // Set default namespace
 })();
+/*
+//-----------------------------------
+// Enables Cross Domain Requests
+// http://api.jquery.com/jquery.ajaxprefilter/
+$.ajaxPrefilter(function (options) {
+    if (options.crossDomain && $.support.cors) {
+        var http = (window.location.protocol === 'http:' ? 'http:' : 'https:'),
+            url = options.url; //encodeURIComponent(options.url);
+        options.url = http + '//cors-anywhere.herokuapp.com/' + url;
+        //options.url = "http://cors.corsproxy.io/url=" + url;
+        //options.crossDomain = false;
+    }
+});
+*/
