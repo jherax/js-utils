@@ -6,7 +6,8 @@ This is a library of JavaScript / jQuery utilities, which includes tools for dat
 Documentation
 -------------
 Go to the documentation site to see the API reference and examples:<br>
-* **http://jherax.github.io/#jsu-library**
+* Spanish: **http://jherax.github.io/?lang=spanish#jsu-library**
+* English: **http://jherax.github.io/#jsu-library**
 
 Getting Started
 ---------------
@@ -53,8 +54,8 @@ A Glance
 
 Appendix
 --------
-### Category:text
-We speak about *DOM element category:text* when that object belongs to one of the following html elements:
+### inputType:text
+It is considered *inputType:text* any of the following `DOM` elements:
 ```html
   <textarea></textarea>
   <input type="text" />
@@ -93,7 +94,7 @@ For more information on semantic versioning, please visit http://semver.org/
 
 Author
 ------
-Developed by [David Rivera](http://careers.stackoverflow.com/jheraxcorp) ([stackoverflow](http://stackoverflow.com/users/2247494/jherax-corp) / [GitHub](https://github.com/jherax)) as *jherax*, from Bogota-Colombia.
+Developed by [David Rivera](http://careers.stackoverflow.com/jheraxcorp) ([stackoverflow](http://stackoverflow.com/users/2247494/jherax-corp) / [GitHub](https://github.com/jherax)) *jherax*, from Bogota-Colombia.
 
 
 License
