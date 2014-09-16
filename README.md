@@ -53,8 +53,8 @@ A Glance
 
 Appendix
 --------
-### Category:text
-We speak about *DOM element category:text* when that object belongs to one of the following html elements:
+### inputType:text
+A `DOM` element belongs to *inputType:text* when that object is one of the following elements:
 ```html
   <textarea></textarea>
   <input type="text" />
