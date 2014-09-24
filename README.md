@@ -6,7 +6,8 @@ This is a library of JavaScript / jQuery utilities, which includes tools for dat
 Documentation
 -------------
 Go to the documentation site to see the API reference and examples:<br>
-* **http://jherax.github.io/#jsu-library**
+* Spanish: **http://jherax.github.io/?lang=spanish#jsu-library**
+* English: **http://jherax.github.io/#jsu-library**
 
 Getting Started
 ---------------
@@ -54,7 +55,7 @@ A Glance
 Appendix
 --------
 ### inputType:text
-A `DOM` element belongs to *inputType:text* when that object is one of the following elements:
+It is considered *inputType:text* any of the following `DOM` elements:
 ```html
   <textarea></textarea>
   <input type="text" />
