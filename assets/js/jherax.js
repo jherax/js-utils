@@ -369,9 +369,9 @@ Object.defineProperty(Array.prototype, "sortBy", {
     //-----------------------------------
     // This is a reference to JSON.stringify and provides a polyfill for old browsers
     var fnStringify = typeof JSON !== "undefined" ? JSON.stringify : function (json) {
-        var arr = [];
+        var arr = [], prop;
         $.each(json, function (key, val) {
-            var prop = "\"" + key + "\":";
+            prop = "\"" + key + "\":";
             prop += ($.isPlainObject(val) ? fnStringify(val) : 
                 (typeof val === "string" ? "\"" + val + "\"" : val));
             arr.push(prop);
@@ -489,11 +489,11 @@ Object.defineProperty(Array.prototype, "sortBy", {
     //-----------------------------------
     // Gets the querystring values from address bar and it is returned as a JSON object
     function fnGetQueryToJSON(q) {
-        var params = {};
+        var m, params = {};
         q = !q ? "" : q.toString();
         $.each(window.location.search.split(/[\?&]/g),
             function (i, item) {
-                var m = item.match(/(\w+)=([^&]+)/);
+                m = item.match(/(\w+)=([^&]+)/);
                 if (!m) return true;
                 if (q === "" || q.indexOf(m[1]) > -1) {
                     params[$.trim(m[1])] = m[2];
@@ -514,11 +514,11 @@ Object.defineProperty(Array.prototype, "sortBy", {
             return value;
         };
         return function (data) {
-            var params = {};
+            var m, params = {};
             data = !data ? "" : data.toString();
             $.each(data.split(/[\{\},]/g),
                 function (i, item) {
-                    var m = item.match(/['"]?(\w+)['"]?:['"]?([^'"]+)/);
+                    m = item.match(/['"]?(\w+)['"]?:['"]?([^'"]+)/);
                     if (!m) return true;
                     params[$.trim(m[1])] = parser(m[2]);
                 });
@@ -527,16 +527,16 @@ Object.defineProperty(Array.prototype, "sortBy", {
     }());
     //-----------------------------------
     // Clones and freezes an object (set all navigable properties to read-only)
-    function fnFreezeJSON(obj) {
+    function fnFreezeObject(obj) {
         //Object.freeze(obj)
-        var n = {}, p = null;
+        var n = {}, p;
         for (p in obj) {
             Object.defineProperty(n, p, {
                 __proto__: null, //no inherited properties
                 configurable: false,
                 enumerable: true,
                 writable: false,
-                value: $.isPlainObject(obj[p]) ? fnFreezeJSON(obj[p]) : obj[p]
+                value: $.isPlainObject(obj[p]) ? fnFreezeObject(obj[p]) : obj[p]
             });
         }
         return n;
@@ -613,9 +613,10 @@ Object.defineProperty(Array.prototype, "sortBy", {
             M = r[2] - 1,
             h = r[4] || 0,
             m = r[5] || 0,
-            s = r[6] || 0;
+            s = r[6] || 0,
+            ms;
         if (th < 0 && tm > 0) tm = -tm; //fixes the minutes offset
-        var ms = -60000 * (th * 60 + tm); //corrects the time offset
+        ms = -60000 * (th * 60 + tm); //corrects the time offset
         gmt = new Date(Date.UTC(r[1], M, r[3], h, m, s) + ms);
         return new Date(gmt);
     }
@@ -1578,7 +1579,7 @@ Object.defineProperty(Array.prototype, "sortBy", {
     jherax.fnGetQueryToString = fnGetQueryToString;
     jherax.fnGetQueryToJSON = fnGetQueryToJSON;
     jherax.fnGetDataToJSON = fnGetDataToJSON; //undocumented
-    jherax.fnFreezeJSON = fnFreezeJSON;
+    jherax.fnFreezeObject = fnFreezeObject;
     jherax.fnExtend = fnExtend; //undocumented
     jherax.fnGetDate = fnGetDate;
     jherax.fnDateFromISO8601 = fnDateFromISO8601;
