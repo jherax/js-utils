@@ -1,6 +1,6 @@
 {
 	"name": "jherax",
-	"version": "3.6.5",
+	"version": "3.6.6",
 	"title": "JSU Library",
 	"description": "This is a library of JavaScript / jQuery utilities, which includes tools for data validation and text formatting, plugins for tooltip, modal-windows and positioning elements, resources injection, string and JSON manipulation, object cloning, sorting arrays, and other features.",
 	"dependencies": {
