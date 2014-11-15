@@ -119,11 +119,12 @@ table.pretty-table, .pretty-table caption, .pretty-table tbody, .pretty-table tf
 /* ==========================================================================
    Kendo window
    ========================================================================== */
-.k-window-titlebar { font-size: 18px; line-height: 20px; text-shadow: 0 1px 0 #FFF; color: #727272; }
 .k-window .k-header .k-window-title { line-height: 20px; font-size: small; font-weight: bold; }
+.k-window-titlebar { font-size: 18px; line-height: 20px; text-shadow: 0 1px 0 #FFF; color: #727272; }
 .k-window-titlebar .k-window-actions { right: .27em; padding-top: .35em; }
-.jsu-wnd-wrapper { padding: 8px 12px; color: #696969; }
-.jsu-wnd-wrapper > .wnd-text { font-size: 16px; line-height: 1.4em; }
+.jsu-dialog .jsu-wnd-wrapper { padding: 8px 12px; color: #696969; }
+.jsu-dialog .jsu-wnd-wrapper > .wnd-text { font-size: 16px; line-height: 1.4em; }
+.jsu-dialog  { margin-top: -17px; /*fixes top position because of padding-top*/ }
 
 /* ==========================================================================
    jQuery ui dialog
@@ -134,11 +135,11 @@ table.pretty-table, .pretty-table caption, .pretty-table tbody, .pretty-table tf
 .ui-dialog-custom { display: table; margin: 0 auto; border-collapse: collapse; border: 0 none; outline: 0 none; }
 .ui-dialog-custom .wnd-text { display: table-cell; padding: 10px 5px; vertical-align: middle; cursor: default; }
 .ui-dialog-custom .wnd-icon { display: table-cell; width: 55px; height: 66px; padding: 0; }
-.ui-dialog-custom .wnd-icon.info { background: url("../img/ico_info.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.alert { background: url("../img/ico_alert.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.success { background: url("../img/ico_success.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.cancel { background: url("../img/ico_cancel.png") no-repeat; background-position: left center; }
-.ui-dialog-custom .wnd-icon.error { background: url("../img/ico_error.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.info { background: url("../images/ico_info.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.alert { background: url("../images/ico_alert.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.success { background: url("../images/ico_success.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.cancel { background: url("../images/ico_cancel.png") no-repeat; background-position: left center; }
+.ui-dialog-custom .wnd-icon.error { background: url("../images/ico_error.png") no-repeat; background-position: left center; }
 .ui-dialog-buttonpane button { min-width: 54px; margin: .5em .4em .1em .4em !important; }
 .ui-button-text-only .ui-button-text { padding: .3em .8em; line-height: 1.5em; }
 .ui-button:focus, .ui-button:active { outline: none; }
