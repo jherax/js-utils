@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 2013/06/26
- *  Version: 3.5.4
+ *  Version: 3.6.5
  -------------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -61,7 +61,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
     "version": {
         enumerable: false,
         configurable: false,
-        value: "3.5.4"
+        value: "3.6.5"
     },
     "dependencies": {
         enumerable: false,
@@ -130,7 +130,7 @@ if (!Array.prototype.some) {
             //let @len be ToUint32(value)
             len = t.length >>> 0;
 
-        if (({}).toString.call(fn) != "[object Function]")
+        if (Object.prototype.toString.call(fn) != "[object Function]")
             throw new TypeError();
 
         thisArg = arguments.length >= 2 ? arguments[1] : void 0;
@@ -141,30 +141,38 @@ if (!Array.prototype.some) {
         return false;
     };
 }
-// Creates a sort method in the Array prototype
-// @prop: property name (if it is a JSON Array)
-// @desc: descending sort
-// @parser: function to parse the items to expected type
-Object.defineProperty(Array.prototype, "sortBy", {
-    configurable: false,
-    enumerable: false,
-    value: function (o) {
-        if (Object.prototype.toString.call(o) != "[object Object]")
-            o = {};
-        if (({}).toString.call(o.parser) != "[object Function]")
-            o.parser = function (x) { return x; };
-        o.desc = !!o.desc;
-        //gets the item to be compared
-        var getItem = function (x) { return o.parser(x[o.prop] || x); };
-        //if @desc is true: return -1, else 1
-        o.desc = [1, -1][+!!o.desc];
-        return this.sort(function (a, b) {
-            a = getItem(a); b = getItem(b);
-            return ((a < b) ? -1 : ((a > b) ? 1 : 0)) * o.desc;
-            //return a = getItem(a), b = getItem(b), o.desc * ((a > b) - (b > a));
-        });
-    }
-});
+(function() {
+    var toString = Object.prototype.toString,
+        //default parser
+        parser = function (x) { return x; },
+        //gets the item to be sorted
+        getItem = function (x) {
+            return this.parser((toString.call(x) == "[object Object]" && x[this.prop]) || x);
+        };
+    // Creates a sort method in the Array prototype
+    Object.defineProperty(Array.prototype, "sortBy", {
+        configurable: false,
+        enumerable: false,
+        // @o.prop: property name (if it is an Array of objects)
+        // @o.desc: determines descending sort
+        // @o.parser: function to parse the items to expected type
+        value: function (o) {
+            if (toString.call(o) != "[object Object]")
+                o = {};
+            if (toString.call(o.parser) != "[object Function]")
+                o.parser = parser;
+            o.desc = !!o.desc;
+            //if @o.desc is true: set -1, else 1
+            o.desc = [1, -1][+!!o.desc];
+            return this.sort(function (a, b) {
+                a = getItem.call(o, a);
+                b = getItem.call(o, b);
+                return (a < b ? -1 : (a > b ? 1 : 0)) * o.desc;
+                //return a = getItem(a), b = getItem(b), o.desc * ((a > b) - (b > a));
+            });
+        }
+    });
+})();
 
 //-----------------------------------
 // Immediately-invoked Function Expressions (IIFE)
@@ -175,6 +183,7 @@ Object.defineProperty(Array.prototype, "sortBy", {
     // Creates the messages for specific culture
     regional.spanish = {
         culture: "es",
+        deprecated: "\"{0}\" está en desuso, use \"{1}\" en su lugar",
         wordPattern: /\s(?:Y|O|Del?|Por|Al?|L[ao]s?|[SC]on|En|Se|Que|Una?)\b/g,
         decimalMark: ",",
         thousandsMark: ".",
@@ -192,6 +201,7 @@ Object.defineProperty(Array.prototype, "sortBy", {
     };
     regional.english = {
         culture: "en",
+        deprecated: "\"{0}\" is deprecated, use \"{1}\" instead",
         wordPattern: null,
         decimalMark: ".",
         thousandsMark: ",",
@@ -286,7 +296,8 @@ Object.defineProperty(Array.prototype, "sortBy", {
 
     // Sets the default language configuration
     jherax.regional.set(jherax.regional.spanish);
-    var _language = jherax.regional.current;
+    var _toString = Object.prototype.toString,
+        _language = jherax.regional.current;
 
     // Create a custom exception notifier
     // @@Private
@@ -300,6 +311,12 @@ Object.defineProperty(Array.prototype, "sortBy", {
         this.toString = function() {
             return this.name + ": " + this.message;
         };
+    }
+    //-----------------------------------
+    // Prints a console message notifying the compatibility mode
+    // @@Private
+    function deprecated(oldname, newname) {
+        console.log(_language.deprecated.replace("{0}", oldname).replace("{1}", newname));
     }
     //-----------------------------------
     // Seals the writable attribute of the object properties
@@ -364,7 +381,7 @@ Object.defineProperty(Array.prototype, "sortBy", {
     //-----------------------------------
     // Determines if the @obj parameter is a function
     function isFunction (obj) {
-        return (!!obj && Object.prototype.toString.call(obj) == '[object Function]');
+        return (!!obj && _toString.call(obj) == '[object Function]');
     }
     //-----------------------------------
     // This is a reference to JSON.stringify and provides a polyfill for old browsers
@@ -419,10 +436,10 @@ Object.defineProperty(Array.prototype, "sortBy", {
             async: true,
             charset: null,
             onload: null,
-            before: "jherax.js"
+            before: null
         }, $.isPlainObject(path) ? path : { src: path });
         if (!o.src) throw new CustomError("The url of file is required");
-        if (!o.async || !o.before) {
+        if (!o.async) {
             return $.ajax({
                 url: o.src,
                 async: o.async,
@@ -434,18 +451,20 @@ Object.defineProperty(Array.prototype, "sortBy", {
                 throw new CustomError(result);
             });
         }
-        var s, i,
-            js = document.createElement('script'),
-            before = new RegExp(fnEscapeRegExp(o.before));
-        js.type = 'text/javascript';
-        js.src = o.src;
-        if (o.async) js.async = true;
-        if (o.charset) js.charset = o.charset;
-        if (isFunction(o.onload)) js.onload = o.onload;
-        s = document.getElementsByTagName('script');
-        for (i = 0; i < s.length; i++) {
-            if (before.test(s[i].src)) {
-                s[i].parentNode.insertBefore(js, s[i]);
+        var tags, i,
+            file = document.createElement('script'),
+            before = fnEscapeRegExp(o.before);
+        file.type = 'text/javascript';
+        file.src = o.src;
+        if (o.async) file.async = true;
+        if (o.charset) file.charset = o.charset;
+        if (isFunction(o.onload)) file.onload = o.onload;
+        tags = document.getElementsByTagName('script');
+        if (!before) return !!$(tags).last().before(file);
+        before = new RegExp(before);
+        for (i = 0; i < tags.length; i++) {
+            if (before.test(tags[i].src)) {
+                tags[i].parentNode.insertBefore(file, tags[i]);
                 break;
             }
         }
@@ -455,20 +474,21 @@ Object.defineProperty(Array.prototype, "sortBy", {
     function fnAddCSS(path, before) {
         if (!path) throw new CustomError("The url of file is required");
         before = fnEscapeRegExp(before);
-        if (before) before = new RegExp(before);
-        var i, css, lnk = document.createElement('link');
-        lnk.rel = 'stylesheet';
-        lnk.type = 'text/css';
-        lnk.href = path;
+        var tags, i,
+            file = document.createElement('link');
+        file.rel = 'stylesheet';
+        file.type = 'text/css';
+        file.href = path;
         if (!before) {
-            css = document.getElementsByTagName('head');
-            css && css[0].appendChild(lnk);
+            tags = document.getElementsByTagName('head');
+            tags && tags[0].appendChild(file);
             return;
         }
-        css = document.getElementsByTagName('link');
-        for (i = 0; i < css.length; i++) {
-            if (before.test(css[i].href)) {
-                css[i].parentNode.insertBefore(lnk, css[i]);
+        before = new RegExp(before);
+        tags = document.getElementsByTagName('link');
+        for (i = 0; i < tags.length; i++) {
+            if (before.test(tags[i].href)) {
+                tags[i].parentNode.insertBefore(file, tags[i]);
                 break;
             }
         }
@@ -487,8 +507,8 @@ Object.defineProperty(Array.prototype, "sortBy", {
         return m && m[2] || "";
     }
     //-----------------------------------
-    // Gets the querystring values from address bar and it is returned as a JSON object
-    function fnGetQueryToJSON(q) {
+    // Gets the querystring values from address bar and it is returned as an Object literal
+    function fnGetQueryToObject(q) {
         var m, params = {};
         q = !q ? "" : q.toString();
         $.each(window.location.search.split(/[\?&]/g),
@@ -503,8 +523,8 @@ Object.defineProperty(Array.prototype, "sortBy", {
         return params;
     }
     //-----------------------------------
-    // Converts an inconsistent JSON string representation to the correct JSON object
-    var fnGetDataToJSON = (function() {
+    // Converts an inconsistent JSON string to the correct Object literal
+    var fnGetDataToObject = (function() {
         var parser = function (value) {
             if (+value) return +value;
             if ((/true/i).test(value)) return true;
@@ -545,18 +565,44 @@ Object.defineProperty(Array.prototype, "sortBy", {
     // Extends the properties of @from object to the @to object.
     // If @to is not provided, then a deep copy of @from is returned.
     function fnExtend (from, to) {
-        if (from == null || typeof from != "object") return from;
-        if (from.constructor != Object && from.constructor != Array) return from;
-        if (from.constructor == Date || from.constructor == RegExp || from.constructor == Function ||
-            from.constructor == String || from.constructor == Number || from.constructor == Boolean) {
-            return new from.constructor(from);
-        }
-        to = to || new from.constructor();
-        for (var name in from) {
-            to[name] = typeof to[name] == "undefined" ? arguments.callee(from[name], null) : to[name];
-        }
-        return to;
+        var _objects = [];
+        var _fnExtend = function (_from, _to) {
+            var prop;
+            // checks if @from refers to an object already defined
+            if (_toString.call(_from) == "[object Object]") {
+                if (_objects.filter(function(item) {
+                    return item === _from;
+                }).length) return _from;
+                // keeps the reference to objects to check if it was created
+                _objects.push(_from);
+            }
+            // determines whether @from is a primitive object or a function
+            if (_from == null || typeof _from != "object") return _from;
+            // determines whether @from is an instance of any of these prototypes
+            if (_from.constructor == Date || _from.constructor == RegExp || _from.constructor == Function ||
+                _from.constructor == String || _from.constructor == Number || _from.constructor == Boolean) {
+                return new _from.constructor(_from);
+            }
+            if (_from.constructor != Object && _from.constructor != Array) return _from;
+            // iterates recursively the object properties
+            _to = _to || new _from.constructor();
+            for (prop in _from) {
+                _to[prop] = typeof _to[prop] == "undefined" ? arguments.callee(_from[prop], null) : _to[prop];
+            }
+            return _to;
+        };
+        // Lazy Function Definition
+        fnExtend = function (_from, _to) {
+            var cloned = _fnExtend(_from, _to);
+            _objects = [];
+            return cloned;
+        };
+        return fnExtend(from, to);
     }
+    //invokes the function to create the closure 
+    //and allow "Lazy Function" takes place
+    fnExtend();
+    
     //-----------------------------------
     // Gets the string representation of the specified date according to regional setting.
     // The supported formats for ISO 8601 are: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
@@ -869,6 +915,7 @@ Object.defineProperty(Array.prototype, "sortBy", {
         var d = $.extend({
             hide: false,
             delay: 2600,
+            async: true,
             of: null
         }, o);
         $("#floatingBarsG,#backBarsG").remove();
@@ -887,7 +934,9 @@ Object.defineProperty(Array.prototype, "sortBy", {
             'height': target.outerHeight(),
             'width': target.outerWidth()
         });
-        overlay.add(loading).appendTo(target).hide().fadeIn(d.delay);
+        overlay.add(loading).appendTo(target);
+        if (bool(d.async)) overlay.hide().fadeIn(d.delay);
+        else overlay.show();
         loading.fnCenter({ of: d.of });
         return true;
     }
@@ -1577,8 +1626,8 @@ Object.defineProperty(Array.prototype, "sortBy", {
     jherax.fnAddCSS = fnAddCSS;
     jherax.fnEscapeRegExp = fnEscapeRegExp;
     jherax.fnGetQueryToString = fnGetQueryToString;
-    jherax.fnGetQueryToJSON = fnGetQueryToJSON;
-    jherax.fnGetDataToJSON = fnGetDataToJSON; //undocumented
+    jherax.fnGetQueryToObject = fnGetQueryToObject;
+    jherax.fnGetDataToObject = fnGetDataToObject; //undocumented
     jherax.fnFreezeObject = fnFreezeObject;
     jherax.fnExtend = fnExtend; //undocumented
     jherax.fnGetDate = fnGetDate;
@@ -1596,6 +1645,20 @@ Object.defineProperty(Array.prototype, "sortBy", {
     jherax.fnLoading = fnLoading;
     jherax.fnScrollbarWidth = fnScrollbarWidth;
     jherax.fnUpdateCache = fnUpdateCache; //undocumented
+
+    //Provide compatibility with older versions
+    jherax.fnGetQueryToJSON = function() {
+        deprecated("fnGetQueryToJSON", "fnGetQueryToObject");
+        return fnGetQueryToObject.apply(this, arguments);
+    };
+    jherax.fnGetDataToJSON = function() {
+        deprecated("fnGetDataToJSON", "fnGetDataToObject");
+        return fnGetDataToObject.apply(this, arguments);
+    };
+    jherax.fnCloneObject = function() {
+        deprecated("fnCloneObject", "fnFreezeObject");
+        return fnGetDataToObject.apply(this, arguments);
+    };
 
 })(jsu, jQuery);
 /*
