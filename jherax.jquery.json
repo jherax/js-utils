@@ -7,6 +7,8 @@
 		"jquery": ">=1.8.0"
 	},
 	"keywords": [
+		"jquery-plugin",
+		"jquery",
 		"JSON",
 		"text",
 		"validation",
@@ -19,8 +21,7 @@
 		"positioning",
 		"injection",
 		"sorting",
-		"cloning",
-		"jquery"
+		"cloning"
 	],
 	"author": {
 		"name": "David Rivera",
