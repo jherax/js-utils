@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 2013/06/26
- *  Version: 3.6.5
+ *  Version: 3.6.6
  -------------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -25,7 +25,7 @@
  */
 ;
 // Avoid console errors in browsers that lack a console.
-(function() {
+(function () {
     var noop = function () {},
         method,
         methods = [
@@ -48,7 +48,7 @@
 }());
 
 // Creates the global namespace
-if (window["jsu"] && jsu.author != 'jherax')
+if (window["jsu"] && jsu.author !== 'jherax')
     throw new Error("A variable with namespace [jsu] is already in use");
 
 // Creates the initial properties
@@ -61,7 +61,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
     "version": {
         enumerable: false,
         configurable: false,
-        value: "3.6.5"
+        value: "3.6.6"
     },
     "dependencies": {
         enumerable: false,
@@ -434,12 +434,13 @@ if (!Array.prototype.some) {
         var o = $.extend({
             src: null,
             async: true,
+            silent: false,
             charset: null,
             onload: null,
             before: null
         }, $.isPlainObject(path) ? path : { src: path });
         if (!o.src) throw new CustomError("The url of file is required");
-        if (!o.async) {
+        if (!o.async || o.silent) {
             return $.ajax({
                 url: o.src,
                 async: o.async,
