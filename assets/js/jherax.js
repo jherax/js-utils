@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 2013/06/26
- *  Version: 3.6.6
+ *  Version: 3.6.7
  -------------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -61,7 +61,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
     "version": {
         enumerable: false,
         configurable: false,
-        value: "3.6.6"
+        value: "3.6.7"
     },
     "dependencies": {
         enumerable: false,
@@ -143,7 +143,7 @@ if (!Array.prototype.some) {
 }
 (function() {
     var toString = Object.prototype.toString,
-        //default parser
+        //the default parser function
         parser = function (x) { return x; },
         //gets the item to be sorted
         getItem = function (x) {
@@ -154,7 +154,7 @@ if (!Array.prototype.some) {
         configurable: false,
         enumerable: false,
         // @o.prop: property name (if it is an Array of objects)
-        // @o.desc: determines descending sort
+        // @o.desc: determines whether the sort is descending
         // @o.parser: function to parse the items to expected type
         value: function (o) {
             if (toString.call(o) != "[object Object]")
@@ -299,19 +299,47 @@ if (!Array.prototype.some) {
     var _toString = Object.prototype.toString,
         _language = jherax.regional.current;
 
+    //-----------------------------------
     // Create a custom exception notifier
+    // Constructor Pattern
     // @@Private
-    function CustomError (message) {
-        for (var i = 1; i < arguments.length; i++)
-            message = message.replace(new RegExp("\\{" + (i - 1) + "}"), arguments[i]);
-        this.message = message || "An exception occurred";
-        this.name = "JSU Error";
-        i = null;
-        // @Override
-        this.toString = function() {
-            return this.name + ": " + this.message;
-        };
-    }
+    var CustomError = (function() {
+        'use strict';
+        function CustomError(message) {
+            //enforces new
+            if (!(this instanceof CustomError)) {
+                return new CustomError(message);
+            }
+            var i, error = new Error();
+            message = message || "An exception occurred";
+            for (i = 1; i < arguments.length; i++)
+                message = message.replace(new RegExp("\\{" + (i - 1) + "}"), arguments[i]);
+            this.message = message;
+            //saves the current stack
+            error.message = message;
+            error.name = this.name;
+            this.stack = error.stack;
+        }
+        // Prevents reference to Error.prototype
+        CustomError.prototype = Object.create(Error.prototype);
+        Object.defineProperties(CustomError.prototype, {
+            "name": {
+                enumerable: false,
+                value: "JSU Error"
+            },
+            "constructor": {
+                enumerable: false,
+                value: CustomError
+            },
+            "toString": {
+                enumerable: false,
+                value: function() {
+                    return this.name + ": " + this.message;
+                }
+            }
+        });
+        return CustomError;
+    }());
     //-----------------------------------
     // Prints a console message notifying the compatibility mode
     // @@Private
@@ -919,7 +947,7 @@ if (!Array.prototype.some) {
             async: true,
             of: null
         }, o);
-        $("#floatingBarsG,#backBarsG").remove();
+        $("#floatingBarsG,#backBarsG").stop().remove();
         if (d.hide === true) return true;
         var target = $(d.of || "body"),
             blockG = [],
