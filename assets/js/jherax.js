@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 2013/06/26
- *  Version: 3.6.7
+ *  Version: 3.6.8
  -------------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -37,7 +37,7 @@
     var length = methods.length,
         console = (window.console = window.console || {});
 
-    while (length--) {
+    while (length -= 1) {
         method = methods[length];
 
         // Only stub undefined methods.
@@ -61,7 +61,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
     "version": {
         enumerable: false,
         configurable: false,
-        value: "3.6.7"
+        value: "3.6.8"
     },
     "dependencies": {
         enumerable: false,
@@ -94,7 +94,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
             // we want to be able to include or exclude the root namespace so we strip it if it's in the namespace
             if (nsparts[0] === "window") nsparts = nsparts.slice(1);
             // loop through the parts and create a nested namespace if necessary
-            for (i = 0; i < nsparts.length; i++) {
+            for (i = 0; i < nsparts.length; i+=1) {
                 subns = nsparts[i];
                 // check if the namespace is a valid variable name
                 if (!(/^[A-Za-z_]\w+/).test(subns)) throw new Error("Incorrect namespace");
@@ -105,7 +105,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
                 }
                 cparent = cparent[subns];
             }
-            i = null;
+            i = subns = nsparts = null;
             // the parent is now constructed with empty namespaces and can be used.
             // we return the outermost namespace
             return cparent;
@@ -134,7 +134,7 @@ if (!Array.prototype.some) {
             throw new TypeError();
 
         thisArg = arguments.length >= 2 ? arguments[1] : void 0;
-        for (i = 0; i < len; i++) {
+        for (i = 0; i < len; i+=1) {
             if (i in t && fn.call(thisArg, t[i], i, t))
                 return true;
         }
@@ -183,7 +183,7 @@ if (!Array.prototype.some) {
     // Creates the messages for specific culture
     regional.spanish = {
         culture: "es",
-        deprecated: "\"{0}\" está en desuso, use \"{1}\" en su lugar",
+        deprecated: " .{0} está en desuso, use .{1} en su lugar ",
         wordPattern: /\s(?:Y|O|Del?|Por|Al?|L[ao]s?|[SC]on|En|Se|Que|Una?)\b/g,
         decimalMark: ",",
         thousandsMark: ".",
@@ -201,7 +201,7 @@ if (!Array.prototype.some) {
     };
     regional.english = {
         culture: "en",
-        deprecated: "\"{0}\" is deprecated, use \"{1}\" instead",
+        deprecated: " .{0} is deprecated, use .{1} instead ",
         wordPattern: null,
         decimalMark: ".",
         thousandsMark: ",",
@@ -223,44 +223,42 @@ if (!Array.prototype.some) {
     
     //-----------------------------------
     // Creates culture for jquery.ui datepicker
-    (function() {
-        if ($.datepicker) {
-            $.datepicker.regional['en'] = $.extend({}, $.datepicker.regional[""]);
-            $.datepicker.regional['es'] = {
-                closeText: 'Cerrar',
-                prevText: '&lt; Anterior',
-                nextText: 'Siguiente &gt;',
-                currentText: 'Hoy',
-                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
-                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mi&eacute;', 'Juv', 'Vie', 'S&aacute;b'],
-                dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S&aacute;'],
-                weekHeader: 'Sm',
-                dateFormat: 'dd/mm/yy',
-                firstDay: 1,
-                isRTL: false,
-                showMonthAfterYear: false,
-                yearSuffix: ""
-            };
-        }
-        if ($.timepicker) {
-            $.timepicker.regional['en'] = $.extend({}, $.timepicker.regional[""]);
-            $.timepicker.regional['es'] = {
-                timeOnlyTitle: 'Seleccione Hora',
-                timeText: 'Tiempo',
-                hourText: 'Hora',
-                minuteText: 'Minuto',
-                secondText: 'Segundo',
-                currentText: 'Actual',
-                closeText: 'Aceptar',
-                timeFormat: 'HH:mm',
-                hourGrid: 4,
-                minuteGrid: 10,
-                ampm: false
-            };
-        }
-    }());
+    if ($.datepicker) {
+        $.datepicker.regional['en'] = $.extend({}, $.datepicker.regional[""]);
+        $.datepicker.regional['es'] = {
+            closeText: 'Cerrar',
+            prevText: '&lt; Anterior',
+            nextText: 'Siguiente &gt;',
+            currentText: 'Hoy',
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
+            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mi&eacute;', 'Juv', 'Vie', 'S&aacute;b'],
+            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S&aacute;'],
+            weekHeader: 'Sm',
+            dateFormat: 'dd/mm/yy',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: ""
+        };
+    }
+    if ($.timepicker) {
+        $.timepicker.regional['en'] = $.extend({}, $.timepicker.regional[""]);
+        $.timepicker.regional['es'] = {
+            timeOnlyTitle: 'Seleccione Hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Actual',
+            closeText: 'Aceptar',
+            timeFormat: 'HH:mm',
+            hourGrid: 4,
+            minuteGrid: 10,
+            ampm: false
+        };
+    }
     //-----------------------------------
     // Sets the default language configuration
     regional.set = function (obj, fnSetCustom) {
@@ -310,32 +308,34 @@ if (!Array.prototype.some) {
             if (!(this instanceof CustomError)) {
                 return new CustomError(message);
             }
-            var i, error = new Error();
+            var i, error;
             message = message || "An exception occurred";
-            for (i = 1; i < arguments.length; i++)
+            for (i = 1; i < arguments.length; i+=1)
                 message = message.replace(new RegExp("\\{" + (i - 1) + "}"), arguments[i]);
-            this.message = message;
             //saves the current stack
-            error.message = message;
+            error = new Error(message);
             error.name = this.name;
-            this.stack = error.stack;
+            Object.defineProperties(this, {
+                "stack": {
+                    enumerable: false,
+                    get: function() { return error.stack; }
+                },
+                "message": {
+                    enumerable: false,
+                    value: message
+                }
+            });
         }
         // Prevents reference to Error.prototype
         CustomError.prototype = Object.create(Error.prototype);
         Object.defineProperties(CustomError.prototype, {
-            "name": {
-                enumerable: false,
-                value: "JSU Error"
-            },
             "constructor": {
                 enumerable: false,
                 value: CustomError
             },
-            "toString": {
+            "name": {
                 enumerable: false,
-                value: function() {
-                    return this.name + ": " + this.message;
-                }
+                value: "JSU Error"
             }
         });
         return CustomError;
@@ -344,7 +344,9 @@ if (!Array.prototype.some) {
     // Prints a console message notifying the compatibility mode
     // @@Private
     function deprecated(oldname, newname) {
-        console.log(_language.deprecated.replace("{0}", oldname).replace("{1}", newname));
+        console.log("%c" +
+            _language.deprecated.replace("{0}", oldname).replace("{1}", newname),
+            'background: tomato; color: white; display: block;');
     }
     //-----------------------------------
     // Seals the writable attribute of the object properties
@@ -443,10 +445,10 @@ if (!Array.prototype.some) {
     // Determines if an event handler was created previously by specifying a namespace
     function handlerExist (dom, eventName, namespace) {
         var h, handler = ($._data(dom, 'events') || {})[eventName] || [];
-        for (h = 0; h < handler.length; h++) {
+        for (h = 0; h < handler.length; h+=1) {
             if (handler[h].namespace === namespace || (handler[h].data || {}).handler === namespace) return true;
         }
-        h = null;
+        h = handler = null;
         return false;
     }
     //-----------------------------------
@@ -491,7 +493,7 @@ if (!Array.prototype.some) {
         tags = document.getElementsByTagName('script');
         if (!before) return !!$(tags).last().before(file);
         before = new RegExp(before);
-        for (i = 0; i < tags.length; i++) {
+        for (i = 0; i < tags.length; i+=1) {
             if (before.test(tags[i].src)) {
                 tags[i].parentNode.insertBefore(file, tags[i]);
                 break;
@@ -515,7 +517,7 @@ if (!Array.prototype.some) {
         }
         before = new RegExp(before);
         tags = document.getElementsByTagName('link');
-        for (i = 0; i < tags.length; i++) {
+        for (i = 0; i < tags.length; i+=1) {
             if (before.test(tags[i].href)) {
                 tags[i].parentNode.insertBefore(file, tags[i]);
                 break;
@@ -552,22 +554,24 @@ if (!Array.prototype.some) {
         return params;
     }
     //-----------------------------------
-    // Converts an inconsistent JSON string to the correct Object literal
+    // Converts an inconsistent JSON string to the correct Object Literal notation
     var fnGetDataToObject = (function() {
         var parser = function (value) {
-            if (+value) return +value;
             if ((/true/i).test(value)) return true;
             if ((/false/i).test(value)) return false;
             if ((/null/i).test(value)) return null;
             if ((/undefined/i).test(value)) return undefined;
+            if ((/^[0-9]+$/).test(value)) return +value;
             return value;
         };
+        //Object sample:
+        //"{id:0,nombre:'',casado:true,hijos:false,salario:undefined,cesantias:null}"
         return function (data) {
             var m, params = {};
             data = !data ? "" : data.toString();
             $.each(data.split(/[\{\},]/g),
                 function (i, item) {
-                    m = item.match(/['"]?(\w+)['"]?:['"]?([^'"]+)/);
+                    m = item.match(/['"]?(\w+)['"]?\s*:\s*['"]?([^'"]+|(?:.*(?='|")))/);
                     if (!m) return true;
                     params[$.trim(m[1])] = parser(m[2]);
                 });
@@ -616,11 +620,11 @@ if (!Array.prototype.some) {
             // iterates recursively the object properties
             _to = _to || new _from.constructor();
             for (prop in _from) {
-                _to[prop] = typeof _to[prop] == "undefined" ? arguments.callee(_from[prop], null) : _to[prop];
+                _to[prop] = typeof _to[prop] == "undefined" ? _fnExtend(_from[prop], null) : _to[prop];
             }
             return _to;
         };
-        // Lazy Function Definition
+        // Lazy Function Definition Pattern
         fnExtend = function (_from, _to) {
             var cloned = _fnExtend(_from, _to);
             _objects = [];
@@ -630,14 +634,15 @@ if (!Array.prototype.some) {
     }
     //invokes the function to create the closure 
     //and allow "Lazy Function" takes place
+    //to reasign in memory the new fnExtend
     fnExtend();
     
     //-----------------------------------
     // Gets the string representation of the specified date according to regional setting.
     // The supported formats for ISO 8601 are: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
     var fnGetDate = (function() {
-        var fillZero = function(n) { return ("0" + n.toString()).slice(-2); };
-        var fnDate = function(o) {
+        function fillZero(n) { return ("0" + n.toString()).slice(-2); }
+        function fnDate(o) {
             return (o.ISO8601 ? "yyyy-MM-dd" : _language.dateFormat).replace(/[dMy]+/g, function(m) {
                 switch (m.toString()) {
                     case "dd": return fillZero(o.date.getDate());
@@ -645,8 +650,8 @@ if (!Array.prototype.some) {
                     case "yyyy": return o.date.getFullYear();
                 }
             });
-        };
-        var fnTime = function(o) {
+        }
+        function fnTime(o) {
             return (o.ISO8601 ? "HH:mm" : _language.timeFormat).replace(/[Hhms]+/g, function(m) {
                 var h = o.date.getHours();
                 switch (m.toString()) {
@@ -656,10 +661,10 @@ if (!Array.prototype.some) {
                     case "ss": return fillZero(o.date.getSeconds());
                 }
             });
-        };
-        var fnDateTime = function(o) {
+        }
+        function fnDateTime(o) {
             return fnDate(o) + (o.ISO8601 ? "T" : " ") + fnTime(o);
-        };
+        }
         // Return Module
         return function(o) {
             if (typeof o === "string") o = { date: o };
@@ -888,7 +893,7 @@ if (!Array.prototype.some) {
             d = date.split(/\D/);
             date = "y/M/d";
             part = _language.dateFormat.split(/[^yMd]/);
-            for (x = 0; x < part.length; x++) {
+            for (x = 0; x < part.length; x+=1) {
                 if ((/y+/).test(part[x])) date = date.replace("y", d[x]);
                 if ((/M+/).test(part[x])) date = date.replace("M", d[x]);
                 if ((/d+/).test(part[x])) date = date.replace("d", d[x]);
@@ -952,7 +957,7 @@ if (!Array.prototype.some) {
         var target = $(d.of || "body"),
             blockG = [],
             i, loading, overlay;
-        for (i = 1; i < 9; i++) blockG.push('<div class="blockG"></div>');
+        for (i = 1; i < 9; i+=1) blockG.push('<div class="blockG"></div>');
         loading = $('<div id="floatingBarsG">').append(blockG.join(""));
         overlay = $('<div id="backBarsG" class="bg-fixed bg-opacity">');
         if (d.of) overlay.css({
@@ -1033,6 +1038,7 @@ if (!Array.prototype.some) {
             }
             return (pos === "center" ? "center center" : pos);
         };
+        //monkey-patching
         $.fn.position = function(o) {
             if (!o || !o.of) return _position.apply(this, arguments);
             o = $.extend({
