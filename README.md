@@ -6,32 +6,35 @@ This is a library of JavaScript / jQuery utilities, which includes tools for dat
 Documentation
 -------------
 Go to the documentation site to see the API reference and examples:<br>
-* Spanish: **http://jherax.github.io/?lang=spanish#jsu-library**
-* English: **http://jherax.github.io/#jsu-library**
+  - [http://jherax.github.io/?lang=english](http://jherax.github.io/?lang=english#jsu-library)
+  - [http://jherax.github.io/?lang=spanish](http://jherax.github.io/?lang=spanish#jsu-library)
 
 Getting Started
 ---------------
-The library has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before [jsu-library][jherax.js].<br>
+The library has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before jsu-library.<br>
 It also requires some [CSS][jherax.css] rules for functions showing **tooltips**, **loadings**, among others.
 
-If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using *jQuery.ui,* otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
+If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using *jQuery.ui*, otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
 
-[fnShowDialog](#fnshowdialog-options) is a facade for [jQuery.ui.dialog](https://jqueryui.com/dialog/) and has a dependency on [jQuery.ui 1.9+][jQuery.ui].<br>
-But if you don't want to use *jQuery.ui,* as the default implementation, you can override the method by specifying&nbsp;the `source` property with the new implementation, e.g.<br>
-`jsu.fnShowDialog.source = function (options) { ... }`
+[fnShowDialog](http://jherax.github.io/#fnshowdialog-options) is a facade for [jQuery.ui.dialog](https://jqueryui.com/dialog/) and has a dependency on [jQuery.ui 1.9+][jQuery.ui].<br>
+But if you don't want to use *jQuery.ui* as the default implementation, you can override the method by invoking the `set()` method with the new implementation, e.g. <nobr>`jsu.fnShowDialog.set("source", function (options) { ... });`</nobr>
 
 The library has the following structure:
 - `jsu:` main namespace
   - `author:` me :^)
-  - `version:` release number
+  - `version:` the library version
   - `dependencies:` array with name of dependencies
-  - `createNS:` utility to create safe namespaces
+  - `siteOrigin`: get the host part of the current url
   - `wrapper:` selector where dynamic HTML is placed
+  - `createNS:` method to create safe namespaces
   - `regional:` namespace for language settings
   - `settings:` namespace for global settings
 
 A Glance
 --------
+* [API Reference](http://jherax.github.io/#api-reference)
+* [List of methods](http://jherax.github.io/#list-of-methods)
+
 ```javascript
   (function() {
     // None of below settings are mandatory.
@@ -48,7 +51,7 @@ A Glance
       my: "left+2 top+5"
     };
     
-    // Add your code for plugins init, event handlers, etc...
+    // Add your code...
   })();
 ```
 
@@ -94,12 +97,11 @@ For more information on semantic versioning, please visit http://semver.org/
 
 Author
 ------
-Developed by [David Rivera](http://careers.stackoverflow.com/jheraxcorp) ([stackoverflow](http://stackoverflow.com/users/2247494/jherax-corp) / [GitHub](https://github.com/jherax)) *jherax*, from Bogota-Colombia.
-
+Developed and maintained by David Rivera (jherax [stackoverflow](http://stackoverflow.com/users/2247494/jherax) | [careers](http://careers.stackoverflow.com/jherax) | [wordpress](https://jherax.wordpress.com/))
 
 License
 -------
-Licensed under the MIT License
+JSU Library is released under the MIT license. See [LICENSE](https://raw.githubusercontent.com/jherax/js-utils/master/LICENSE) file for details.
 
 <!-- links -->
 [jsu-library]: http://jherax.github.io/

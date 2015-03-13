@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 2013/06/26
- *  Version: 3.6.8
+ *  Version: 3.7.0
  -------------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -21,12 +21,12 @@
  -------------------------------------
  *  Released under the MIT license
  *  https://raw.githubusercontent.com/jherax/js-utils/master/LICENSE
- *  Copyright (C) 2013-2014 jherax
+ *  Copyright (C) 2013-2015 jherax
  */
 ;
 // Avoid console errors in browsers that lack a console.
-(function () {
-    var noop = function () {},
+(function() {
+    var noop = function() {},
         method,
         methods = [
         'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
@@ -61,7 +61,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
     "version": {
         enumerable: false,
         configurable: false,
-        value: "3.6.8"
+        value: "3.7.0"
     },
     "dependencies": {
         enumerable: false,
@@ -90,11 +90,11 @@ var jsu = window.jsu || Object.defineProperties({}, {
         value: function (namespace) {
             var nsparts = namespace.toString().split("."),
                 cparent = window,
-                subns, i;
+                i, subns, nspartsLength;
             // we want to be able to include or exclude the root namespace so we strip it if it's in the namespace
             if (nsparts[0] === "window") nsparts = nsparts.slice(1);
             // loop through the parts and create a nested namespace if necessary
-            for (i = 0; i < nsparts.length; i+=1) {
+            for (i = 0, nspartsLength = nsparts.length; i < nspartsLength; i+=1) {
                 subns = nsparts[i];
                 // check if the namespace is a valid variable name
                 if (!(/^[A-Za-z_]\w+/).test(subns)) throw new Error("Incorrect namespace");
@@ -105,7 +105,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
                 }
                 cparent = cparent[subns];
             }
-            i = subns = nsparts = null;
+            i = subns = nsparts = nspartsLength = null;
             // the parent is now constructed with empty namespaces and can be used.
             // we return the outermost namespace
             return cparent;
@@ -113,66 +113,75 @@ var jsu = window.jsu || Object.defineProperties({}, {
     }
 });
 // Polyfill for Object.create() method on IE
-Object.create || (Object.create = function(o) {
-    function F(){}
-    F.prototype = o;
-    return new F();
-});
+if (typeof Object.create !== 'function') {
+    Object.create = (function() {
+        function F() {}
+        return function (proto) {
+            F.prototype = proto;
+            var newObj = new F();
+            F.prototype = null;
+            return newObj;
+        };
+    }());
+}
 // Polyfill for Array.prototype.some
-if (!Array.prototype.some) {
+if (typeof Array.prototype.some !== 'function') {
     Array.prototype.some = function (fn /*, thisArg */) {
         'use strict';
         if (this === void 0 || this === null)
             throw new TypeError();
 
-        var i, thisArg,
-            t = Object(this),
-            //let @len be ToUint32(value)
-            len = t.length >>> 0;
-
-        if (Object.prototype.toString.call(fn) != "[object Function]")
+        if (typeof fn !== 'function')
             throw new TypeError();
 
+        var thisArg, index,
+            array = Object(this),
+            //let @len be ToUint32(value)
+            len = array.length >>> 0;
+
         thisArg = arguments.length >= 2 ? arguments[1] : void 0;
-        for (i = 0; i < len; i+=1) {
-            if (i in t && fn.call(thisArg, t[i], i, t))
+        for (index = 0; index < len; index += 1) {
+            if (index in array && fn.call(thisArg, array[index], index, array))
                 return true;
         }
         return false;
     };
 }
-(function() {
-    var toString = Object.prototype.toString,
-        //the default parser function
-        parser = function (x) { return x; },
-        //gets the item to be sorted
-        getItem = function (x) {
-            return this.parser((toString.call(x) == "[object Object]" && x[this.prop]) || x);
-        };
-    // Creates a sort method in the Array prototype
-    Object.defineProperty(Array.prototype, "sortBy", {
-        configurable: false,
-        enumerable: false,
-        // @o.prop: property name (if it is an Array of objects)
-        // @o.desc: determines whether the sort is descending
-        // @o.parser: function to parse the items to expected type
-        value: function (o) {
-            if (toString.call(o) != "[object Object]")
-                o = {};
-            if (toString.call(o.parser) != "[object Function]")
-                o.parser = parser;
-            o.desc = !!o.desc;
-            //if @o.desc is true: set -1, else 1
-            o.desc = [1, -1][+!!o.desc];
-            return this.sort(function (a, b) {
-                a = getItem.call(o, a);
-                b = getItem.call(o, b);
-                return (a < b ? -1 : (a > b ? 1 : 0)) * o.desc;
-                //return a = getItem(a), b = getItem(b), o.desc * ((a > b) - (b > a));
-            });
+// Polyfill for Array.prototype.filter
+if (typeof Array.prototype.filter !== 'function') {
+    Array.prototype.filter = function (fn /*, thisArg*/) {
+        'use strict';
+        if (this === void 0 || this === null) {
+            throw new TypeError();
         }
-    });
-})();
+
+        if (typeof fn !== 'function') {
+            throw new TypeError();
+        }
+
+        var filtered, thisArg,
+            index, element,
+            array = Object(this),
+            len = array.length >>> 0;
+
+        filtered = [];
+        thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+        for (index = 0; index < len; index += 1) {
+            if (index in array) {
+                element = array[index];
+                // NOTE: Technically this should Object.defineProperty at
+                //       the next index, as push can be affected by
+                //       properties on Object.prototype and Array.prototype.
+                //       But that method's new, and collisions should be
+                //       rare, so use the more-compatible alternative.
+                if (fn.call(thisArg, element, index, array)) {
+                    filtered.push(element);
+                }
+            }
+        }
+        return filtered;
+    };
+}
 
 //-----------------------------------
 // Immediately-invoked Function Expressions (IIFE)
@@ -192,7 +201,7 @@ if (!Array.prototype.some) {
         dateFormatError: "El formato de fecha es incorrecto",
         dateIsGreater: "La fecha no puede ser mayor a hoy",
         dateIsLesser: "La fecha no puede ser menor a hoy",
-        validateForm: "El botón debe estar dentro de un formulario",
+        validateForm: "El botón debe estar dentro de un &lt;form&gt;",
         validateRequired: "Este campo es requerido",
         validateFormat: "El formato es incorrecto",
         dialogTitle: "Información",
@@ -210,7 +219,7 @@ if (!Array.prototype.some) {
         dateFormatError: "The date format is incorrect",
         dateIsGreater: "The date can't be greater than today",
         dateIsLesser: "The date can't be lesser than today",
-        validateForm: "The button must be inside a form",
+        validateForm: "The button must be inside a &lt;form&gt;",
         validateRequired: "This field is required",
         validateFormat: "The format is incorrect",
         dialogTitle: "Information",
@@ -261,14 +270,19 @@ if (!Array.prototype.some) {
     }
     //-----------------------------------
     // Sets the default language configuration
-    regional.set = function (obj, fnSetCustom) {
-        $.extend(regional.current, obj);
-        // This code segment must be called before the plugin initialization
-        // You can find more languages: [http://github.com/jquery/jquery-ui/tree/master/ui/i18n]
-        if ($.datepicker) { $.datepicker.setDefaults($.datepicker.regional[regional.current.culture]); }
-        if ($.timepicker) { $.timepicker.setDefaults($.timepicker.regional[regional.current.culture]); }
-        if ($.isFunction(fnSetCustom)) fnSetCustom();
-    };
+    Object.defineProperty(regional, "set", {
+        enumerable: true,
+        configurable: false,
+        value: function (obj, fnSetCustom) {
+            $.extend(regional.current, obj);
+            // This code segment must be called before the plugin initialization
+            // You can find more languages: [http://github.com/jquery/jquery-ui/tree/master/ui/i18n]
+            if ($.datepicker) { $.datepicker.setDefaults($.datepicker.regional[regional.current.culture]); }
+            if ($.timepicker) { $.timepicker.setDefaults($.timepicker.regional[regional.current.culture]); }
+            if ($.isFunction(fnSetCustom)) fnSetCustom();
+        }
+    });
+    
 })(jsu.createNS("jsu.regional"), jQuery);
 // Create the namespace for languages
 
@@ -303,14 +317,14 @@ if (!Array.prototype.some) {
     // @@Private
     var CustomError = (function() {
         'use strict';
-        function CustomError(message) {
+        function CustomError (message) {
             //enforces new
             if (!(this instanceof CustomError)) {
                 return new CustomError(message);
             }
-            var i, error;
+            var i, argsLength, error;
             message = message || "An exception occurred";
-            for (i = 1; i < arguments.length; i+=1)
+            for (i = 1, argsLength = arguments.length; i < argsLength; i+=1)
                 message = message.replace(new RegExp("\\{" + (i - 1) + "}"), arguments[i]);
             //saves the current stack
             error = new Error(message);
@@ -343,17 +357,16 @@ if (!Array.prototype.some) {
     //-----------------------------------
     // Prints a console message notifying the compatibility mode
     // @@Private
-    function deprecated(oldname, newname) {
+    function deprecated (oldname, newname) {
         console.log("%c" +
             _language.deprecated.replace("{0}", oldname).replace("{1}", newname),
             'background: tomato; color: white; display: block;');
     }
     //-----------------------------------
-    // Seals the writable attribute of the object properties
+    // Seals the writable attribute in all object's properties
     // @@Private
     function sealWritable (obj) {
-        var p = null;
-        for (p in obj) {
+        for (var p in obj) {
             Object.defineProperty(obj, p, {
                 __proto__: null,
                 configurable: true,
@@ -361,7 +374,18 @@ if (!Array.prototype.some) {
                 writable: false
             });
         }
-        p = null;
+    }
+    //-----------------------------------
+    // Sets the @value of specific @property in the @obj,
+    // keeping the writable attribute to false
+    // @@Private
+    function setWritable (obj, property, value, enumerable) {
+        Object.defineProperty(obj, property, {
+            "configurable": true,
+            "enumerable": !!enumerable,
+            "writable": false,
+            "value": value
+        });
     }
     //-----------------------------------
     // Fix: failed to read the 'selectionStart' property from 'HTMLInputElement'
@@ -426,6 +450,60 @@ if (!Array.prototype.some) {
         return "{" + arr.join(",") + "}";
     };
     //-----------------------------------
+    // Sorts the elements of an array
+    var sortBy = (function () {
+        var //the default parser function
+            _parser = function (x) { return x; },
+            //gets the item to be sorted
+            _getItem = function (x) {
+                return this.parser((_toString.call(x) == "[object Object]" && x[this.prop]) || x);
+            };
+        // Creates a sort method in the Array prototype
+        Object.defineProperty(Array.prototype, "sortBy", {
+            configurable: false,
+            enumerable: false,
+            // @o.prop: property name (if it is an Array of objects)
+            // @o.desc: determines whether the sort is descending
+            // @o.parser: function to parse the items to expected type
+            value: function (o) {
+                if (_toString.call(o) != "[object Object]")
+                    o = {};
+                if (_toString.call(o.parser) != "[object Function]")
+                    o.parser = _parser;
+                o.desc = !!o.desc;
+                //if @o.desc is true: set -1, else 1
+                o.desc = [1, -1][+!!o.desc];
+                return this.sort(function (a, b) {
+                    a = _getItem.call(o, a);
+                    b = _getItem.call(o, b);
+                    return ((a > b) - (b > a)) * o.desc;
+                    //return a = getItem(a), b = getItem(b), o.desc * (a < b ? -1 : +(a > b));
+                });
+            }
+        });
+        // Creates a method for sorting the Array
+        // @array: the Array of elements
+        // @o.prop: property name (if it is an Array of objects)
+        // @o.desc: determines whether the sort is descending
+        // @o.parser: function to parse the items to expected type
+        return function (array, o) { 
+            if (_toString.call(array) != "[object Array]" || !array.length)
+                return [];
+            if (_toString.call(o) != "[object Object]")
+                o = {};
+            if (_toString.call(o.parser) != "[object Function]")
+                o.parser = _parser;
+            o.desc = !!o.desc;
+            //if @o.desc is true: set -1, else 1
+            o.desc = [1, -1][+!!o.desc];
+            return array.sort(function (a, b) {
+                a = _getItem.call(o, a);
+                b = _getItem.call(o, b);
+                return ((a > b) - (b > a)) * o.desc;
+            });
+        };
+    }());
+    //-----------------------------------
     // Determines whether the @dom parameter is a writable or checkable <input>
     // http://www.quackit.com/html_5/tags/html_input_tag.cfm
     var input = {
@@ -444,11 +522,13 @@ if (!Array.prototype.some) {
     //-----------------------------------
     // Determines if an event handler was created previously by specifying a namespace
     function handlerExist (dom, eventName, namespace) {
-        var h, handler = ($._data(dom, 'events') || {})[eventName] || [];
-        for (h = 0; h < handler.length; h+=1) {
+        var h,
+            handler = ($._data(dom, 'events') || {})[eventName] || [],
+            handlerLength = handler.length;
+        for (h = 0; h < handlerLength; h+=1) {
             if (handler[h].namespace === namespace || (handler[h].data || {}).handler === namespace) return true;
         }
-        h = handler = null;
+        h = handler = handlerLength = null;
         return false;
     }
     //-----------------------------------
@@ -460,7 +540,7 @@ if (!Array.prototype.some) {
     }
     //-----------------------------------
     // Dynamically adds an external script
-    function fnAddScript(path) {
+    function fnAddScript (path) {
         var o = $.extend({
             src: null,
             async: true,
@@ -482,7 +562,7 @@ if (!Array.prototype.some) {
                 throw new CustomError(result);
             });
         }
-        var tags, i,
+        var tags, tagsLength, i,
             file = document.createElement('script'),
             before = fnEscapeRegExp(o.before);
         file.type = 'text/javascript';
@@ -493,7 +573,7 @@ if (!Array.prototype.some) {
         tags = document.getElementsByTagName('script');
         if (!before) return !!$(tags).last().before(file);
         before = new RegExp(before);
-        for (i = 0; i < tags.length; i+=1) {
+        for (i = 0, tagsLength = tags.length; i < tagsLength; i+=1) {
             if (before.test(tags[i].src)) {
                 tags[i].parentNode.insertBefore(file, tags[i]);
                 break;
@@ -502,10 +582,10 @@ if (!Array.prototype.some) {
     }
     //-----------------------------------
     // Dynamically adds an external stylesheet
-    function fnAddCSS(path, before) {
+    function fnAddCSS (path, before) {
         if (!path) throw new CustomError("The url of file is required");
         before = fnEscapeRegExp(before);
-        var tags, i,
+        var tags, tagsLength, i,
             file = document.createElement('link');
         file.rel = 'stylesheet';
         file.type = 'text/css';
@@ -517,7 +597,7 @@ if (!Array.prototype.some) {
         }
         before = new RegExp(before);
         tags = document.getElementsByTagName('link');
-        for (i = 0; i < tags.length; i+=1) {
+        for (i = 0, tagsLength = tags.length; i < tagsLength; i+=1) {
             if (before.test(tags[i].href)) {
                 tags[i].parentNode.insertBefore(file, tags[i]);
                 break;
@@ -526,20 +606,20 @@ if (!Array.prototype.some) {
     }
     //-----------------------------------
     // Escapes the input text to a literal pattern in the constructor of a regular expression
-    function fnEscapeRegExp(txt) {
+    function fnEscapeRegExp (txt) {
         if (typeof txt !== "string") return null;
         return txt.replace(/([.*+?=!:${}()|\-\^\[\]\/\\])/g, "\\$1");
     }
     //-----------------------------------
     // Gets the value of a specific parameter in the querystring
-    function fnGetQueryToString(q) {
+    function fnGetQueryToString (q) {
         if (!q || q === "") return "";
         var m = window.location.search.match(new RegExp("(" + q.toString() + ")=([^&]+)"));
         return m && m[2] || "";
     }
     //-----------------------------------
     // Gets the querystring values from address bar and it is returned as an Object literal
-    function fnGetQueryToObject(q) {
+    function fnGetQueryToObject (q) {
         var m, params = {};
         q = !q ? "" : q.toString();
         $.each(window.location.search.split(/[\?&]/g),
@@ -580,7 +660,7 @@ if (!Array.prototype.some) {
     }());
     //-----------------------------------
     // Clones and freezes an object (set all navigable properties to read-only)
-    function fnFreezeObject(obj) {
+    function fnFreezeObject (obj) {
         //Object.freeze(obj)
         var n = {}, p;
         for (p in obj) {
@@ -603,7 +683,7 @@ if (!Array.prototype.some) {
             var prop;
             // checks if @from refers to an object already defined
             if (_toString.call(_from) == "[object Object]") {
-                if (_objects.filter(function(item) {
+                if (_objects.filter(function (item) {
                     return item === _from;
                 }).length) return _from;
                 // keeps the reference to objects to check if it was created
@@ -641,9 +721,9 @@ if (!Array.prototype.some) {
     // Gets the string representation of the specified date according to regional setting.
     // The supported formats for ISO 8601 are: [YYYY-MM-DD] and [YYYY-MM-DDThh:mm]
     var fnGetDate = (function() {
-        function fillZero(n) { return ("0" + n.toString()).slice(-2); }
-        function fnDate(o) {
-            return (o.ISO8601 ? "yyyy-MM-dd" : _language.dateFormat).replace(/[dMy]+/g, function(m) {
+        function fillZero (n) { return ("0" + n.toString()).slice(-2); }
+        function fnDate (o) {
+            return (o.ISO8601 ? "yyyy-MM-dd" : _language.dateFormat).replace(/[dMy]+/g, function (m) {
                 switch (m.toString()) {
                     case "dd": return fillZero(o.date.getDate());
                     case "MM": return fillZero(o.date.getMonth() + 1);
@@ -651,8 +731,8 @@ if (!Array.prototype.some) {
                 }
             });
         }
-        function fnTime(o) {
-            return (o.ISO8601 ? "HH:mm" : _language.timeFormat).replace(/[Hhms]+/g, function(m) {
+        function fnTime (o) {
+            return (o.ISO8601 ? "HH:mm" : _language.timeFormat).replace(/[Hhms]+/g, function (m) {
                 var h = o.date.getHours();
                 switch (m.toString()) {
                     case "HH": return fillZero(o.date.getHours());
@@ -662,11 +742,11 @@ if (!Array.prototype.some) {
                 }
             });
         }
-        function fnDateTime(o) {
+        function fnDateTime (o) {
             return fnDate(o) + (o.ISO8601 ? "T" : " ") + fnTime(o);
         }
         // Return Module
-        return function(o) {
+        return function (o) {
             if (typeof o === "string") o = { date: o };
             o = $.extend({ date: new Date(), ISO8601: false }, o);
             if (typeof o.date === "string" && /Date/.test(o.date))
@@ -683,7 +763,7 @@ if (!Array.prototype.some) {
     }());
     //-----------------------------------
     // Gets the date object from a string in ISO 8601 format
-    function fnDateFromISO8601(date) {
+    function fnDateFromISO8601 (date) {
         if (typeof date !== "string") { console.log("js-utils: Date format must be ISO 8601 » " + date); return null; }
         var r = date.match(/(?:(\d{4})-(\d{2})-(\d{2}))(?:T(?:(\d{2})(?:\:(\d{2}))?(?:\:(\d{2}))?)?(?:([+-]\d{2})(?:\:?(\d{2}))?)?)?/);
         if (!r) { console.log("js-utils: Date format must be ISO 8601 » " + date); return null; }
@@ -703,7 +783,7 @@ if (!Array.prototype.some) {
     //-----------------------------------
     // Converts all applicable characters to their corresponding HTML entities.
     // This also is a delegate for $.val() and $.text()
-    function fnGetHtmlText(i, value) {
+    function fnGetHtmlText (i, value) {
         if (!value && typeof i === "string") value = i;
         var html = $("<div>").text(value).html();
         return $.trim(html);
@@ -734,7 +814,7 @@ if (!Array.prototype.some) {
     }
     //-----------------------------------
     // Gets the cursor position in the @dom element
-    function fnGetCaretPosition(dom) {
+    function fnGetCaretPosition (dom) {
         if ('selectionStart' in dom) {
             return fixSelection(dom).start;
         } else { // IE below version 9
@@ -745,7 +825,7 @@ if (!Array.prototype.some) {
     }
     //-----------------------------------
     // Sets the @position of the cursor in the @dom element
-    function fnSetCaretPosition(dom, pos) {
+    function fnSetCaretPosition (dom, pos) {
         if ('selectionStart' in dom) {
             fixSelection(dom, function (_input) {
                 _input.setSelectionRange(pos, pos);
@@ -761,7 +841,7 @@ if (!Array.prototype.some) {
     //-----------------------------------
     // Applies a transformation to the text,
     // also it removes all consecutive spaces
-    function fnCapitalize(obj, _type) {
+    function fnCapitalize (obj, _type) {
         var _isDOM = input.isText(obj),
             _text = _isDOM ? obj.value : obj.toString();
         if (!_text || _text.length === 0) return "";
@@ -774,8 +854,8 @@ if (!Array.prototype.some) {
         else _text = $.trim(_text.replace(/\s{2,}/g, " "));
         if (parseFloat(_text) === 0) _text = "0";
         if (_type == "word" || _type == "lower") _text = _text.toLowerCase();
-        if (_type == "word" || _type == "title") _text = _text.replace(/(?:^|-|:|;|\s|\.|\(|\/)[a-záéíóúüñ]/g, function(m) { return m.toUpperCase(); });
-        if (_type == "word" && _language.wordPattern instanceof RegExp) _text = _text.replace(_language.wordPattern, function(m) { return m.toLowerCase(); });
+        if (_type == "word" || _type == "title") _text = _text.replace(/(?:^|-|:|;|\s|\.|\(|\/)[a-záéíóúüñ]/g, function (m) { return m.toUpperCase(); });
+        if (_type == "word" && _language.wordPattern instanceof RegExp) _text = _text.replace(_language.wordPattern, function (m) { return m.toLowerCase(); });
         if (_type == "first") _text = _text.replace(/^\w/, _text.charAt(0).toUpperCase());
         if (_type == "upper") _text = _text.toUpperCase();
         if (_isDOM) obj.value = _text;
@@ -784,7 +864,7 @@ if (!Array.prototype.some) {
     //-----------------------------------
     // Sets the numeric format according to current culture.
     // Places the decimal and thousand separators specified in _language
-    function fnNumericFormat(obj, o) {
+    function fnNumericFormat (obj, o) {
         o = $.extend({
             inDecimalMark: _language.decimalMark,
             inThousandsMark: _language.thousandsMark,
@@ -865,12 +945,7 @@ if (!Array.prototype.some) {
             writable: false,
             value: function (property, value) {
                 if (!isFunction(value)) return;
-                Object.defineProperty(this, property, {
-                    configurable: true,
-                    enumerable: true,
-                    writable: false,
-                    value: value
-                });
+                setWritable(this, property, value, true);
             }
         });
         return validator;
@@ -879,9 +954,9 @@ if (!Array.prototype.some) {
     // Evaluates whether the @dom element contains a value with a date.
     // The result of the validation will be shown in a tooltip
     var fnIsValidDate = (function() {
-        var error = false,
-            type, d, part, x;
-        var parser = function (date) {
+        var error = false;
+        function parser (date) {
+            var type, d, part, partLength, x;
             if (date instanceof Date) return date;
             if (typeof date !== "string") {
                 if (+date) return new Date(+date);
@@ -893,12 +968,11 @@ if (!Array.prototype.some) {
             d = date.split(/\D/);
             date = "y/M/d";
             part = _language.dateFormat.split(/[^yMd]/);
-            for (x = 0; x < part.length; x+=1) {
+            for (x = 0, partLength = part.length; x < partLength; x+=1) {
                 if ((/y+/).test(part[x])) date = date.replace("y", d[x]);
                 if ((/M+/).test(part[x])) date = date.replace("M", d[x]);
                 if ((/d+/).test(part[x])) date = date.replace("d", d[x]);
             }
-            x = null;
             d.splice(0, 3);
             return new Date(date + " " + d.join(":"));
         };
@@ -925,7 +999,7 @@ if (!Array.prototype.some) {
     });
     //-----------------------------------
     // Displays a tooltip next to the @dom element
-    function fnShowTooltip(dom, msg, pos) {
+    function fnShowTooltip (dom, msg, pos) {
         dom = $(dom);
         pos = $.extend({
             at: "right center",
@@ -945,10 +1019,12 @@ if (!Array.prototype.some) {
     }
     //-----------------------------------
     // Shows the overlay screen with the loading animation
-    function fnLoading(o) {
+    function fnLoading (o) {
+        if (o === false)
+            o = { hide: true };
         var d = $.extend({
             hide: false,
-            delay: 2600,
+            delay: 1800,
             async: true,
             of: null
         }, o);
@@ -960,14 +1036,16 @@ if (!Array.prototype.some) {
         for (i = 1; i < 9; i+=1) blockG.push('<div class="blockG"></div>');
         loading = $('<div id="floatingBarsG">').append(blockG.join(""));
         overlay = $('<div id="backBarsG" class="bg-fixed bg-opacity">');
-        if (d.of) overlay.css({
-            'border-radius': $(d.of).css('border-radius'),
-            'position': 'absolute',
-            'top': target.position().top,
-            'left': target.position().left,
-            'height': target.outerHeight(),
-            'width': target.outerWidth()
-        });
+        if (d.of) {
+            overlay.css({
+                'border-radius': $(d.of).css('border-radius'),
+                'position': 'absolute',
+                'top': target.position().top,
+                'left': target.position().left,
+                'height': target.outerHeight(),
+                'width': target.outerWidth()
+            });
+        }
         overlay.add(loading).appendTo(target);
         if (bool(d.async)) overlay.hide().fadeIn(d.delay);
         else overlay.show();
@@ -1021,12 +1099,12 @@ if (!Array.prototype.some) {
     (function() {
         // http://api.jqueryui.com/position/
         if (jQuery.ui && jQuery.ui.position) return;
-        var _position = $.fn.position,
+        var _position,
             rhorizontal = /left|center|right/,
             rvertical = /top|center|bottom/,
             roffset = /([a-z]+)([+-]\d+)?\s?([a-z]+)?([+-]\d+)?/; //brings 4 groups: (horizontal)(offset) (vertical)(offset)
         //normalizes "horizontal vertical" alignment
-        var setAlignment = function(pos) {
+        var setAlignment = function (pos) {
             pos = $.trim(pos);
             var horizontal = rhorizontal.test(pos),
                 vertical = rvertical.test(pos);
@@ -1039,7 +1117,8 @@ if (!Array.prototype.some) {
             return (pos === "center" ? "center center" : pos);
         };
         //monkey-patching
-        $.fn.position = function(o) {
+        _position = $.fn.position;
+        $.fn.position = function (o) {
             if (!o || !o.of) return _position.apply(this, arguments);
             o = $.extend({
                 of: null,
@@ -1126,7 +1205,7 @@ if (!Array.prototype.some) {
     //-----------------------------------
     // Centers an element relative to another
     // css:calc [http://jsfiddle.net/apaul34208/e4y6F]
-    $.fn.fnCenter = function(o) {
+    $.fn.fnCenter = function (o) {
         o = $.extend({}, o);
         if (o.of) {
             return this.position({
@@ -1161,7 +1240,7 @@ if (!Array.prototype.some) {
             if (!input.isText(dom)) return true; //continue
             dom.maxLength = length;
             $(dom).off(".fnMaxLength").attr("data-role", "tooltip")
-            .on(nsEvents("keypress input paste", "fnMaxLength"), function(e) {
+            .on(nsEvents("keypress input paste", "fnMaxLength"), function (e) {
                 var len = dom.value.length,
                     max = len >= length ? 1 : 0;
                 if (browser.mozilla) max = (!e.keyCode && max);
@@ -1211,14 +1290,14 @@ if (!Array.prototype.some) {
     //-----------------------------------
     // Evaluates whether the current element contains a value with a date.
     // The result of the validation will be shown in a tooltip
-    $.fn.fnIsValidDate = function(o) {
+    $.fn.fnIsValidDate = function (o) {
         if (!this.length) return false;
         return fnIsValidDate(this.get(0), o);
     };
     //-----------------------------------
     // Sets the numeric format according to current culture.
     // Places the decimal and thousand separators specified in _language
-    $.fn.fnNumericFormat = function(o) {
+    $.fn.fnNumericFormat = function (o) {
         return this.each(function (i, dom) {
             $(dom).off(".fnNumericFormat").on(nsEvents("keyup blur", "fnNumericFormat"), function() {
                 fnNumericFormat(this, o);
@@ -1233,7 +1312,7 @@ if (!Array.prototype.some) {
             dom.maxLength = 524000;
             if (len < 1) len = 524000;
             $(dom).off(".fnNumericInput")
-            .on(nsEvents("focus blur input paste", "fnNumericInput"), { max: len }, function(e) {
+            .on(nsEvents("focus blur input paste", "fnNumericInput"), { max: len }, function (e) {
                 var _pos = e.type != "blur" ? fnGetCaretPosition(e.target) : 0,
                     _value = e.target.value,
                     _sel, _digits;
@@ -1249,7 +1328,7 @@ if (!Array.prototype.some) {
                 e.target.maxLength = e.data.max;
                 if (e.type != "blur") fnSetCaretPosition(e.target, _pos);
             })
-            .on(nsEvents("keydown", "fnNumericInput"), function(e) {
+            .on(nsEvents("keydown", "fnNumericInput"), function (e) {
                 var _key = (e.which || e.keyCode),
                     _ctrl = !!(e.ctrlKey || e.metaKey);
                 // Allow: (numbers), (keypad numbers),
@@ -1273,7 +1352,7 @@ if (!Array.prototype.some) {
             dom.maxLength = 524000;
             if (len < 1) len = 524000;
             $(dom).off(".fnCustomInput")
-            .on(nsEvents("focus blur input paste", "fnCustomInput"), { max: len }, function(e) {
+            .on(nsEvents("focus blur input paste", "fnCustomInput"), { max: len }, function (e) {
                 var _pos = e.type != "blur" ? fnGetCaretPosition(e.target) : 0,
                     _value = e.target.value,
                     _sel, _pattern, _matched;
@@ -1289,7 +1368,7 @@ if (!Array.prototype.some) {
                 e.target.maxLength = e.data.max;
                 if (e.type != "blur") fnSetCaretPosition(e.target, _pos);
             })
-            .on(nsEvents("keypress", "fnCustomInput"), function(e) {
+            .on(nsEvents("keypress", "fnCustomInput"), function (e) {
                 var _pattern = new RegExp(mask.source || mask, "i"),
                     _key = (e.which || e.keyCode),
                     _vk = (_key == 8 || _key == 9 || _key == 46 || (_key >= 35 && _key <= 40));
@@ -1302,9 +1381,9 @@ if (!Array.prototype.some) {
     $.fn.fnDisableKey = function (key) {
         if (!key) return this;
         var keys = key.toString().split("");
-        keys = keys.filter(function(n){ return (n && n.length); });
+        keys = keys.filter(function (n){ return (n && n.length); });
         return this.each(function() {
-            $(this).off(".fnDisableKey").on(nsEvents("keypress", "fnDisableKey"), function(e) {
+            $(this).off(".fnDisableKey").on(nsEvents("keypress", "fnDisableKey"), function (e) {
                 var _key = (e.which || e.keyCode);
                 _key = String.fromCharCode(_key);
                 return ($.inArray(_key, keys) == -1);
@@ -1318,12 +1397,13 @@ if (!Array.prototype.some) {
         var allFilters = $.map(fnIsValidFormat, function (value, key) { return ".vld-" + key; }).join(",");
         // Shows a tooltip for the validation message
         var fnTooltip = function (dom, event, messageType, pos) {
-            var button = $(event.currentTarget),
+            var beforeTooltip,
+                button = $(event.currentTarget),
                 args = { "target": dom, "position": pos };
 
             //executes a function before displaying the tooltip,
             //useful to change the element to which the tooltip is attached
-            var beforeTooltip = button.data("nsEvent");
+            beforeTooltip = button.data("nsEvent");
             if (beforeTooltip) button.trigger(beforeTooltip, [args]);
 
             //removes the validation message when the [blur] event is raised
@@ -1349,26 +1429,28 @@ if (!Array.prototype.some) {
                 if (input.isText(this) && this.getAttribute('data-group') == group) $(this).focus();
             });
         };
-        $.fn.fnEasyValidate = function(o) {
+        $.fn.fnEasyValidate = function (o) {
             var position = $.extend({
-                at: "right center",
-                my: "left+6 center",
-                collision: "flipfit"
-            }, jherax.settings.position);
-            var d = $.extend({
-                fnValidator: null,
-                firstItemInvalid: false,
-                container: jherax.wrapper,
-                requiredForm: false,
-                position: position
-            }, o);
-            var fnValidateFirstItem = function(dom) {
-                if (dom.length === 0) return true;
-                //treat the first item of the <select> element as an invalid option
-                return (d.firstItemInvalid && dom.selectedIndex === 0);
-            };
-            var selector = this.selector;
+                        at: "right center",
+                        my: "left+6 center",
+                        collision: "flipfit"
+                    }, jherax.settings.position),
+                d = $.extend({
+                        fnValidator: null,
+                        firstItemInvalid: false,
+                        container: jherax.wrapper,
+                        requiredForm: false,
+                        position: position
+                    }, o),
+                fnValidateFirstItem = function (dom) {
+                    if (dom.length === 0) return true;
+                    //treat the first item of the <select> element as an invalid option
+                    return (d.firstItemInvalid && dom.selectedIndex === 0);
+                },
+                selector = this.selector;
+            // Returns the collection of matching elements
             return this.each(function (index, btn) {
+                var evt, handlers;
                 if (d.requiredForm && !$(btn).closest("form").length) {
                     fnShowTooltip(btn, _language.validateForm);
                     return true; //continue with next element
@@ -1376,23 +1458,24 @@ if (!Array.prototype.some) {
                 // Delegates the handler to execute a callback before displaying the tooltip,
                 // useful to change the element to which show the tooltip against
                 if (isFunction(d.fnBeforeTooltip)) {
-                    var evt = nsEvents("beforeTooltip", "fnEasyValidate-" + index);
+                    evt = nsEvents("beforeTooltip", "fnEasyValidate-" + index);
                     $(btn).data("nsEvent", evt);
-                    $(document).off(evt).on(evt, selector, function(e, args) {
+                    $(document).off(evt).on(evt, selector, function (e, args) {
                         //args.target is the DOM element to which the "tooltip" is attached
                         //args.position is the position of "tooltip" { at, my, collision }
                         d.fnBeforeTooltip(args);
                     });
+                    evt = null;
                 }
                 // Each button validates the marked elements according to the specified rules
-                $(btn).off(".fnEasyValidate").on(nsEvents("click", "fnEasyValidate"), { handler: "fnEasyValidate" }, function(event) {
+                $(btn).off(".fnEasyValidate").on(nsEvents("click", "fnEasyValidate"), { handler: "fnEasyValidate" }, function (event) {
                     fnSetFocus(d.container, btn.getAttribute('data-group')); $(btn).focus().blur();
                     $(".vld-tooltip").remove();
                     var _submit = true; 
 
                     // Validates each element according to specific rules
                     $(".vld-required," + allFilters).each(function (i, _dom) {
-                        var type, _tag = _dom.nodeName.toLowerCase();
+                        var type, dom, _tag = _dom.nodeName.toLowerCase();
                         // Gets the html5 data- attribute; modern browsers admit: dom.dataset[attribute]
                         if (btn.getAttribute('data-group') !== _dom.getAttribute('data-group')) return true; //continue
                         if (input.isText(_dom)) _dom.value = $.trim(_dom.value);
@@ -1401,7 +1484,7 @@ if (!Array.prototype.some) {
                         // Looks for empty <input> elements, <select> elements and those having the [value] attribute equal to "0"
                         if ($(_dom).hasClass("vld-required") && ((_tag == "select" && (fnValidateFirstItem(_dom) || _dom.value === "0")) ||
                             (input.isText(_dom) && !_dom.value.length) || (input.isCheck(_dom) && !_dom.checked) || _tag == "span")) {
-                            var dom = _dom;
+                            dom = _dom;
                             // Awful asp.net radiobutton or checkbox
                             if (_tag == "span" || input.isCheck(_dom)) {
                                 if (_tag == "input") dom = $(_dom);
@@ -1428,13 +1511,13 @@ if (!Array.prototype.some) {
                     if (_submit && isFunction(d.fnValidator) && !d.fnValidator(btn)) {
                         _submit = false;
                     }
-                    $.fn.fnEasyValidate.canSubmit = _submit;
+                    setWritable($.fn.fnEasyValidate, "canSubmit", _submit);
                     if (!_submit) event.stopImmediatePropagation();
                     return _submit;
                     
                 }); //end btn.click
                 
-                var handlers = ($._data(btn, 'events') || {})["click"];
+                handlers = ($._data(btn, 'events') || {})["click"];
                 // Move at the beginning the click.fnEasyValidate handler
                 handlers.unshift(handlers.pop());
 
@@ -1444,81 +1527,100 @@ if (!Array.prototype.some) {
     
     //-----------------------------------
     // Displays a confirm window on click event
-    $.fn.fnConfirm = function(o) {
-        var type = "click", current = {};
-        $.fn.fnConfirm.canSubmit = false;
-        var hasValidUrl = function (href) {
-            return !!(href && href.length && (/(?:^\w+:\/\/[^\s\n]+)[^#]$/).test(href));
+    (function() {
+        var type = "click",
+            pattern = (/(?:^\w+:\/\/[^\s\n]+)[^#]$/);
+        function hasValidUrl (href) {
+            return !!(href && href.length && pattern.test(href));
+        }
+        $.fn.fnConfirm = function (o) {
+            setWritable($.fn.fnConfirm, "canSubmit", false);
+            // Returns the collection of matching elements
+            return this.each(function (i, target) {
+                var current = {};
+                $(target).off(".fnConfirm").on(nsEvents(type, "fnConfirm"), function (e) {
+                    current = this;
+                    // Allows to the fnEasyValidate function pass through
+                    if (handlerExist(current, type, "fnEasyValidate"))
+                        setWritable ($.fn.fnConfirm, "canSubmit", !$.fn.fnEasyValidate.canSubmit);
+                    if (!$.fn.fnConfirm.canSubmit) {
+                        e.stopImmediatePropagation();
+                        e.preventDefault();
+                        // Executes the callback before the window is displayed
+                        if (isFunction(o.beforeShow))
+                            o.beforeShow.call(current);
+                        // Shows the confirm window
+                        fnShowDialog(o);
+                    }
+                });
+                var handlers = ($._data(target, 'events') || {})[type];
+                // Move at the beginning the type.fnConfirm handler
+                var h = 0, handler = handlers.pop();
+                $.each(handlers, function (index, item) {
+                    if (item.namespace === "fnEasyValidate") {
+                        h = index + 1;
+                        return false;
+                    }
+                });
+                handlers.splice(h, 0, handler);
+                o.id = 'jsu-dialog-confirm';
+                // Creates the buttons for jquery.ui.dialog
+                o.buttons = [
+                    {
+                        text: _language.dialogOK,
+                        click: function() {
+                            if (hasValidUrl(current.href)) document.location = current.href;
+                            $("#" + o.id).on("dialogclose", function (ev, ui) {
+                                setWritable($.fn.fnConfirm, "canSubmit", true);
+                                // Unbinds  the event handler and triggers the previous actions
+                                $(current).off(".fnConfirm").trigger(type);
+                                // Triggers the awful asp.net postback
+                                if ((/[_]{2}doPostBack/).test(current.href))
+                                    setTimeout(current.href.replace(/javascript:/i, ""), 1);
+                            }).dialog("close");
+                        }
+                    },
+                    {
+                        text: _language.dialogCancel,
+                        click: function() {
+                            setWritable($.fn.fnConfirm, "canSubmit", false);
+                            $("#" + o.id).dialog("close");
+                        }
+                    }
+                ];
+            }); //end $.each
         };
-        return this.each(function (i, target) {
-            $(target).off(".fnConfirm").on(nsEvents(type, "fnConfirm"), function(e) {
-                current = this;
-                // Allows to the fnEasyValidate function pass through
-                if (handlerExist(current, type, "fnEasyValidate"))
-                    $.fn.fnConfirm.canSubmit = !$.fn.fnEasyValidate.canSubmit;
-                if (!$.fn.fnConfirm.canSubmit) {
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    // Executes the callback before the window is displayed
-                    if (isFunction(o.beforeShow))
-                        o.beforeShow.call(current);
-                    // Shows the confirm window
-                    fnShowDialog(o);
-                }
-            });
-            var handlers = ($._data(target, 'events') || {})[type];
-            // Move at the beginning the type.fnConfirm handler
-            var h = 0, handler = handlers.pop();
-            $.each(handlers, function(index, item) {
-                if (item.namespace === "fnEasyValidate") {
-                    h = index + 1;
-                    return false;
-                }
-            });
-            handlers.splice(h, 0, handler);
-            o.id = 'jsu-dialog-confirm';
-            // Creates the buttons for jquery.ui.dialog
-            o.buttons = [
-                {
-                    text: _language.dialogOK,
-                    click: function() {
-                        if (hasValidUrl(current.href)) document.location = current.href;
-                        $("#" + o.id).on("dialogclose", function (ev, ui) {
-                            $.fn.fnConfirm.canSubmit = true;
-                            // Unbinds  the event handler and triggers the previous actions
-                            $(current).off(".fnConfirm").trigger(type);
-                            // Triggers the awful asp.net postback
-                            if ((/[_]{2}doPostBack/).test(current.href))
-                                setTimeout(current.href.replace(/javascript:/i, ""), 1);
-                        }).dialog("close");
-                    }
-                },
-                {
-                    text: _language.dialogCancel,
-                    click: function() {
-                        $.fn.fnConfirm.canSubmit = false;
-                        $("#" + o.id).dialog("close");
-                    }
-                }
-            ];
-        }); //end $.each
-    };
-    // We expose a property to check whether the form can be submitted or not
-    $.fn.fnConfirm.canSubmit = false;
+    }());
 
     //===================================
     /* FACADES */
     //===================================
 
     // Public implementation to display a dialog window
-    // It also provides a mechanism for redefinition
-    function fnShowDialog(options) {
-        return (arguments.callee.source || _fnShowDialog)(options);
+    // It also provides a mechanism for redefinition:
+    // fnShowDialog.set("source", callback);
+    function fnShowDialog (options) {
+        return fnShowDialog.source(options);
     }
+
+    setWritable(fnShowDialog, "source", function() {
+        return _fnShowDialog.apply(jherax, arguments);
+    });
+
+    Object.defineProperty(fnShowDialog, "set", {
+        configurable: false,
+        enumerable: true,
+        writable: false,
+        value: function (property, value) {
+            if (!isFunction(value)) return;
+            setWritable(this, property, value);
+        }
+    });
+
     // Private implementation to display a dialog window
     // Displays a jquery.ui modal window
     // @@Private
-    function _fnShowDialog(o) {
+    function _fnShowDialog (o) {
         if (!jQuery.ui || !jQuery.ui.dialog)
             throw new CustomError("jQuery.ui.dialog is required");
         var d = $.extend(true, {
@@ -1628,7 +1730,7 @@ if (!Array.prototype.some) {
                     else {
                         cnt.unwrap().unwrap();
                         // Restores the DOM element to its original location
-                        $("[class*=" + id + "]").reverse().each(function () {
+                        $("[class*=" + id + "]").reverse().each(function() {
                             var dom = $(this),
                                 css = new RegExp("^" + id + "-place-"),
                                 place = this.className.split(/\s+/).filter(function (item) {
@@ -1654,6 +1756,7 @@ if (!Array.prototype.some) {
     jherax.isDOM = isDOM;
     jherax.isFunction = isFunction;
     jherax.fnStringify = fnStringify;
+    jherax.sortBy = sortBy; //undocumented
     jherax.inputType = input;
     jherax.handlerExist = handlerExist;
     jherax.nsEvents = nsEvents;
