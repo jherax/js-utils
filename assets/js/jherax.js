@@ -2,7 +2,7 @@
  *  JSU Library
  *  Author: David Rivera
  *  Created: 2013/06/26
- *  Version: 3.7.0
+ *  Version: 3.7.1
  -------------------------------------
  *  Source:
  *  http://github.com/jherax/js-utils
@@ -61,7 +61,7 @@ var jsu = window.jsu || Object.defineProperties({}, {
     "version": {
         enumerable: false,
         configurable: false,
-        value: "3.7.0"
+        value: "3.7.1"
     },
     "dependencies": {
         enumerable: false,
@@ -544,41 +544,43 @@ if (typeof Array.prototype.filter !== 'function') {
         var o = $.extend({
             src: null,
             async: true,
-            silent: false,
+            createTag: false,
             charset: null,
             onload: null,
             before: null
         }, $.isPlainObject(path) ? path : { src: path });
         if (!o.src) throw new CustomError("The url of file is required");
-        if (!o.async || o.silent) {
-            return $.ajax({
-                url: o.src,
-                async: o.async,
-                dataType: "script"
-            }).done(function (script) {
-                if (isFunction(o.onload)) o.onload();
-            }).fail(function (jqXHR, result) {
-                console.log("fnAddScript:", jqXHR);
-                throw new CustomError(result);
-            });
-        }
-        var tags, tagsLength, i,
-            file = document.createElement('script'),
-            before = fnEscapeRegExp(o.before);
-        file.type = 'text/javascript';
-        file.src = o.src;
-        if (o.async) file.async = true;
-        if (o.charset) file.charset = o.charset;
-        if (isFunction(o.onload)) file.onload = o.onload;
-        tags = document.getElementsByTagName('script');
-        if (!before) return !!$(tags).last().before(file);
-        before = new RegExp(before);
-        for (i = 0, tagsLength = tags.length; i < tagsLength; i+=1) {
-            if (before.test(tags[i].src)) {
-                tags[i].parentNode.insertBefore(file, tags[i]);
-                break;
+        //creates the <script> element
+        if (o.createTag === true) {
+            var tags, tagsLength, i,
+                file = document.createElement('script'),
+                before = fnEscapeRegExp(o.before);
+            file.type = 'text/javascript';
+            file.src = o.src;
+            if (o.charset) file.charset = o.charset;
+            if (isFunction(o.onload)) file.onload = o.onload;
+            tags = document.getElementsByTagName('script');
+            if (!before) return !!$(tags).last().before(file);
+            before = new RegExp(before);
+            for (i = 0, tagsLength = tags.length; i < tagsLength; i+=1) {
+                if (before.test(tags[i].src)) {
+                    tags[i].parentNode.insertBefore(file, tags[i]);
+                    break;
+                }
             }
+            return file;
         }
+        //returns jqXHR object
+        return $.ajax({
+            url: o.src,
+            async: o.async,
+            dataType: "script"
+        }).done(function (script) {
+            if (isFunction(o.onload)) o.onload();
+        }).fail(function (jqXHR, result) {
+            console.log("fnAddScript:", jqXHR);
+            throw new CustomError(result);
+        });
     }
     //-----------------------------------
     // Dynamically adds an external stylesheet
@@ -593,7 +595,7 @@ if (typeof Array.prototype.filter !== 'function') {
         if (!before) {
             tags = document.getElementsByTagName('head');
             tags && tags[0].appendChild(file);
-            return;
+            return file;
         }
         before = new RegExp(before);
         tags = document.getElementsByTagName('link');
@@ -603,6 +605,7 @@ if (typeof Array.prototype.filter !== 'function') {
                 break;
             }
         }
+        return file;
     }
     //-----------------------------------
     // Escapes the input text to a literal pattern in the constructor of a regular expression
