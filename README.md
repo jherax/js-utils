@@ -57,8 +57,8 @@ A Glance
 
 Appendix
 --------
-### inputType:text
-It is considered *inputType:text* any of the following `DOM` elements:
+### inputType.isText
+It is considered *inputType.isText* any of the following `DOM` elements:
 ```html
   <textarea></textarea>
   <input type="text" />
