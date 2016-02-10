@@ -1,36 +1,22 @@
 [JSU Library][jsu-library]
 ========
 
-This is a library of JavaScript / jQuery utilities, which includes tools for data validation and text formatting, plugins for tooltip, modal-windows and positioning elements, resources injection, string and JSON manipulation, object cloning, sorting arrays, and other features.
+This is a library of utilities for JavaScript and jQuery, which includes tools for data validation, text formatting, tooltips, positioning elements, JSON manipulation, cloning objects, sorting arrays, resource injection, among others.
 
 Documentation
 -------------
-Go to the documentation site to see the API reference and examples:<br>
+Go to documentation site to see the API reference and examples:<br>
   - [http://jherax.github.io/?lang=english](http://jherax.github.io/?lang=english#jsu-library)
   - [http://jherax.github.io/?lang=spanish](http://jherax.github.io/?lang=spanish#jsu-library)
 
 Getting Started
 ---------------
 The library has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before jsu-library.<br>
-It also requires some [CSS][jherax.css] rules for functions showing **tooltips**, **loadings**, among others.
+It also requires some [CSS][jherax.css] rules for methods showing **tooltips**, **loadings**, and others.
 
-If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using *jQuery.ui*, otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
+If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using [jQuery.ui](https://github.com/jquery/jquery-ui), otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
 
-[fnShowDialog](http://jherax.github.io/#fnshowdialog-options) is a facade for [jQuery.ui.dialog](https://jqueryui.com/dialog/) and has a dependency on [jQuery.ui 1.9+][jQuery.ui].<br>
-But if you don't want to use *jQuery.ui* as the default implementation, you can override the method by invoking the `set()` method with the new implementation, e.g. <nobr>`jsu.fnShowDialog.set("source", function (options) { ... });`</nobr>
-
-The library has the following structure:
-- `jsu:` main namespace
-  - `author:` me :^)
-  - `version:` the library version
-  - `dependencies:` array with name of dependencies
-  - `siteOrigin`: get the host part of the current url
-  - `wrapper:` selector where dynamic HTML is placed
-  - `createNS:` method to create safe namespaces
-  - `regional:` namespace for language settings
-  - `settings:` namespace for global settings
-
-A Glance
+Quick view
 --------
 * [API Reference](http://jherax.github.io/#api-reference)
 * [List of methods](http://jherax.github.io/#list-of-methods)
