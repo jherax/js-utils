@@ -1,43 +1,31 @@
 {
-  "name": "js-utils",
+  "name": "jsu-library",
   "version": "3.7.2",
   "title": "JSU Library",
-  "main": "./assets/js/jherax.js",
-  "description": "Utilities for JavaScript and jQuery, included tools for data validation, text formatting, tooltips, positioning elements, JSON, cloning objects, sorting arrays, resource injection.",
-  "dependencies": {
-    "jquery": ">=1.8.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jherax/js-utils.git"
-  },
+  "description": "Utilities for JavaScript and jQuery, included tools for data validation, text formatting, tooltips, positioning elements, cloning objects, sorting arrays, etc.",
+  "author": "David Rivera <jherax@gmail.com>",
+  "main": "assets/js/jherax.js",
   "keywords": [
-    "javascript",
-    "json",
-    "jquery",
     "jquery-plugin",
-    "format",
+    "ecosystem:jquery",
+    "javascript",
+    "jquery",
+    "array",
+    "sort",
+    "clone",
     "validation",
-    "capitals",
+    "text formatting",
     "capitalize",
     "positioning",
-    "tooltip",
-    "clone",
-    "sort"
+    "tooltip"
   ],
-  "author": {
-    "name": "David Rivera",
-    "url": "http://jherax.github.io/",
-    "email": "jherax@gmail.com"
+  "repository": {
+    "url": "https://github.com/jherax/js-utils.git",
+    "type": "git"
   },
-  "licenses": [{
-    "type": "MIT",
-    "url": "http://www.opensource.org/licenses/mit-license.php"
-  }],
+  "bugs": {
+    "url": "https://github.com/jherax/js-utils/issues"
+  },
   "homepage": "http://jherax.github.io/",
-  "docs": "http://jherax.github.io/#jsu-library",
-  "bugs": "https://github.com/jherax/js-utils/issues",
-  "download": "https://github.com/jherax/js-utils/archive/master.zip",
-  "demo": "http://jherax.github.io/#list-of-methods",
-  "readmeFilename": "README.md"
+  "license": "MIT"
 }

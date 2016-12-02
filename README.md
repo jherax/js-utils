@@ -3,21 +3,22 @@
 
 This is a library of utilities for JavaScript and jQuery, which includes tools for data validation, text formatting, tooltips, positioning elements, JSON manipulation, cloning objects, sorting arrays, resource injection, among others.
 
-Documentation
--------------
-Go to documentation site to see the API reference and examples:<br>
-  - [http://jherax.github.io/?lang=english](http://jherax.github.io/?lang=english#jsu-library)
-  - [http://jherax.github.io/?lang=spanish](http://jherax.github.io/?lang=spanish#jsu-library)
+## Documentation
 
-Getting Started
----------------
+Go to the API reference site and see some examples:
+
+  - [jherax.github.io/?lang=english](http://jherax.github.io/?lang=english#jsu-library)
+  - [jherax.github.io/?lang=spanish](http://jherax.github.io/?lang=spanish#jsu-library)
+
+## Getting Started
+
 The library has a dependency on [jQuery 1.8+][jQuery.js] which must be loaded before jsu-library.<br>
 It also requires some [CSS][jherax.css] rules for methods showing **tooltips**, **loadings**, and others.
 
 If [jQuery.ui.position](http://api.jqueryui.com/position/) is available, all tooltips will be positioned using [jQuery.ui](https://github.com/jquery/jquery-ui), otherwise an internal implementation for [positioning](#jqueryposition-options) will be used.
 
-Quick view
---------
+## Quick view
+
 * [API Reference](http://jherax.github.io/#api-reference)
 * [List of methods](http://jherax.github.io/#list-of-methods)
 
@@ -41,53 +42,39 @@ Quick view
   })();
 ```
 
-Appendix
---------
-### inputType.isText
-It is considered *inputType.isText* any of the following `DOM` elements:
-```html
-  <textarea></textarea>
-  <input type="text" />
-  <input type="password" />
-  <input type="number" />
-  <input type="search" />
-  <input type="tel" />
-  <input type="url" />
-  <input type="email" />
-  <input type="datetime" />
-  <input type="datetime-local" />
-  <input type="date" />
-  <input type="time" />
-  <input type="month" />
-  <input type="week" />
-  <input type="file" />
+## Versioning
+
+This projects adopts the [Semantic Versioning](http://semver.org/) (SemVer) guidelines:
+
+```
+<MAJOR>.<MINOR>.<PATCH>
 ```
 
-Issues
-------
-If you discover a bug, please let me know here on GitHub!<br>
-https://github.com/jherax/js-utils/issues
+Given a version number MAJOR.MINOR.PATCH, increment the:
 
-Versioning
-----------
-The releases will be numbered with the follow format:<br>
-`<major>.<minor>.<patch>`
+1. MAJOR version when you make incompatible API changes
+2. MINOR version when you add functionality in a backwards-compatible manner
+3. PATCH version when you make backwards-compatible bug fixes.
 
-And constructed with the following guidelines:
+## Issues
 
-* Breaking backwards compatibility bumps the major
-* New additions without breaking backwards compatibility bumps the minor
-* Bug fixes and misc changes bump the patch
+To report an issue and keep traceability of bug-fixes, please report to:
 
-For more information on semantic versioning, please visit http://semver.org/
+* https://github.com/jherax/js-utils/issues
 
-Author
-------
-Developed and maintained by David Rivera (jherax [stackoverflow](http://stackoverflow.com/users/2247494/jherax) | [careers](http://careers.stackoverflow.com/jherax) | [wordpress](https://jherax.wordpress.com/))
+## Changelog
 
-License
--------
-JSU Library is released under the MIT license. See [LICENSE](https://raw.githubusercontent.com/jherax/js-utils/master/LICENSE) file for details.
+Details changes for each release are documented [here](CHANGELOG.md).
+
+## Author
+
+Developed and maintained by David Rivera (jherax [stackoverflow](http://stackoverflow.com/users/2247494/jherax) | [wordpress](https://jherax.wordpress.com/))
+
+## License
+
+This project has been released under the [MIT](https://opensource.org/licenses/MIT) license. 
+This license applies ONLY to the source of this repository and does not extend to any other distribution, 
+or any other 3rd party libraries used in a repository. See [LICENSE](LICENSE) file for more information.
 
 <!-- links -->
 [jsu-library]: http://jherax.github.io/
